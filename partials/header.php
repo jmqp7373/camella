@@ -35,7 +35,7 @@
             <!-- Logo -->
             <a href="index.php" class="logo">
                 <img src="assets/images/logo/logo_horizontal.png" alt="Camella Logo">
-                <span>Camella</span>
+                
             </a>
             
             <!-- Navegación Principal -->
