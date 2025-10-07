@@ -25,7 +25,7 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    background: var(--gradiente-header);
+    background: #3a8be8;
     box-shadow: var(--sombra-suave);
     z-index: 1000;
     padding: 0;
@@ -244,7 +244,7 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--color-azul);
+    background: #3a8be8;
     color: var(--color-blanco);
     text-align: center;
     padding: var(--spacing-lg);
