@@ -1,68 +1,72 @@
 <?php
 /**
- * Página principal del sitio web camella.com.co
- * Versión inicial para pruebas de GitHub
+ * CAMELLA.COM.CO - Portal de Empleo
+ * Archivo principal del sitio web con estructura MVC
+ * 
+ * @author Camella Development Team
+ * @version 2.0
+ * @date 2025
  */
+
+// Configuraciones globales
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // En producción debe ser 0
+
+// Definir rutas principales
+define('BASE_PATH', __DIR__);
+define('VIEWS_PATH', BASE_PATH . '/views/');
+define('CONTROLLERS_PATH', BASE_PATH . '/controllers/');
+define('MODELS_PATH', BASE_PATH . '/models/');
+
+// Función para sanitizar entradas
+function sanitize_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
+
+// Obtener la vista solicitada (default: home)
+$view = isset($_GET['view']) ? sanitize_input($_GET['view']) : 'home';
+
+// Lista de vistas permitidas (seguridad)
+$allowed_views = [
+    'home',
+    'empresas', 
+    'talentos',
+    'contacto',
+    'publicar-oferta',
+    'buscar-empleo',
+    'registro-empresa',
+    'registro-talento',
+    'privacidad',
+    'terminos',
+    'ayuda'
+];
+
+// Verificar que la vista sea válida
+if (!in_array($view, $allowed_views)) {
+    $view = 'home';
+}
+
+// Definir la ruta del archivo de vista
+$viewPath = VIEWS_PATH . $view . '.php';
+
+// Incluir header
+include 'partials/header.php';
+
+// Cargar la vista correspondiente
+if (file_exists($viewPath)) {
+    include $viewPath;
+} else {
+    // Vista de error 404 personalizada
+    echo '<div style="text-align: center; padding: 4rem;">';
+    echo '<h2><i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i> Vista no encontrada</h2>';
+    echo '<p>La página <strong>"' . htmlspecialchars($view) . '"</strong> no existe o está en desarrollo.</p>';
+    echo '<a href="index.php" class="btn btn-primary"><i class="fas fa-home"></i> Volver al Inicio</a>';
+    echo '</div>';
+}
+
+// Incluir footer
+include 'partials/footer.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camella.com.co - Página Principal</title>
-    <link rel="icon" type="image/x-icon" href="assets/images/logo/favicon.ico">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .container {
-            text-align: center;
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            max-width: 500px;
-        }
-        h1 {
-            color: #333;
-            margin-bottom: 1rem;
-        }
-        .logo {
-            max-width: 200px;
-            height: auto;
-            margin-bottom: 1rem;
-        }
-        .info {
-            color: #666;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <img src="assets/images/logo/logo_horizontal.png" alt="Logo Camella" class="logo">
-        
-        <h1><?php echo "¡Hola Mundo!"; ?></h1>
-        
-        <p>Bienvenido al sitio web de <strong>Camella.com.co</strong></p>
-        
-        <div class="info">
-            <p><strong>Fecha:</strong> <?php echo date('d/m/Y H:i:s'); ?></p>
-            <p><strong>Servidor:</strong> <?php echo $_SERVER['HTTP_HOST']; ?></p>
-            <p><strong>IP del Cliente:</strong> <?php echo $_SERVER['REMOTE_ADDR']; ?></p>
-        </div>
-        
-        <p style="margin-top: 2rem; color: #28a745; font-weight: bold;">
-            ✅ Sitio funcionando correctamente
-        </p>
-    </div>
-</body>
-</html>
