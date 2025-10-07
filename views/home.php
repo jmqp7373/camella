@@ -18,32 +18,6 @@ $pageTitle = "Inicio";
     </p>
 </div>
 
-<!-- Estadísticas del portal -->
-<div class="stats-section">
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon"><i class="fas fa-briefcase"></i></div>
-            <div class="stat-number">1,250+</div>
-            <div class="stat-label">Ofertas Activas</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon"><i class="fas fa-building"></i></div>
-            <div class="stat-number">450+</div>
-            <div class="stat-label">Empresas Registradas</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon"><i class="fas fa-users"></i></div>
-            <div class="stat-number">8,700+</div>
-            <div class="stat-label">Profesionales</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon"><i class="fas fa-handshake"></i></div>
-            <div class="stat-number">2,340+</div>
-            <div class="stat-label">Contrataciones Exitosas</div>
-        </div>
-    </div>
-</div>
-
 <!-- Árbol de Categorías de Empleo -->
 <section class="categories-section">
     <h2 class="section-title">
