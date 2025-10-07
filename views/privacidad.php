@@ -133,18 +133,18 @@ $pageTitle = "Política de Privacidad";
     text-align: center;
     margin-bottom: 3rem;
     padding-bottom: 2rem;
-    border-bottom: 3px solid #7a2e2e;
+    border-bottom: 3px solid #CE1126;
 }
 
 .privacidad-header .page-title {
-    color: #7a2e2e;
+    color: #CE1126;
     font-size: 2.5rem;
     margin-bottom: 1rem;
     font-weight: 700;
 }
 
 .last-updated {
-    background: linear-gradient(135deg, #7a2e2e 0%, #a03e3e 100%);
+    background: linear-gradient(135deg, #CE1126 0%, #a03e3e 100%);
     color: white;
     padding: 0.8rem 1.5rem;
     border-radius: 25px;
@@ -157,7 +157,7 @@ $pageTitle = "Política de Privacidad";
     background: #f8f9fa;
     padding: 1.5rem;
     border-radius: 10px;
-    border-left: 4px solid #7a2e2e;
+    border-left: 4px solid #CE1126;
     font-size: 1.1rem;
     color: #555;
     margin-top: 1.5rem;
@@ -178,11 +178,11 @@ $pageTitle = "Política de Privacidad";
 
 .privacy-section:hover {
     box-shadow: 0 8px 25px rgba(122, 46, 46, 0.1);
-    border-color: #7a2e2e;
+    border-color: #CE1126;
 }
 
 .privacy-section h2 {
-    color: #7a2e2e;
+    color: #CE1126;
     font-size: 1.6rem;
     margin-bottom: 1.5rem;
     font-weight: 600;
@@ -192,7 +192,7 @@ $pageTitle = "Política de Privacidad";
 }
 
 .section-number {
-    background: #7a2e2e;
+    background: #CE1126;
     color: white;
     padding: 0.5rem 0.8rem;
     border-radius: 50%;
@@ -225,7 +225,7 @@ $pageTitle = "Política de Privacidad";
     content: "▶";
     position: absolute;
     left: 0;
-    color: #7a2e2e;
+    color: #CE1126;
     font-weight: bold;
 }
 
@@ -233,7 +233,7 @@ $pageTitle = "Política de Privacidad";
     background: white;
     padding: 1.5rem;
     border-radius: 10px;
-    border-left: 4px solid #7a2e2e;
+    border-left: 4px solid #CE1126;
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
@@ -249,7 +249,7 @@ $pageTitle = "Política de Privacidad";
     margin-top: 3rem;
     text-align: center;
     padding: 2rem;
-    background: linear-gradient(135deg, #7a2e2e 0%, #a03e3e 100%);
+    background: linear-gradient(135deg, #CE1126 0%, #a03e3e 100%);
     color: white;
     border-radius: 15px;
 }
@@ -267,7 +267,7 @@ $pageTitle = "Política de Privacidad";
 /* Enlaces */
 .privacy-section a, 
 .company-signature a {
-    color: #7a2e2e;
+    color: #CE1126;
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
@@ -337,18 +337,18 @@ html {
 
 /* Mejoras de accesibilidad */
 .privacy-section:focus-within {
-    outline: 2px solid #7a2e2e;
+    outline: 2px solid #CE1126;
     outline-offset: 2px;
 }
 
 /* Efecto de selección de texto */
 ::selection {
-    background-color: #7a2e2e;
+    background-color: #CE1126;
     color: white;
 }
 
 ::-moz-selection {
-    background-color: #7a2e2e;
+    background-color: #CE1126;
     color: white;
 }
 </style>
