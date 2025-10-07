@@ -185,13 +185,10 @@
 }
 
 /* ========================================
-   MODO OSCURO (OPCIONAL)
+   COLORES UNIFICADOS - DESKTOP Y MÓVIL
    ======================================== */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-blanco: #1a1a1a;
-    --gris-claro: #2d2d2d;
-    --color-gris: #e5e5e5;
-    --gradiente-fondo: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  }
-}
+/* 
+  IMPORTANTE: Los colores son idénticos en todas las resoluciones
+  No se aplican variaciones por tamaño de pantalla o preferencia del sistema
+  La identidad visual se mantiene consistente en todos los dispositivos
+*/

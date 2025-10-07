@@ -251,13 +251,13 @@ $pageTitle = "Inicio";
 }
 
 .stat-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: var(--gradiente-header);
+    color: var(--color-blanco);
     text-align: center;
-    padding: 2rem;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-    transition: transform 0.3s ease;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--sombra-azul);
+    transition: var(--transition-normal);
 }
 
 .stat-card:hover {
@@ -283,10 +283,10 @@ $pageTitle = "Inicio";
 
 .section-title {
     text-align: center;
-    color: #333;
+    color: var(--color-azul);
     font-size: 2rem;
-    margin-bottom: 2rem;
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    margin-bottom: var(--spacing-xl);
+    background: var(--gradiente-header);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -333,35 +333,35 @@ $pageTitle = "Inicio";
 }
 
 .cta-card:hover {
-    border-color: #667eea;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+    border-color: var(--color-amarillo);
+    box-shadow: var(--sombra-amarillo);
     transform: translateY(-5px);
 }
 
 .cta-icon {
     font-size: 3rem;
-    color: #667eea;
-    margin-bottom: 1rem;
+    color: var(--color-azul);
+    margin-bottom: var(--spacing-md);
 }
 
 .cta-card h3 {
-    color: #333;
-    margin-bottom: 1rem;
+    color: var(--color-azul);
+    margin-bottom: var(--spacing-md);
     font-size: 1.5rem;
 }
 
 .cta-card p {
-    color: #666;
-    margin-bottom: 1.5rem;
+    color: var(--color-gris);
+    margin-bottom: var(--spacing-lg);
     line-height: 1.6;
 }
 
 .btn-primary {
-    background: #667eea;
+    background: var(--color-azul);
 }
 
 .btn-primary:hover {
-    background: #5a6fd8;
+    background: var(--azul-claro);
 }
 
 .btn-info {
