@@ -8,16 +8,14 @@ $pageTitle = "Inicio";
         Bienvenido a Camella.com.co
     </h1>
     <p class="page-subtitle">
-        El portal de empleo líder en Colombia que conecta talentos excepcionales con empresas innovadoras
+        Camella.com.co es la bolsa de empleo que conecta a Colombia.
     </p>
-    
-    <!-- Lema con corazón colombiano -->
-    <div class="lema-container">
-        <p class="lema-camella">
-            <i class="fas fa-heart heart-colombia"></i>
-            "La forma más fácil de camellar en Colombia"
-        </p>
-    </div>
+    <p class="page-subtitle" style="margin-top: 10px;">
+        Si necesitas algo, aquí hay quien te ayude.
+    </p>
+    <p class="page-subtitle" style="margin-top: 10px; margin-bottom: 10px;">
+        Si sabes hacer algo, aquí puedes camellar.
+    </p>
 </div>
 
 <!-- Estadísticas del portal -->
