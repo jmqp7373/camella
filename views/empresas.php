@@ -271,7 +271,7 @@ $pageTitle = "Empresas Registradas";
 
 .search-input:focus, .filter-select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #3a8be8;
 }
 
 .companies-grid {
@@ -293,7 +293,7 @@ $pageTitle = "Empresas Registradas";
 .company-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-    border-color: #667eea;
+    border-color: #3a8be8;
 }
 
 .company-header {
@@ -314,7 +314,7 @@ $pageTitle = "Empresas Registradas";
 }
 
 .company-sector {
-    color: #667eea;
+    color: #3a8be8;
     font-weight: 600;
     margin-bottom: 0.3rem;
 }
@@ -347,7 +347,7 @@ $pageTitle = "Empresas Registradas";
     display: block;
     font-size: 1.5rem;
     font-weight: bold;
-    color: #667eea;
+    color: #3a8be8;
 }
 
 .stat-label {
@@ -362,17 +362,17 @@ $pageTitle = "Empresas Registradas";
 
 .btn-outline {
     background: transparent;
-    border: 2px solid #667eea;
-    color: #667eea;
+    border: 2px solid #3a8be8;
+    color: #3a8be8;
 }
 
 .btn-outline:hover {
-    background: #667eea;
+    background: #3a8be8;
     color: white;
 }
 
 .cta-empresas {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #3a8be8 0%, #3a8be8 100%);
     color: white;
     padding: 3rem;
     border-radius: 15px;

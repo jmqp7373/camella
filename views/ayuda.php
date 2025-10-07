@@ -192,7 +192,7 @@ $pageTitle = "Centro de Ayuda";
 
 .help-search-input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #3a8be8;
 }
 
 .help-categories {
@@ -214,7 +214,7 @@ $pageTitle = "Centro de Ayuda";
 .category-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    border-color: #667eea;
+    border-color: #3a8be8;
 }
 
 .category-icon {
@@ -224,7 +224,7 @@ $pageTitle = "Centro de Ayuda";
 
 .category-icon i {
     font-size: 3rem;
-    color: #667eea;
+    color: #3a8be8;
 }
 
 .category-card h3 {
@@ -251,7 +251,7 @@ $pageTitle = "Centro de Ayuda";
 }
 
 .help-links a {
-    color: #667eea;
+    color: #3a8be8;
     text-decoration: none;
     transition: all 0.3s ease;
     display: flex;
@@ -317,7 +317,7 @@ $pageTitle = "Centro de Ayuda";
 }
 
 .faq-question i {
-    color: #667eea;
+    color: #3a8be8;
     transition: transform 0.3s ease;
 }
 
@@ -344,7 +344,7 @@ $pageTitle = "Centro de Ayuda";
 }
 
 .faq-answer a {
-    color: #667eea;
+    color: #3a8be8;
     text-decoration: none;
 }
 
@@ -353,7 +353,7 @@ $pageTitle = "Centro de Ayuda";
 }
 
 .contact-support {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #3a8be8 0%, #3a8be8 100%);
     color: white;
     padding: 3rem;
     border-radius: 15px;
