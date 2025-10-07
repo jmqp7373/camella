@@ -353,7 +353,7 @@ $pageTitle = "Centro de Ayuda";
 }
 
 .contact-support {
-    background: linear-gradient(135deg, #3a8be8 0%, #3a8be8 100%);
+    background: linear-gradient(135deg, var(--azul-fondo) 0%, var(--azul-fondo) 100%);
     color: white;
     padding: 3rem;
     border-radius: 15px;
