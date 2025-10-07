@@ -10,7 +10,7 @@
      ======================================== */
   
   /* Colores principales (4) */
-  --color-azul: #002B5C;       /* Azul principal - textos y navegación */
+  --color-azul: #3a8be8;       /* Azul principal - textos y navegación */
   --color-amarillo: #FFD200;   /* Amarillo - acentos y hover */
   --color-rojo: #CE1126;       /* Rojo - botones de acción */
   --color-blanco: #FAFAFA;     /* Blanco - fondos principales */
@@ -24,7 +24,7 @@
   --shadow-color: rgba(0, 0, 0, 0.1);  /* Sombra universal */
   
   /* Gradientes minimalistas (2) */
-  --gradiente-header: linear-gradient(135deg, var(--color-azul), var(--color-azul));
+  --gradiente-header: linear-gradient(135deg, var(--color-azul), #2a7bd4);
   --gradiente-fondo: linear-gradient(to bottom, var(--color-blanco), var(--gris-claro));
   
   /* Sombras universales (1) */
