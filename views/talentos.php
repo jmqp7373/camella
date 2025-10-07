@@ -418,7 +418,7 @@ $pageTitle = "Talentos Profesionales";
 .talent-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    border-color: #667eea;
+    border-color: #3a8be8;
 }
 
 .talent-header {
@@ -444,7 +444,7 @@ $pageTitle = "Talentos Profesionales";
 }
 
 .talent-title {
-    color: #667eea;
+    color: #3a8be8;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
@@ -508,7 +508,7 @@ $pageTitle = "Talentos Profesionales";
 }
 
 .skill-tag {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #3a8be8, #3a8be8);
     color: white;
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
@@ -533,7 +533,7 @@ $pageTitle = "Talentos Profesionales";
     display: block;
     font-size: 1.3rem;
     font-weight: bold;
-    color: #667eea;
+    color: #3a8be8;
 }
 
 .talent-stats .stat-label {
@@ -551,7 +551,7 @@ $pageTitle = "Talentos Profesionales";
 }
 
 .cta-talentos {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #3a8be8 0%, #3a8be8 100%);
     color: white;
     padding: 3rem;
     border-radius: 15px;
