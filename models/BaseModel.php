@@ -138,7 +138,7 @@ class JobOfferModel extends BaseModel {
                 'title' => 'Desarrollador Full Stack',
                 'company' => 'TechSolutions Colombia',
                 'category' => 'tecnologia',
-                'location' => 'Bogotá',
+                'location' => 'Medellín',
                 'salary' => '$3,000,000 - $4,500,000',
                 'type' => 'Tiempo completo',
                 'created_at' => '2025-01-01'
@@ -187,7 +187,7 @@ class CompanyModel extends BaseModel {
                 'name' => 'TechSolutions Colombia',
                 'sector' => 'tecnologia',
                 'size' => 'grande',
-                'location' => 'Bogotá',
+                'location' => 'Medellín',
                 'active_jobs' => 25,
                 'rating' => 4.8
             ]

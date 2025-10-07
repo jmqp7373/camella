@@ -58,7 +58,7 @@ $pageTitle = "Talentos Profesionales";
                     <span class="stars">★★★★★</span>
                     <span class="rating-number">(4.9)</span>
                 </div>
-                <p class="talent-location"><i class="fas fa-map-marker-alt"></i> Bogotá, Colombia</p>
+                <p class="talent-location"><i class="fas fa-map-marker-alt"></i> Medellín, Colombia</p>
             </div>
             <div class="talent-status available">
                 <span>Disponible</span>
