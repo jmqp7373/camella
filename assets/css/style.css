@@ -10,7 +10,6 @@
 
 body {
     font-family: var(--font-principal);
-    line-height: 1.6;
     color: var(--color-azul);
     background: var(--gradiente-fondo);
     min-height: 100vh;
@@ -924,14 +923,13 @@ body {
     border-radius: var(--border-radius-md);
     text-align: center;
     margin: var(--spacing-xl) auto;
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     font-weight: bold;
     box-shadow: var(--sombra-suave);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-md);
-    max-width: 800px;
     /* Anular estilos de gradiente heredados */
     -webkit-background-clip: unset !important;
     background-clip: unset !important;
@@ -946,7 +944,7 @@ body {
 /* Responsive para títulos de sección */
 @media (max-width: 768px) {
     .section-title {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         padding: var(--spacing-md) var(--spacing-lg);
         margin: var(--spacing-lg) var(--spacing-md);
     }
