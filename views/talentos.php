@@ -508,7 +508,7 @@ $pageTitle = "Talentos Profesionales";
 }
 
 .skill-tag {
-    background: linear-gradient(45deg, #3a8be8, #3a8be8);
+    background: linear-gradient(45deg, var(--azul-fondo), var(--azul-fondo));
     color: white;
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
@@ -551,7 +551,7 @@ $pageTitle = "Talentos Profesionales";
 }
 
 .cta-talentos {
-    background: linear-gradient(135deg, #3a8be8 0%, #3a8be8 100%);
+    background: linear-gradient(135deg, var(--azul-fondo) 0%, var(--azul-fondo) 100%);
     color: white;
     padding: 3rem;
     border-radius: 15px;
