@@ -12,6 +12,9 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     
+    <!-- Paleta de Colores Oficial -->
+    <link rel="stylesheet" href="assets/css/colors.css">
+    
     <!-- CSS Principal -->
     <link rel="stylesheet" href="assets/css/style.css">
     

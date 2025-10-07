@@ -3,13 +3,21 @@ $pageTitle = "Inicio";
 ?>
 
 <div class="home-hero">
-    <h1 class="page-title">
+    <h1 class="page-title text-azul">
         <i class="fas fa-briefcase"></i> 
         Bienvenido a Camella.com.co
     </h1>
     <p class="page-subtitle">
         El portal de empleo líder en Colombia que conecta talentos excepcionales con empresas innovadoras
     </p>
+    
+    <!-- Lema con corazón colombiano -->
+    <div class="lema-container">
+        <p class="lema-camella">
+            <i class="fas fa-heart heart-colombia"></i>
+            "La forma más fácil de camellar en Colombia"
+        </p>
+    </div>
 </div>
 
 <!-- Estadísticas del portal -->
