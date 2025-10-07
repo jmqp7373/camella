@@ -566,14 +566,14 @@ body {
     gap: var(--spacing-sm);
 }
 
-/* Corazón con colores de Colombia (50% amarillo, 25% azul, 25% rojo) */
+/* Corazón con colores de la bandera de Colombia (50% amarillo, 25% azul, 25% rojo) */
 .heart-colombia {
     font-size: 1.5rem;
     background: linear-gradient(
-        135deg,
-        var(--color-amarillo) 0% 50%,
-        var(--color-azul) 50% 75%,
-        var(--color-rojo) 75% 100%
+        to bottom,
+        #FFD700 50%,
+        #0033A0 50% 75%,
+        #CE1126 75%
     );
     -webkit-background-clip: text;
     background-clip: text;

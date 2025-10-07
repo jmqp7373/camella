@@ -16,6 +16,14 @@ $pageTitle = "Inicio";
     <p class="page-subtitle" style="margin-bottom: 10px; line-height: 1.5;">
         Si sabes hacer algo, aquí puedes camellar.
     </p>
+    
+    <!-- Lema con corazón colombiano -->
+    <div class="lema-container">
+        <p class="lema-camella">
+            <i class="fas fa-heart heart-colombia"></i>
+            "La forma más fácil de camellar en Colombia"
+        </p>
+    </div>
 </div>
 
 <!-- Árbol de Categorías de Empleo -->
