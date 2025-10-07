@@ -32,8 +32,6 @@ $view = isset($_GET['view']) ? sanitize_input($_GET['view']) : 'home';
 // Lista de vistas permitidas (seguridad)
 $allowed_views = [
     'home',
-    'empresas', 
-    'talentos',
     'contacto',
     'publicar-oferta',
     'buscar-empleo',
