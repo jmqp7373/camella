@@ -10,7 +10,7 @@ html, body { margin:0; padding:0; box-sizing:border-box; overflow-x:hidden; }
    ======================================== */
 
 :root{
-  --camella-azul: #002b47;      /* Azul principal - igual que --color-azul */
+  --camella-azul: #3a8be8;      /* Azul sólido para fondo del header */
   --camella-rojo: #CE1126;      /* Rojo botón - igual que --color-rojo */
   --camella-blanco: #fff;       /* Blanco puro */
   --camella-texto: #002b47;     /* Texto oscuro - igual que azul principal */
