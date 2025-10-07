@@ -58,7 +58,7 @@ function getCacheBuster($filepath) {
             <a href="index.php" class="logo" aria-label="Ir a inicio">
                 <img src="assets/images/logo/logo_horizontal.png" alt="Camella Logo">
             </a>
-            <nav class="header-actions" aria-label="Acciones principales">
+            <nav class="header-actions" aria-label="Acciones">
                 <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publicar oferta</a>
                 <a href="index.php?view=login" class="btn btn-login">Login</a>
             </nav>

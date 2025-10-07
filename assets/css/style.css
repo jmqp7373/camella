@@ -13,7 +13,7 @@ body {
     color: var(--color-azul);
     background: var(--gradiente-fondo);
     min-height: 100vh;
-    padding-top: 80px; /* Espacio para header fijo */
+    padding-top: 0; /* Sin padding - header sticky */
 }
 
 /* ========================================
