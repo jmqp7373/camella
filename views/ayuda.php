@@ -142,9 +142,9 @@ $pageTitle = "Centro de Ayuda";
                 </div>
                 
                 <div class="contact-option">
-                    <i class="fas fa-phone"></i>
-                    <h4>Teléfono</h4>
-                    <p>+57 (1) 234-5678</p>
+                    <i class="fab fa-whatsapp"></i>
+                    <h4>WhatsApp</h4>
+                    <p><a href="https://wa.me/573103951529" target="_blank">+57 310 3951529</a></p>
                     <span class="response-time">Lun - Vie: 8:00 AM - 6:00 PM</span>
                 </div>
                 
