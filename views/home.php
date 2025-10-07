@@ -34,147 +34,160 @@ $pageTitle = "Inicio";
     </h2>
     
     <div class="categories-tree">
-        <!-- Tecnología e Informática -->
+        <!-- Servicios para el hogar -->
         <div class="category-card">
             <h3 class="category-title">
-                <span class="category-icon">💻</span>
-                Tecnología e Informática
+                <span class="category-icon">�</span>
+                Servicios para el hogar
             </h3>
             <ul class="subcategories">
-                <li>Desarrollo de Software</li>
-                <li>Análisis de Datos</li>
-                <li>Ciberseguridad</li>
-                <li>Diseño UX/UI</li>
-                <li>Administración de Sistemas</li>
-                <li>Inteligencia Artificial</li>
-                <li>DevOps</li>
-                <li>Soporte Técnico</li>
+                <li>Plomería</li>
+                <li>Electricidad</li>
+                <li>Pintura</li>
+                <li>Carpintería</li>
+                <li>Instalación de puertas/ventanas</li>
+                <li>Reparación de electrodomésticos</li>
+                <li>Desinfección / Fumigación</li>
+                <li>Arreglo de techos y goteras</li>
             </ul>
         </div>
 
-        <!-- Ingeniería -->
+        <!-- Aseo, limpieza y cuidado -->
         <div class="category-card">
             <h3 class="category-title">
-                <span class="category-icon">⚙️</span>
-                Ingeniería
+                <span class="category-icon">🧹</span>
+                Aseo, limpieza y cuidado
             </h3>
             <ul class="subcategories">
-                <li>Ingeniería Civil</li>
-                <li>Ingeniería Industrial</li>
-                <li>Ingeniería Mecánica</li>
-                <li>Ingeniería Eléctrica</li>
-                <li>Ingeniería Ambiental</li>
-                <li>Ingeniería de Sistemas</li>
-                <li>Ingeniería Química</li>
-                <li>Control de Calidad</li>
+                <li>Empleadas domésticas</li>
+                <li>Niñeras</li>
+                <li>Cuidadores de adulto mayor</li>
+                <li>Personal de aseo para oficinas o conjuntos</li>
+                <li>Lavado de muebles / alfombras</li>
+                <li>Lavado de carros a domicilio</li>
             </ul>
         </div>
 
-        <!-- Salud y Medicina -->
+        <!-- Belleza y cuidado personal -->
         <div class="category-card">
             <h3 class="category-title">
-                <span class="category-icon">🏥</span>
-                Salud y Medicina
+                <span class="category-icon">✂️</span>
+                Belleza y cuidado personal
             </h3>
             <ul class="subcategories">
-                <li>Medicina General</li>
-                <li>Enfermería</li>
-                <li>Odontología</li>
-                <li>Fisioterapia</li>
-                <li>Psicología</li>
-                <li>Farmacia</li>
-                <li>Laboratorio Clínico</li>
-                <li>Administración Hospitalaria</li>
+                <li>Peluquería y barbería</li>
+                <li>Manicuristas y pedicuristas</li>
+                <li>Maquillaje</li>
+                <li>Depilación</li>
+                <li>Masajes relajantes o terapéuticos</li>
+                <li>Cejas y pestañas</li>
             </ul>
         </div>
 
-        <!-- Educación -->
+        <!-- Servicios logísticos y transporte -->
         <div class="category-card">
             <h3 class="category-title">
-                <span class="category-icon">🎓</span>
-                Educación
+                <span class="category-icon">🧳</span>
+                Servicios logísticos y transporte
             </h3>
             <ul class="subcategories">
-                <li>Educación Preescolar</li>
-                <li>Educación Primaria</li>
-                <li>Educación Secundaria</li>
-                <li>Educación Superior</li>
-                <li>Educación Especial</li>
-                <li>Capacitación Corporativa</li>
-                <li>Investigación Educativa</li>
-                <li>Administración Educativa</li>
+                <li>Trasteos y mudanzas</li>
+                <li>Mototaxi o transporte alternativo</li>
+                <li>Servicios de mensajería</li>
+                <li>Ayudantes de bodega / cargue y descargue</li>
+                <li>Conductor elegido</li>
+                <li>Repartidores con moto o bici</li>
             </ul>
         </div>
 
-        <!-- Finanzas y Contabilidad -->
+        <!-- Reparaciones, técnica y mantenimiento -->
         <div class="category-card">
             <h3 class="category-title">
-                <span class="category-icon">📊</span>
-                Finanzas y Contabilidad
+                <span class="category-icon">🧰</span>
+                Reparaciones, técnica y mantenimiento
             </h3>
             <ul class="subcategories">
-                <li>Contabilidad General</li>
-                <li>Auditoría</li>
-                <li>Análisis Financiero</li>
-                <li>Banca e Inversiones</li>
-                <li>Seguros</li>
-                <li>Tesorería</li>
-                <li>Costos y Presupuestos</li>
-                <li>Tributaria</li>
+                <li>Técnicos celulares, televisores, PC</li>
+                <li>Reparación de electrodomésticos</li>
+                <li>Mantenimiento de motos o bicicletas</li>
+                <li>Cerrajería</li>
+                <li>Instalación de cámaras de seguridad</li>
+                <li>Soporte técnico básico</li>
             </ul>
         </div>
 
-        <!-- Marketing y Ventas -->
+        <!-- Educación y servicios personales -->
         <div class="category-card">
             <h3 class="category-title">
-                <span class="category-icon">📈</span>
-                Marketing y Ventas
+                <span class="category-icon">�</span>
+                Educación y servicios personales
             </h3>
             <ul class="subcategories">
-                <li>Marketing Digital</li>
-                <li>Ventas Directas</li>
-                <li>Publicidad</li>
-                <li>Community Management</li>
-                <li>SEO/SEM</li>
-                <li>E-commerce</li>
-                <li>Relaciones Públicas</li>
-                <li>Trade Marketing</li>
+                <li>Clases particulares (básica/secundaria)</li>
+                <li>Tutorías universitarias</li>
+                <li>Refuerzos escolares</li>
+                <li>Psicólogos / coaches</li>
+                <li>Traductores / intérpretes</li>
+                <li>Diseñadores / publicistas</li>
             </ul>
         </div>
 
-        <!-- Recursos Humanos -->
+        <!-- Cocina y alimentación -->
         <div class="category-card">
             <h3 class="category-title">
-                <span class="category-icon">👥</span>
-                Recursos Humanos
+                <span class="category-icon">🍲</span>
+                Cocina y alimentación
             </h3>
             <ul class="subcategories">
-                <li>Reclutamiento y Selección</li>
-                <li>Capacitación y Desarrollo</li>
-                <li>Compensación y Beneficios</li>
-                <li>Relaciones Laborales</li>
-                <li>Seguridad y Salud Ocupacional</li>
-                <li>Gestión del Talento</li>
-                <li>HR Analytics</li>
-                <li>Cultura Organizacional</li>
+                <li>Cocineras por días</li>
+                <li>Almuerzos por encargo</li>
+                <li>Repostería y pastelería</li>
+                <li>Preparación de alimentos para eventos</li>
+                <li>Venta de productos caseros</li>
             </ul>
         </div>
 
-        <!-- Administración y Dirección -->
+        <!-- Oficios varios y "hago de todo" -->
         <div class="category-card">
             <h3 class="category-title">
-                <span class="category-icon">🏢</span>
-                Administración y Dirección
+                <span class="category-icon">📦</span>
+                Oficios varios y "hago de todo"
             </h3>
             <ul class="subcategories">
-                <li>Gerencia General</li>
-                <li>Administración</li>
-                <li>Coordinación</li>
-                <li>Asistencia Ejecutiva</li>
-                <li>Gestión de Proyectos</li>
-                <li>Consultoría</li>
-                <li>Planeación Estratégica</li>
-                <li>Operaciones</li>
+                <li>Toderos</li>
+                <li>Ayudas ocasionales</li>
+                <li>Servicios rurales o de campo</li>
+                <li>Acompañantes para trámites o citas</li>
+                <li>Vigilancia informal / cuidadores de finca</li>
+            </ul>
+        </div>
+
+        <!-- Trabajo remoto / digital -->
+        <div class="category-card">
+            <h3 class="category-title">
+                <span class="category-icon">🌐</span>
+                Trabajo remoto / digital
+            </h3>
+            <ul class="subcategories">
+                <li>Asistentes virtuales</li>
+                <li>Freelancers (diseño, video, copywriting)</li>
+                <li>Soporte al cliente digital</li>
+                <li>Community managers</li>
+                <li>Marketing por redes sociales</li>
+            </ul>
+        </div>
+
+        <!-- Eventos y creativos -->
+        <div class="category-card">
+            <h3 class="category-title">
+                <span class="category-icon">📸</span>
+                Eventos y creativos
+            </h3>
+            <ul class="subcategories">
+                <li>Fotografía de eventos</li>
+                <li>Edición digital y retoque</li>
+                <li>Organizadores de eventos</li>
+                <li>Decoradores y ambientadores de fiestas</li>
             </ul>
         </div>
     </div>
@@ -205,8 +218,8 @@ $pageTitle = "Inicio";
             <div class="cta-icon"><i class="fas fa-star"></i></div>
             <h3>Freelancers</h3>
             <p>Ofrece tus servicios profesionales y conecta con empresas que buscan tu expertise.</p>
-            <a href="index.php?view=talentos" class="btn btn-info">
-                <i class="fas fa-rocket"></i> Ver Talentos
+            <a href="index.php?view=registro" class="btn btn-info">
+                <i class="fas fa-rocket"></i> Registrarse
             </a>
         </div>
     </div>
