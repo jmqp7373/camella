@@ -115,6 +115,25 @@ body {
     box-shadow: var(--sombra-suave);
 }
 
+.btn-login {
+    background: transparent !important;
+    color: var(--color-blanco) !important;
+    padding: var(--spacing-md) var(--spacing-lg) !important;
+    border: 2px solid var(--color-blanco) !important;
+    border-radius: var(--border-radius-xl) !important;
+    font-weight: bold !important;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    transition: var(--transition-normal);
+}
+
+.btn-login:hover {
+    background: var(--color-blanco) !important;
+    color: var(--color-azul) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: var(--sombra-suave);
+}
+
 /* ========================================
    CONTENIDO PRINCIPAL
    ======================================== */
@@ -628,6 +647,230 @@ body {
     box-shadow: 0 8px 25px rgba(255, 210, 0, 0.4);
 }
 
+/* ========================================
+   PÁGINA DE LOGIN
+   ======================================== */
+.login-container {
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-xl);
+    background: var(--gradiente-fondo);
+}
+
+.login-card {
+    background: var(--color-blanco);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--sombra-suave);
+    padding: var(--spacing-xxl);
+    width: 100%;
+    max-width: 450px;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.login-header h1 {
+    color: var(--color-azul);
+    font-size: 1.8rem;
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+}
+
+.login-header p {
+    color: var(--color-gris);
+    font-size: 0.95rem;
+}
+
+.login-form .form-group {
+    margin-bottom: var(--spacing-lg);
+    position: relative;
+}
+
+.login-form label {
+    display: block;
+    color: var(--color-azul);
+    font-weight: bold;
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.login-form .form-input {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid var(--gris-claro);
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    transition: var(--transition-normal);
+    box-sizing: border-box;
+}
+
+.login-form .form-input:focus {
+    border-color: var(--color-amarillo);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 210, 0, 0.2);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 38px;
+}
+
+.toggle-password {
+    background: none;
+    border: none;
+    color: var(--color-gris);
+    cursor: pointer;
+    padding: var(--spacing-sm);
+    border-radius: 50%;
+    transition: var(--transition-normal);
+}
+
+.toggle-password:hover {
+    color: var(--color-azul);
+    background: var(--gris-claro);
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.remember-me input[type="checkbox"] {
+    accent-color: var(--color-amarillo);
+}
+
+.forgot-password {
+    color: var(--color-azul);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: var(--transition-normal);
+}
+
+.forgot-password:hover {
+    color: var(--color-amarillo);
+    text-decoration: underline;
+}
+
+.btn-login-submit {
+    width: 100%;
+    background: var(--color-azul);
+    color: var(--color-blanco);
+    padding: var(--spacing-lg);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    text-transform: uppercase;
+}
+
+.btn-login-submit:hover {
+    background: var(--color-amarillo);
+    color: var(--color-azul);
+    transform: translateY(-2px);
+    box-shadow: var(--sombra-suave);
+}
+
+.login-footer {
+    margin-top: var(--spacing-xl);
+    text-align: center;
+}
+
+.login-footer p {
+    color: var(--color-gris);
+    margin-bottom: var(--spacing-lg);
+}
+
+.register-link {
+    color: var(--color-azul);
+    text-decoration: none;
+    font-weight: bold;
+    transition: var(--transition-normal);
+}
+
+.register-link:hover {
+    color: var(--color-amarillo);
+    text-decoration: underline;
+}
+
+.social-login {
+    border-top: 1px solid var(--gris-claro);
+    padding-top: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
+}
+
+.social-login p {
+    color: var(--color-gris);
+    margin-bottom: var(--spacing-md);
+    font-size: 0.9rem;
+}
+
+.social-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+}
+
+.btn-social {
+    flex: 1;
+    padding: var(--spacing-md);
+    border: none;
+    border-radius: var(--border-radius-md);
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    font-size: 0.9rem;
+}
+
+.btn-google {
+    background: #dc4e41;
+    color: white;
+}
+
+.btn-google:hover {
+    background: #c23321;
+    transform: translateY(-2px);
+}
+
+.btn-linkedin {
+    background: #0077b5;
+    color: white;
+}
+
+.btn-linkedin:hover {
+    background: #005885;
+    transform: translateY(-2px);
+}
+
 /* Responsive para elementos colombianos */
 @media (max-width: 768px) {
     .lema-camella {
@@ -646,5 +889,27 @@ body {
     
     .home-hero {
         padding: var(--spacing-xl) var(--spacing-md);
+    }
+    
+    .login-container {
+        padding: var(--spacing-lg);
+    }
+    
+    .login-card {
+        padding: var(--spacing-xl);
+    }
+    
+    .form-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-md);
+    }
+    
+    .social-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-social {
+        width: 100%;
     }
 }
