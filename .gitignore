@@ -34,3 +34,8 @@ temp/
 *.key
 ftp_credentials.txt
 passwords.txt
+
+# Carpeta de configuración con credenciales
+config/
+config.php
+database_credentials.php
