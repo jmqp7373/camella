@@ -418,7 +418,7 @@ $pageTitle = "Talentos Profesionales";
 .talent-card:hover {
     transform: translateY(-10px);
     box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    border-color: #3a8be8;
+    border-color: #002b47;
 }
 
 .talent-header {
@@ -444,7 +444,7 @@ $pageTitle = "Talentos Profesionales";
 }
 
 .talent-title {
-    color: #3a8be8;
+    color: #002b47;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
@@ -533,7 +533,7 @@ $pageTitle = "Talentos Profesionales";
     display: block;
     font-size: 1.3rem;
     font-weight: bold;
-    color: #3a8be8;
+    color: #002b47;
 }
 
 .talent-stats .stat-label {

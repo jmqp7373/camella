@@ -183,7 +183,7 @@ $pageTitle = "Contacto";
     padding: 1.5rem;
     background: #f8f9fa;
     border-radius: 10px;
-    border-left: 4px solid #3a8be8;
+    border-left: 4px solid #002b47;
     transition: all 0.3s ease;
 }
 
@@ -193,7 +193,7 @@ $pageTitle = "Contacto";
 }
 
 .info-item i {
-    color: #3a8be8;
+    color: #002b47;
     font-size: 1.5rem;
     margin-top: 0.2rem;
     flex-shrink: 0;
@@ -226,7 +226,7 @@ $pageTitle = "Contacto";
 }
 
 .contact-value:hover {
-    color: #3a8be8;
+    color: #002b47;
 }
 
 .contact-actions {
@@ -296,7 +296,7 @@ $pageTitle = "Contacto";
 .form-group textarea:focus, 
 .form-group select:focus {
     outline: none;
-    border-color: #3a8be8;
+    border-color: #002b47;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
