@@ -3,17 +3,17 @@ $pageTitle = "Inicio";
 ?>
 
 <div class="home-hero">
-    <h1 class="page-title text-azul">
+    <h1 class="page-title text-azul" style="margin-bottom: 10px;">
         <i class="fas fa-briefcase"></i> 
         Bienvenido a Camella.com.co
     </h1>
-    <p class="page-subtitle">
+    <p class="page-subtitle" style="margin-bottom: 6px; line-height: 1.5;">
         Camella.com.co es la bolsa de empleo que conecta a Colombia.
     </p>
-    <p class="page-subtitle" style="margin-top: 10px;">
+    <p class="page-subtitle" style="margin-bottom: 4px; line-height: 1.5;">
         Si necesitas algo, aquí hay quien te ayude.
     </p>
-    <p class="page-subtitle" style="margin-top: 10px; margin-bottom: 10px;">
+    <p class="page-subtitle" style="margin-bottom: 10px; line-height: 1.5;">
         Si sabes hacer algo, aquí puedes camellar.
     </p>
 </div>
@@ -22,7 +22,7 @@ $pageTitle = "Inicio";
 <section class="categories-section">
     <h2 class="section-title">
         <i class="fas fa-sitemap"></i> 
-        Explora Oportunidades por Categoría
+        Explora prestadores de servicios por Categoría
     </h2>
     
     <div class="categories-tree">
