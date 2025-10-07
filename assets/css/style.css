@@ -918,7 +918,7 @@ body {
    TÍTULOS DE SECCIONES
    ======================================== */
 .section-title {
-    background: #002b47 !important;
+    background: #3a8be8 !important;
     color: var(--color-blanco) !important;
     padding: var(--spacing-lg) var(--spacing-xl);
     border-radius: var(--border-radius-md);
