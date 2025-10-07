@@ -15,7 +15,6 @@ body {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
     padding-top: 80px; /* Espacio para header fijo */
-    padding-bottom: 60px; /* Espacio para footer fijo */
 }
 
 /* ========================================
@@ -202,10 +201,10 @@ body {
 }
 
 /* ========================================
-   FOOTER FIJO
+   FOOTER RESPONSIVE
    ======================================== */
 .main-footer {
-    position: fixed;
+    position: relative;
     bottom: 0;
     left: 0;
     right: 0;
@@ -213,8 +212,8 @@ body {
     color: white;
     text-align: center;
     padding: 1rem;
-    z-index: 1000;
     box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+    margin-top: auto;
 }
 
 .footer-content {
@@ -245,6 +244,21 @@ body {
 /* ========================================
    RESPONSIVE
    ======================================== */
+
+/* Footer fijo solo en pantallas grandes */
+@media (min-width: 769px) {
+    .main-footer {
+        position: fixed;
+        bottom: 0;
+        z-index: 1000;
+    }
+    
+    body {
+        padding-bottom: 60px; /* Espacio para footer fijo en desktop */
+    }
+}
+
+/* Responsive para móviles y tablets */
 @media (max-width: 768px) {
     .header-content {
         flex-direction: column;
@@ -259,11 +273,16 @@ body {
     
     body {
         padding-top: 120px;
+        padding-bottom: 0; /* Sin padding para footer en móvil */
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
     }
     
     .main-content {
         margin: 1rem;
         padding: 1rem;
+        flex: 1; /* Ocupa el espacio disponible */
     }
     
     .categories-tree {
@@ -278,6 +297,11 @@ body {
     .footer-content {
         flex-direction: column;
         gap: 0.5rem;
+    }
+    
+    .main-footer {
+        position: relative; /* Footer normal en móvil */
+        margin-top: 2rem; /* Separación del contenido */
     }
 }
 
@@ -386,6 +410,36 @@ body {
 
 .btn-info:hover {
     background: #138496;
+}
+
+/* ========================================
+   MEJORAS ADICIONALES PARA FOOTER RESPONSIVE
+   ======================================== */
+
+/* Asegurar que el contenido principal tenga altura mínima */
+.main-content {
+    min-height: calc(100vh - 140px); /* Altura total menos header y footer aproximado */
+}
+
+/* Pequeña mejora para transiciones suaves */
+.main-footer {
+    transition: all 0.3s ease;
+}
+
+/* Mejor espaciado en móviles */
+@media (max-width: 480px) {
+    .main-content {
+        margin: 0.5rem;
+        padding: 0.5rem;
+    }
+    
+    .main-footer {
+        padding: 1.5rem 1rem;
+    }
+    
+    .footer-content {
+        gap: 1rem;
+    }
 }
 
 /* Clases de animación */
