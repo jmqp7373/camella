@@ -1,3 +1,15 @@
+<?php
+/**
+ * Función para generar cache buster para archivos CSS y JS
+ * Usa la fecha de modificación del archivo si existe, o timestamp actual
+ */
+function getCacheBuster($filepath) {
+    if (file_exists($filepath)) {
+        return '?v=' . filemtime($filepath);
+    }
+    return '?v=' . time();
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,13 +24,18 @@
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     
+    <!-- ========================================
+         HOJAS DE ESTILO CON CACHE BUSTING
+         Evita cacheo de archivos CSS locales
+         ======================================== -->
+    
     <!-- Paleta de Colores Oficial -->
-    <link rel="stylesheet" href="assets/css/colors.css">
+    <link rel="stylesheet" href="assets/css/colors.css<?= getCacheBuster('assets/css/colors.css'); ?>">
     
     <!-- CSS Principal -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css<?= getCacheBuster('assets/css/style.css'); ?>">
     
-    <!-- Font Awesome para iconos -->
+    <!-- Font Awesome para iconos (CDN externo - no necesita cache busting) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <!-- Meta tags para SEO y redes sociales -->
