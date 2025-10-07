@@ -17,8 +17,10 @@ body {
 }
 
 /* ========================================
-   HEADER FIJO
+   HEADER ANTIGUO - DESACTIVADO
+   Ahora se usa header.css para el nuevo header limpio
    ======================================== */
+/*
 .main-header {
     position: fixed;
     top: 0;
@@ -57,10 +59,12 @@ body {
     height: 40px;
     margin-right: 10px;
 }
+*/
 
 /* ========================================
-   NAVEGACIÓN
+   NAVEGACIÓN ANTIGUA - DESACTIVADA
    ======================================== */
+/*
 .main-nav {
     display: flex;
     align-items: center;
@@ -132,6 +136,7 @@ body {
     transform: translateY(-2px) !important;
     box-shadow: var(--sombra-suave);
 }
+*/
 
 /* ========================================
    CONTENIDO PRINCIPAL
@@ -296,8 +301,9 @@ body {
     }
 }
 
-/* Responsive para móviles y tablets */
+/* Responsive para móviles y tablets - HEADER ANTIGUO COMENTADO */
 @media (max-width: 768px) {
+    /*
     .header-content {
         flex-direction: column;
         gap: 1rem;
@@ -308,9 +314,10 @@ body {
         flex-direction: column;
         gap: 0.5rem;
     }
+    */
     
     body {
-        padding-top: 120px;
+        padding-top: 0; /* Header sticky no necesita padding */
         padding-bottom: 0; /* Sin padding para footer en móvil */
         display: flex;
         flex-direction: column;

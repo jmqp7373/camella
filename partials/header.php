@@ -35,6 +35,9 @@ function getCacheBuster($filepath) {
     <!-- CSS Principal -->
     <link rel="stylesheet" href="assets/css/style.css<?= getCacheBuster('assets/css/style.css'); ?>">
     
+    <!-- CSS del Header -->
+    <link rel="stylesheet" href="assets/css/header.css<?= getCacheBuster('assets/css/header.css'); ?>">
+    
     <!-- Font Awesome para iconos (CDN externo - no necesita cache busting) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -50,27 +53,14 @@ function getCacheBuster($filepath) {
     <meta name="twitter:description" content="El portal de empleo líder en Colombia. Conectamos talentos con empresas.">
 </head>
 <body>
-    <header class="main-header">
-        <div class="header-content">
-            <!-- Logo como enlace a Inicio -->
-            <a href="index.php" class="logo">
-                <img src="assets/images/logo/logo_horizontal.png" alt="Camella Logo - Ir a Inicio">
+    <header class="site-header">
+        <div class="header-container">
+            <a href="index.php" class="logo" aria-label="Ir a inicio">
+                <img src="assets/images/logo/logo_horizontal.png" alt="Camella Logo">
             </a>
-            
-            <!-- Navegación Simplificada -->
-            <nav class="main-nav">
-                <ul class="nav-links">
-                    <li>
-                        <a href="index.php?view=publicar-oferta" class="btn-publicar">
-                            <i class="fas fa-plus-circle"></i> Publicar Oferta
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.php?view=login" class="btn-login">
-                            <i class="fas fa-user"></i> Login
-                        </a>
-                    </li>
-                </ul>
+            <nav class="header-actions" aria-label="Acciones principales">
+                <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publicar oferta</a>
+                <a href="index.php?view=login" class="btn btn-login">Login</a>
             </nav>
         </div>
     </header>

@@ -1,0 +1,116 @@
+/* ========================================
+   HEADER LIMPIO - CAMELLA.COM.CO
+   Sin solapamientos ni posicionamiento absoluto
+   ======================================== */
+
+:root{
+  --camella-azul: #002b47;      /* Azul principal del header */
+  --camella-rojo: #CE1126;      /* Rojo del botón publicar */
+  --camella-blanco: #FAFAFA;    /* Blanco principal */
+  --camella-texto: #0f1b2d;     /* Texto oscuro */
+}
+
+.site-header{
+  background: var(--camella-azul);
+  position: sticky; 
+  top: 0; 
+  z-index: 1000;
+}
+
+.header-container{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.logo{ 
+  display: inline-flex; 
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo img{ 
+  height: 40px; 
+  width: auto; 
+}
+
+.header-actions{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+}
+
+.header-actions .btn{
+  position: static;              /* asegurar no absoluto */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 2px solid transparent;
+  text-decoration: none;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.btn-publish{
+  background: var(--camella-rojo);
+  color: var(--camella-blanco);
+}
+
+.btn-publish:hover{
+  background: #a50f1f;
+  color: var(--camella-blanco);
+}
+
+.btn-login{
+  background: transparent;
+  color: var(--camella-blanco);
+  border-color: var(--camella-blanco);
+}
+
+.btn-login:hover{
+  background: var(--camella-blanco);
+  color: var(--camella-azul);
+}
+
+/* Responsive */
+@media (max-width: 768px){
+  .header-container{ 
+    padding: 8px 12px; 
+    gap: 12px; 
+  }
+  
+  .header-actions{ 
+    gap: 8px; 
+  }
+  
+  .header-actions .btn{ 
+    padding: 8px 12px; 
+    font-size: 14px; 
+  }
+  
+  .logo img{ 
+    height: 34px; 
+  }
+}
+
+/* Remover posibles estilos heredados que causen solape */
+.site-header .btn[style*="position:absolute"],
+.site-header .btn-login,
+.site-header .btn-publish{ 
+  position: static !important; 
+}
+
+/* Focus visible para accesibilidad */
+.header-actions .btn:focus-visible {
+  outline: 2px solid var(--camella-blanco);
+  outline-offset: 2px;
+}
