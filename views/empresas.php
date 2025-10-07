@@ -44,7 +44,7 @@ $pageTitle = "Empresas Registradas";
     <div class="company-card" data-sector="tecnologia" data-size="grande">
         <div class="company-header">
             <div class="company-logo">
-                <i class="fas fa-laptop-code" style="font-size: 3rem; color: #667eea;"></i>
+                <i class="fas fa-laptop-code" style="font-size: 3rem; color: var(--color-azul);"></i>
             </div>
             <div class="company-info">
                 <h3>TechSolutions Colombia</h3>
@@ -75,7 +75,7 @@ $pageTitle = "Empresas Registradas";
     <div class="company-card" data-sector="salud" data-size="grande">
         <div class="company-header">
             <div class="company-logo">
-                <i class="fas fa-heartbeat" style="font-size: 3rem; color: #e74c3c;"></i>
+                <i class="fas fa-heartbeat" style="font-size: 3rem; color: var(--color-rojo);"></i>
             </div>
             <div class="company-info">
                 <h3>Salud Integral S.A.</h3>
@@ -106,7 +106,7 @@ $pageTitle = "Empresas Registradas";
     <div class="company-card" data-sector="finanzas" data-size="mediana">
         <div class="company-header">
             <div class="company-logo">
-                <i class="fas fa-chart-line" style="font-size: 3rem; color: #28a745;"></i>
+                <i class="fas fa-chart-line" style="font-size: 3rem; color: var(--success);"></i>
             </div>
             <div class="company-info">
                 <h3>Inversiones del Caribe</h3>
@@ -137,7 +137,7 @@ $pageTitle = "Empresas Registradas";
     <div class="company-card" data-sector="educacion" data-size="mediana">
         <div class="company-header">
             <div class="company-logo">
-                <i class="fas fa-graduation-cap" style="font-size: 3rem; color: #f39c12;"></i>
+                <i class="fas fa-graduation-cap" style="font-size: 3rem; color: var(--color-amarillo);"></i>
             </div>
             <div class="company-info">
                 <h3>Universidad Innovadora</h3>
@@ -168,7 +168,7 @@ $pageTitle = "Empresas Registradas";
     <div class="company-card" data-sector="retail" data-size="grande">
         <div class="company-header">
             <div class="company-logo">
-                <i class="fas fa-shopping-cart" style="font-size: 3rem; color: #9b59b6;"></i>
+                <i class="fas fa-shopping-cart" style="font-size: 3rem; color: var(--color-azul);"></i>
             </div>
             <div class="company-info">
                 <h3>MegaRetail Colombia</h3>
@@ -199,7 +199,7 @@ $pageTitle = "Empresas Registradas";
     <div class="company-card" data-sector="manufactura" data-size="grande">
         <div class="company-header">
             <div class="company-logo">
-                <i class="fas fa-industry" style="font-size: 3rem; color: #34495e;"></i>
+                <i class="fas fa-industry" style="font-size: 3rem; color: var(--color-rojo);"></i>
             </div>
             <div class="company-info">
                 <h3>Manufactura Industrial</h3>

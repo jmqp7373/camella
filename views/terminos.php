@@ -309,41 +309,41 @@ $pageTitle = "Términos y Condiciones";
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.7;
-    color: #333;
+    color: var(--color-azul);
 }
 
 .terminos-header {
     text-align: center;
     margin-bottom: 3rem;
     padding-bottom: 2rem;
-    border-bottom: 3px solid #7a2e2e;
+    border-bottom: 3px solid var(--color-rojo);
 }
 
 .terminos-header .page-title {
-    color: #7a2e2e;
+    color: var(--color-rojo);
     font-size: 2.5rem;
     margin-bottom: 1rem;
     font-weight: 700;
 }
 
 .last-updated {
-    background: linear-gradient(135deg, #7a2e2e 0%, #a03e3e 100%);
-    color: white;
-    padding: 0.8rem 1.5rem;
-    border-radius: 25px;
+    background: linear-gradient(135deg, var(--color-rojo) 0%, var(--rojo-claro) 100%);
+    color: var(--color-blanco);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--border-radius-xl);
     display: inline-block;
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--spacing-lg);
     font-size: 0.95rem;
 }
 
 .intro-text {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 10px;
-    border-left: 4px solid #7a2e2e;
+    background: var(--gris-claro);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-md);
+    border-left: 4px solid var(--color-rojo);
     font-size: 1.1rem;
-    color: #555;
-    margin-top: 1.5rem;
+    color: var(--gris-medio);
+    margin-top: var(--spacing-lg);
 }
 
 .terminos-content {
@@ -352,20 +352,20 @@ $pageTitle = "Términos y Condiciones";
 
 .terminos-section {
     margin-bottom: 3rem;
-    padding: 2rem;
-    background: #fafafa;
-    border-radius: 15px;
-    border: 1px solid #e9ecef;
-    transition: all 0.3s ease;
+    padding: var(--spacing-xl);
+    background: var(--color-blanco);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--gris-claro);
+    transition: var(--transition-normal);
 }
 
 .terminos-section:hover {
     box-shadow: 0 8px 25px rgba(122, 46, 46, 0.1);
-    border-color: #7a2e2e;
+    border-color: var(--color-rojo);
 }
 
 .terminos-section h2 {
-    color: #7a2e2e;
+    color: var(--color-rojo);
     font-size: 1.6rem;
     margin-bottom: 1.5rem;
     font-weight: 600;
@@ -375,8 +375,8 @@ $pageTitle = "Términos y Condiciones";
 }
 
 .section-number {
-    background: #7a2e2e;
-    color: white;
+    background: var(--color-rojo);
+    color: var(--color-blanco);
     padding: 0.5rem 0.8rem;
     border-radius: 50%;
     font-size: 1.2rem;
@@ -408,7 +408,7 @@ $pageTitle = "Términos y Condiciones";
     content: "▶";
     position: absolute;
     left: 0;
-    color: #7a2e2e;
+    color: var(--color-rojo);
     font-weight: bold;
 }
 
@@ -432,7 +432,7 @@ $pageTitle = "Términos y Condiciones";
     background: white;
     padding: 1.5rem;
     border-radius: 10px;
-    border-left: 4px solid #7a2e2e;
+    border-left: 4px solid var(--color-rojo);
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     margin: 1rem 0;
 }
@@ -441,7 +441,7 @@ $pageTitle = "Términos y Condiciones";
     background: white;
     padding: 1.5rem;
     border-radius: 10px;
-    border-left: 4px solid #7a2e2e;
+    border-left: 4px solid var(--color-rojo);
     box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
@@ -449,8 +449,8 @@ $pageTitle = "Términos y Condiciones";
     margin-top: 3rem;
     text-align: center;
     padding: 2rem;
-    background: linear-gradient(135deg, #7a2e2e 0%, #a03e3e 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--color-rojo) 0%, var(--rojo-claro) 100%);
+    color: var(--color-blanco);
     border-radius: 15px;
 }
 
@@ -467,7 +467,7 @@ $pageTitle = "Términos y Condiciones";
 /* Enlaces */
 .terminos-section a, 
 .company-signature a {
-    color: #7a2e2e;
+    color: var(--color-rojo);
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
@@ -475,18 +475,18 @@ $pageTitle = "Términos y Condiciones";
 }
 
 .terminos-section a:hover {
-    color: #a03e3e;
-    border-bottom-color: #a03e3e;
+    color: var(--rojo-claro);
+    border-bottom-color: var(--rojo-claro);
     transform: translateY(-1px);
 }
 
 .company-signature a {
-    color: white;
-    border-bottom-color: white;
+    color: var(--color-blanco);
+    border-bottom-color: var(--color-blanco);
 }
 
 .company-signature a:hover {
-    color: #f8f9fa;
+    color: var(--gris-claro);
     transform: translateY(-2px);
 }
 
@@ -537,18 +537,18 @@ html {
 
 /* Mejoras de accesibilidad */
 .terminos-section:focus-within {
-    outline: 2px solid #7a2e2e;
+    outline: 2px solid var(--color-rojo);
     outline-offset: 2px;
 }
 
 /* Efecto de selección de texto */
 ::selection {
-    background-color: #7a2e2e;
-    color: white;
+    background-color: var(--color-rojo);
+    color: var(--color-blanco);
 }
 
 ::-moz-selection {
-    background-color: #7a2e2e;
-    color: white;
+    background-color: var(--color-rojo);
+    color: var(--color-blanco);
 }
 </style>

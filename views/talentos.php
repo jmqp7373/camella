@@ -49,7 +49,7 @@ $pageTitle = "Talentos Profesionales";
     <div class="talent-card" data-profession="desarrollador" data-experience="senior" data-availability="inmediata">
         <div class="talent-header">
             <div class="talent-avatar">
-                <i class="fas fa-user-circle" style="font-size: 4rem; color: #667eea;"></i>
+                <i class="fas fa-user-circle" style="font-size: 4rem; color: var(--color-azul);"></i>
             </div>
             <div class="talent-info">
                 <h3>Carlos Mendoza</h3>
@@ -102,7 +102,7 @@ $pageTitle = "Talentos Profesionales";
     <div class="talent-card" data-profession="disenador" data-experience="mid" data-availability="inmediata">
         <div class="talent-header">
             <div class="talent-avatar">
-                <i class="fas fa-user-circle" style="font-size: 4rem; color: #e74c3c;"></i>
+                <i class="fas fa-user-circle" style="font-size: 4rem; color: var(--color-rojo);"></i>
             </div>
             <div class="talent-info">
                 <h3>Ana Rodríguez</h3>
@@ -155,7 +155,7 @@ $pageTitle = "Talentos Profesionales";
     <div class="talent-card" data-profession="marketing" data-experience="senior" data-availability="1mes">
         <div class="talent-header">
             <div class="talent-avatar">
-                <i class="fas fa-user-circle" style="font-size: 4rem; color: #28a745;"></i>
+                <i class="fas fa-user-circle" style="font-size: 4rem; color: var(--success);"></i>
             </div>
             <div class="talent-info">
                 <h3>Luis García</h3>
@@ -208,7 +208,7 @@ $pageTitle = "Talentos Profesionales";
     <div class="talent-card" data-profession="contabilidad" data-experience="mid" data-availability="inmediata">
         <div class="talent-header">
             <div class="talent-avatar">
-                <i class="fas fa-user-circle" style="font-size: 4rem; color: #f39c12;"></i>
+                <i class="fas fa-user-circle" style="font-size: 4rem; color: var(--color-amarillo);"></i>
             </div>
             <div class="talent-info">
                 <h3>María Fernández</h3>
@@ -261,7 +261,7 @@ $pageTitle = "Talentos Profesionales";
     <div class="talent-card" data-profession="ingenieria" data-experience="senior" data-availability="3meses">
         <div class="talent-header">
             <div class="talent-avatar">
-                <i class="fas fa-user-circle" style="font-size: 4rem; color: #9b59b6;"></i>
+                <i class="fas fa-user-circle" style="font-size: 4rem; color: var(--color-azul);"></i>
             </div>
             <div class="talent-info">
                 <h3>Roberto Silva</h3>
@@ -314,7 +314,7 @@ $pageTitle = "Talentos Profesionales";
     <div class="talent-card" data-profession="medicina" data-experience="mid" data-availability="inmediata">
         <div class="talent-header">
             <div class="talent-avatar">
-                <i class="fas fa-user-circle" style="font-size: 4rem; color: #e67e22;"></i>
+                <i class="fas fa-user-circle" style="font-size: 4rem; color: var(--color-amarillo);"></i>
             </div>
             <div class="talent-info">
                 <h3>Dra. Laura Martín</h3>
