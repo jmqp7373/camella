@@ -913,3 +913,41 @@ body {
         width: 100%;
     }
 }
+
+/* ========================================
+   TÍTULOS DE SECCIONES
+   ======================================== */
+.section-title {
+    background: #002b47;
+    color: var(--color-blanco);
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-radius: var(--border-radius-md);
+    text-align: center;
+    margin: var(--spacing-xl) auto;
+    font-size: 1.8rem;
+    font-weight: bold;
+    box-shadow: var(--sombra-suave);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    max-width: 800px;
+}
+
+.section-title i {
+    font-size: 1.6rem;
+    color: var(--color-blanco);
+}
+
+/* Responsive para títulos de sección */
+@media (max-width: 768px) {
+    .section-title {
+        font-size: 1.5rem;
+        padding: var(--spacing-md) var(--spacing-lg);
+        margin: var(--spacing-lg) var(--spacing-md);
+    }
+    
+    .section-title i {
+        font-size: 1.3rem;
+    }
+}
