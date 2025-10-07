@@ -226,13 +226,13 @@ body {
 }
 
 .subcategories li:hover {
-    color: #3a8be8;
+    color: #002b47;
     font-weight: 500;
 }
 
 .subcategories li::before {
     content: "→ ";
-    color: #3a8be8;
+    color: #002b47;
     font-weight: bold;
 }
 
