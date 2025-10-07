@@ -39,6 +39,9 @@ $allowed_views = [
     'buscar-empleo',
     'registro-empresa',
     'registro-talento',
+    'login',
+    'registro',
+    'recuperar-password',
     'privacidad',
     'terminos',
     'ayuda'

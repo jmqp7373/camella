@@ -52,38 +52,22 @@ function getCacheBuster($filepath) {
 <body>
     <header class="main-header">
         <div class="header-content">
-            <!-- Logo -->
+            <!-- Logo como enlace a Inicio -->
             <a href="index.php" class="logo">
-                <img src="assets/images/logo/logo_horizontal.png" alt="Camella Logo">
-                
+                <img src="assets/images/logo/logo_horizontal.png" alt="Camella Logo - Ir a Inicio">
             </a>
             
-            <!-- Navegación Principal -->
+            <!-- Navegación Simplificada -->
             <nav class="main-nav">
                 <ul class="nav-links">
                     <li>
-                        <a href="index.php" class="<?php echo (!isset($_GET['view']) || $_GET['view'] == 'home') ? 'active' : ''; ?>">
-                            <i class="fas fa-home"></i> Inicio
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.php?view=empresas" class="<?php echo (isset($_GET['view']) && $_GET['view'] == 'empresas') ? 'active' : ''; ?>">
-                            <i class="fas fa-building"></i> Empresas
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.php?view=talentos" class="<?php echo (isset($_GET['view']) && $_GET['view'] == 'talentos') ? 'active' : ''; ?>">
-                            <i class="fas fa-users"></i> Talentos
-                        </a>
-                    </li>
-                    <li>
-                        <a href="index.php?view=contacto" class="<?php echo (isset($_GET['view']) && $_GET['view'] == 'contacto') ? 'active' : ''; ?>">
-                            <i class="fas fa-envelope"></i> Contacto
-                        </a>
-                    </li>
-                    <li>
                         <a href="index.php?view=publicar-oferta" class="btn-publicar">
                             <i class="fas fa-plus-circle"></i> Publicar Oferta
+                        </a>
+                    </li>
+                    <li>
+                        <a href="index.php?view=login" class="btn-login">
+                            <i class="fas fa-user"></i> Login
                         </a>
                     </li>
                 </ul>
