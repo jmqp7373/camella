@@ -4,49 +4,31 @@
    ======================================== */
 
 :root {
-  /* Colores principales - Bandera de Colombia */
-  --color-amarillo: #FFD200;   /* Amarillo bandera - energía y optimismo */
-  --color-azul: #002B5C;       /* Azul bandera oscuro - confianza y estabilidad */
-  --color-rojo: #CE1126;       /* Rojo bandera - acción y pasión */
-  --color-blanco: #FAFAFA;     /* Fondo claro y limpio */
-  --color-gris: #333333;       /* Texto secundario o lema */
+  /* ========================================
+     PALETA SIMPLIFICADA - SOLO 8 COLORES
+     Inspirada en la bandera de Colombia
+     ======================================== */
   
-  /* Variaciones de amarillo */
-  --amarillo-claro: #FFF066;
-  --amarillo-oscuro: #E6BD00;
-  --amarillo-hover: #F4C430;
+  /* Colores principales (4) */
+  --color-azul: #002B5C;       /* Azul principal - textos y navegación */
+  --color-amarillo: #FFD200;   /* Amarillo - acentos y hover */
+  --color-rojo: #CE1126;       /* Rojo - botones de acción */
+  --color-blanco: #FAFAFA;     /* Blanco - fondos principales */
   
-  /* Variaciones de azul */
-  --azul-claro: #1E4A72;
-  --azul-medio: #0F3A5F;
-  --azul-hover: #003D73;
+  /* Grises minimalistas (2) */
+  --color-gris: #666666;       /* Gris medio - textos secundarios */
+  --gris-claro: #F5F5F5;       /* Gris claro - fondos suaves */
   
-  /* Variaciones de rojo */
-  --rojo-claro: #E53E3E;
-  --rojo-oscuro: #B91C1C;
-  --rojo-hover: #DC143C;
+  /* Estados esenciales (2) */
+  --success: #28A745;          /* Verde - éxito y confirmaciones */
+  --shadow-color: rgba(0, 0, 0, 0.1);  /* Sombra universal */
   
-  /* Grises complementarios */
-  --gris-claro: #F7F8FA;
-  --gris-medio: #6B7280;
-  --gris-oscuro: #1F2937;
+  /* Gradientes minimalistas (2) */
+  --gradiente-header: linear-gradient(135deg, var(--color-azul), var(--color-azul));
+  --gradiente-fondo: linear-gradient(to bottom, var(--color-blanco), var(--gris-claro));
   
-  /* Colores de estado */
-  --success: #10B981;    /* Verde éxito */
-  --warning: var(--color-amarillo);  /* Amarillo advertencia */
-  --error: var(--color-rojo);        /* Rojo error */
-  --info: var(--color-azul);         /* Azul información */
-  
-  /* Gradientes corporativos */
-  --gradiente-principal: linear-gradient(135deg, var(--color-amarillo) 0%, var(--color-azul) 50%, var(--color-rojo) 100%);
-  --gradiente-header: linear-gradient(135deg, var(--color-azul) 0%, var(--azul-claro) 100%);
-  --gradiente-fondo: linear-gradient(135deg, var(--color-blanco) 0%, var(--gris-claro) 100%);
-  
-  /* Sombras con colores de marca */
-  --sombra-amarillo: 0 4px 15px rgba(255, 210, 0, 0.3);
-  --sombra-azul: 0 4px 15px rgba(0, 43, 92, 0.3);
-  --sombra-rojo: 0 4px 15px rgba(206, 17, 38, 0.3);
-  --sombra-suave: 0 2px 10px rgba(0, 0, 0, 0.1);
+  /* Sombras universales (1) */
+  --sombra-suave: 0 2px 8px var(--shadow-color);
   
   /* Tipografía */
   --font-principal: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
@@ -77,111 +59,70 @@
    UTILIDADES DE COLORES
    ======================================== */
 
-/* Colores de texto */
-.text-amarillo { color: var(--color-amarillo) !important; }
-.text-azul { color: var(--color-azul) !important; }
-.text-rojo { color: var(--color-rojo) !important; }
-.text-gris { color: var(--color-gris) !important; }
-.text-blanco { color: var(--color-blanco) !important; }
-
-/* Colores de fondo */
-.bg-amarillo { background-color: var(--color-amarillo) !important; }
-.bg-azul { background-color: var(--color-azul) !important; }
-.bg-rojo { background-color: var(--color-rojo) !important; }
-.bg-gris { background-color: var(--color-gris) !important; }
-.bg-blanco { background-color: var(--color-blanco) !important; }
-
-/* Gradientes */
-.bg-gradiente-principal { background: var(--gradiente-principal) !important; }
-.bg-gradiente-header { background: var(--gradiente-header) !important; }
-.bg-gradiente-fondo { background: var(--gradiente-fondo) !important; }
-
-/* Bordes */
-.border-amarillo { border-color: var(--color-amarillo) !important; }
-.border-azul { border-color: var(--color-azul) !important; }
-.border-rojo { border-color: var(--color-rojo) !important; }
-
-/* Sombras */
-.shadow-amarillo { box-shadow: var(--sombra-amarillo) !important; }
-.shadow-azul { box-shadow: var(--sombra-azul) !important; }
-.shadow-rojo { box-shadow: var(--sombra-rojo) !important; }
-.shadow-suave { box-shadow: var(--sombra-suave) !important; }
-
 /* ========================================
-   COMPONENTES ESPECÍFICOS
+   UTILIDADES SIMPLIFICADAS - SOLO ESENCIALES
    ======================================== */
 
-/* Logo con colores de bandera */
-.logo-colombia {
-  background: var(--gradiente-principal);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: bold;
-}
+/* Colores de texto (4 principales) */
+.text-azul { color: var(--color-azul) !important; }
+.text-amarillo { color: var(--color-amarillo) !important; }
+.text-rojo { color: var(--color-rojo) !important; }
+.text-gris { color: var(--color-gris) !important; }
 
-/* Corazón con colores proporcionales */
+/* Colores de fondo (3 principales) */
+.bg-azul { background-color: var(--color-azul) !important; }
+.bg-blanco { background-color: var(--color-blanco) !important; }
+.bg-gris-claro { background-color: var(--gris-claro) !important; }
+
+/* Sombra universal */
+.shadow { box-shadow: var(--sombra-suave) !important; }
+
+/* ========================================
+   COMPONENTES MINIMALISTAS
+   ======================================== */
+
+/* Corazón colombiano simplificado */
 .heart-colombia {
-  background: linear-gradient(
-    135deg,
-    var(--color-amarillo) 0% 50%,
-    var(--color-azul) 50% 75%,
-    var(--color-rojo) 75% 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--color-amarillo);
 }
 
-/* Botones con identidad colombiana */
-.btn-colombia {
-  background: var(--gradiente-principal);
-  color: white;
+/* Botón principal */
+.btn-primary {
+  background: var(--color-azul);
+  color: var(--color-blanco);
   border: none;
-  padding: var(--spacing-md) var(--spacing-lg);
-  border-radius: var(--border-radius-lg);
-  font-weight: 600;
-  transition: var(--transition-normal);
-  text-decoration: none;
-  display: inline-block;
-  cursor: pointer;
 }
 
-.btn-colombia:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--sombra-amarillo);
+.btn-primary:hover {
+  background: var(--color-amarillo);
+  color: var(--color-azul);
 }
 
-/* Tarjetas con esquema de colores */
-.card-colombia {
+/* Botón de acción */
+.btn-action {
+  background: var(--color-rojo);
+  color: var(--color-blanco);
+}
+
+/* Tarjeta simple */
+.card {
   background: var(--color-blanco);
   border: 1px solid var(--gris-claro);
-  border-radius: var(--border-radius-lg);
   box-shadow: var(--sombra-suave);
-  transition: var(--transition-normal);
 }
 
-.card-colombia:hover {
+.card:hover {
   border-color: var(--color-amarillo);
-  box-shadow: var(--sombra-amarillo);
 }
 
-/* Enlaces con colores de marca */
-.link-colombia {
+/* Enlaces simples */
+.link {
   color: var(--color-azul);
   text-decoration: none;
-  transition: var(--transition-fast);
 }
 
-.link-colombia:hover {
-  color: var(--color-rojo);
-}
-
-/* Texto del lema */
-.lema-camella {
-  color: var(--color-gris);
-  font-style: italic;
-  font-size: 0.95em;
+.link:hover {
+  color: var(--color-amarillo);
 }
 
 /* ========================================
