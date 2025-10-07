@@ -1,0 +1,49 @@
+name: Deploy to Production
+
+# Activar el workflow cuando se haga push a main
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Permite ejecutar manualmente
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📂 Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: 🔧 Setup Node.js (opcional para futuras herramientas)
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: 📋 List files to deploy
+      run: |
+        echo "Files to be deployed:"
+        find . -type f -name "*.php" -o -name "*.html" -o -name "*.css" -o -name "*.js" -o -name "*.png" -o -name "*.jpg" -o -name "*.ico" | head -20
+        
+    - name: 🚀 Deploy to GoDaddy via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: ${{ secrets.FTP_SERVER_DIR }}
+        local-dir: ./
+        exclude: |
+          **/.git*
+          **/.git*/**
+          **/node_modules/**
+          **/.DS_Store
+          **/Thumbs.db
+          **/.vscode/**
+          **/README.md
+          **/.github/**
+          
+    - name: ✅ Deployment completed
+      run: |
+        echo "🎉 Deployment to camella.com.co completed successfully!"
+        echo "📅 Deployed at: $(date)"
+        echo "🔗 Check your site: https://camella.com.co"
