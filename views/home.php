@@ -94,52 +94,70 @@ try {
     <div class="cta-grid">
         <div class="cta-card">
             <div class="cta-icon"><i class="fas fa-user-tie"></i></div>
-            <h3>¿Buscas Talento?</h3>
-            <p>Encuentra profesionales calificados para tu empresa o proyecto.</p>
-            <a href="index.php?view=publicar-oferta" class="btn btn-primary">Publicar Oferta</a>
+            <h3>¿Buscas Empleo?</h3>
+            <p>Encuentra tu próxima oportunidad profesional entre miles de ofertas de las mejores empresas.</p>
+            <a href="index.php?view=buscar-empleo" class="btn btn-primary">
+                <i class="fas fa-search"></i> Buscar Empleos
+            </a>
         </div>
-        
+
         <div class="cta-card">
-            <div class="cta-icon"><i class="fas fa-search"></i></div>
-            <h3>¿Buscas Trabajo?</h3>
-            <p>Explora miles de ofertas laborales en toda Colombia.</p>
-            <a href="index.php?view=buscar-empleo" class="btn btn-secondary">Buscar Empleo</a>
+            <div class="cta-icon"><i class="fas fa-building"></i></div>
+            <h3>¿Eres una Empresa?</h3>
+            <p>Conecta con los mejores talentos y encuentra al candidato perfecto para tu organización.</p>
+            <a href="index.php?view=publicar-oferta" class="btn btn-success">
+                <i class="fas fa-plus-circle"></i> Publicar Oferta
+            </a>
         </div>
-        
+
         <div class="cta-card">
-            <div class="cta-icon"><i class="fas fa-users"></i></div>
-            <h3>Únete a Nuestra Red</h3>
-            <p>Forma parte de la comunidad laboral más grande de Colombia.</p>
-            <a href="index.php?view=registro" class="btn btn-accent">Registrarse Gratis</a>
+            <div class="cta-icon"><i class="fas fa-star"></i></div>
+            <h3>Freelancers</h3>
+            <p>Ofrece tus servicios profesionales y conecta con empresas que buscan tu expertise.</p>
+            <a href="index.php?view=registro" class="btn btn-info">
+                <i class="fas fa-rocket"></i> Registrarse
+            </a>
         </div>
     </div>
 </section>
 
 <!-- Estadísticas -->
 <section class="stats-section">
-    <div class="stats-container">
-        <div class="stat-item">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-briefcase"></i>
+            </div>
             <div class="stat-number">
                 <span class="counter" data-target="1250">0</span>+
             </div>
             <div class="stat-label">Ofertas Activas</div>
         </div>
         
-        <div class="stat-item">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
             <div class="stat-number">
                 <span class="counter" data-target="3500">0</span>+
             </div>
             <div class="stat-label">Profesionales Registrados</div>
         </div>
         
-        <div class="stat-item">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-building"></i>
+            </div>
             <div class="stat-number">
                 <span class="counter" data-target="890">0</span>+
             </div>
             <div class="stat-label">Empresas Confían en Nosotros</div>
         </div>
         
-        <div class="stat-item">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-handshake"></i>
+            </div>
             <div class="stat-number">
                 <span class="counter" data-target="2100">0</span>+
             </div>
@@ -248,15 +266,166 @@ function cargarCategoriasAPI() {
 </script>
 
 <style>
-/* Estilos adicionales para elementos dinámicos manteniendo maquetación original */
+/* Estilos específicos para la página de inicio - MAQUETACIÓN ORIGINAL COMPLETA */
+.home-hero {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.stats-section {
+    margin: 3rem 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.stat-card {
+    background: var(--gradiente-header);
+    color: var(--color-blanco);
+    text-align: center;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--sombra-azul);
+    transition: var(--transition-normal);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.9;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.section-title {
+    text-align: center;
+    color: var(--color-azul);
+    font-size: 2rem;
+    margin-bottom: var(--spacing-xl);
+    background: var(--gradiente-header);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.categories-section {
+    margin: 4rem 0;
+}
+
+.cta-section {
+    margin: 4rem 0 2rem;
+}
+
+.cta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.cta-card {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.cta-card:hover::before {
+    left: 100%;
+}
+
+.cta-card:hover {
+    border-color: var(--color-amarillo);
+    box-shadow: var(--sombra-amarillo);
+    transform: translateY(-5px);
+}
+
+.cta-icon {
+    font-size: 3rem;
+    color: var(--color-azul);
+    margin-bottom: var(--spacing-md);
+}
+
+.cta-card h3 {
+    color: var(--color-azul);
+    margin-bottom: var(--spacing-md);
+    font-size: 1.5rem;
+}
+
+.cta-card p {
+    color: var(--color-gris);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.6;
+}
+
+.btn-primary {
+    background: var(--color-azul);
+}
+
+.btn-primary:hover {
+    background: var(--azul-claro);
+}
+
+.btn-info {
+    background: #17a2b8;
+}
+
+.btn-info:hover {
+    background: #138496;
+}
+
+/* Interactividad para elementos dinámicos manteniendo el estilo original */
 .category-card {
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.3s ease;
 }
 
 .category-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.category-card[data-categoria-id] .subcategories li {
+    cursor: pointer;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.category-card[data-categoria-id] .subcategories li:hover {
+    background-color: rgba(255, 210, 0, 0.2);
+    font-weight: 500;
 }
 
 .oficio-item {
@@ -307,6 +476,32 @@ function cargarCategoriasAPI() {
         margin: 0.25rem 0;
         border-radius: 6px;
         background-color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+    }
+    
+    .cta-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .stat-card {
+        padding: 1.5rem;
+    }
+    
+    .stat-icon {
+        font-size: 2rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .cta-icon {
+        font-size: 2.5rem;
     }
 }
 </style>
