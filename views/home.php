@@ -1,5 +1,21 @@
 <?php 
-$pageTitle = "Inicio"; 
+/**
+ * Vista principal - Home con maquetación original y contenido dinámico
+ * Mantiene la estructura visual original pero carga datos desde BD
+ */
+
+$pageTitle = "Inicio";
+
+// Cargar categorías dinámicas desde la base de datos
+$categorias = [];
+try {
+    require_once 'models/Categorias.php';
+    $categoriasModel = new Categorias();
+    $categorias = $categoriasModel->obtenerCategoriasConOficios();
+} catch (Exception $e) {
+    error_log("Error cargando categorías en home: " . $e->getMessage());
+    $categorias = [];
+}
 ?>
 
 <div class="home-hero">
@@ -26,170 +42,50 @@ $pageTitle = "Inicio";
     </div>
 </div>
 
-<!-- Árbol de Categorías de Empleo -->
+<!-- Árbol de Categorías de Empleo - Contenido Dinámico con Maquetación Original -->
 <section class="categories-section">
-    <h2 class="section-title">
-        <i class="fas fa-sitemap"></i> 
-        Explora prestadores de servicios por Categoría
+    <h2 class="section-title text-azul">
+        <i class="fas fa-th-large"></i> 
+        Categorías de Oficios y Servicios
     </h2>
-    
+
     <div class="categories-tree">
-        <!-- Servicios para el hogar -->
-        <div class="category-card">
-            <h3 class="category-title">
-                <span class="category-icon">�</span>
-                Servicios para el hogar
-            </h3>
-            <ul class="subcategories">
-                <li>Plomería</li>
-                <li>Electricidad</li>
-                <li>Pintura</li>
-                <li>Carpintería</li>
-                <li>Instalación de puertas/ventanas</li>
-                <li>Reparación de electrodomésticos</li>
-                <li>Desinfección / Fumigación</li>
-                <li>Arreglo de techos y goteras</li>
-            </ul>
-        </div>
-
-        <!-- Aseo, limpieza y cuidado -->
-        <div class="category-card">
-            <h3 class="category-title">
-                <span class="category-icon">🧹</span>
-                Aseo, limpieza y cuidado
-            </h3>
-            <ul class="subcategories">
-                <li>Empleadas domésticas</li>
-                <li>Niñeras</li>
-                <li>Cuidadores de adulto mayor</li>
-                <li>Personal de aseo para oficinas o conjuntos</li>
-                <li>Lavado de muebles / alfombras</li>
-                <li>Lavado de carros a domicilio</li>
-            </ul>
-        </div>
-
-        <!-- Belleza y cuidado personal -->
-        <div class="category-card">
-            <h3 class="category-title">
-                <span class="category-icon">✂️</span>
-                Belleza y cuidado personal
-            </h3>
-            <ul class="subcategories">
-                <li>Peluquería y barbería</li>
-                <li>Manicuristas y pedicuristas</li>
-                <li>Maquillaje</li>
-                <li>Depilación</li>
-                <li>Masajes relajantes o terapéuticos</li>
-                <li>Cejas y pestañas</li>
-            </ul>
-        </div>
-
-        <!-- Servicios logísticos y transporte -->
-        <div class="category-card">
-            <h3 class="category-title">
-                <span class="category-icon">🧳</span>
-                Servicios logísticos y transporte
-            </h3>
-            <ul class="subcategories">
-                <li>Trasteos y mudanzas</li>
-                <li>Mototaxi o transporte alternativo</li>
-                <li>Servicios de mensajería</li>
-                <li>Ayudantes de bodega / cargue y descargue</li>
-                <li>Conductor elegido</li>
-                <li>Repartidores con moto o bici</li>
-            </ul>
-        </div>
-
-        <!-- Reparaciones, técnica y mantenimiento -->
-        <div class="category-card">
-            <h3 class="category-title">
-                <span class="category-icon">🧰</span>
-                Reparaciones, técnica y mantenimiento
-            </h3>
-            <ul class="subcategories">
-                <li>Técnicos celulares, televisores, PC</li>
-                <li>Reparación de electrodomésticos</li>
-                <li>Mantenimiento de motos o bicicletas</li>
-                <li>Cerrajería</li>
-                <li>Instalación de cámaras de seguridad</li>
-                <li>Soporte técnico básico</li>
-            </ul>
-        </div>
-
-        <!-- Educación y servicios personales -->
-        <div class="category-card">
-            <h3 class="category-title">
-                <span class="category-icon">�</span>
-                Educación y servicios personales
-            </h3>
-            <ul class="subcategories">
-                <li>Clases particulares (básica/secundaria)</li>
-                <li>Tutorías universitarias</li>
-                <li>Refuerzos escolares</li>
-                <li>Psicólogos / coaches</li>
-                <li>Traductores / intérpretes</li>
-                <li>Diseñadores / publicistas</li>
-            </ul>
-        </div>
-
-        <!-- Cocina y alimentación -->
-        <div class="category-card">
-            <h3 class="category-title">
-                <span class="category-icon">🍲</span>
-                Cocina y alimentación
-            </h3>
-            <ul class="subcategories">
-                <li>Cocineras por días</li>
-                <li>Almuerzos por encargo</li>
-                <li>Repostería y pastelería</li>
-                <li>Preparación de alimentos para eventos</li>
-                <li>Venta de productos caseros</li>
-            </ul>
-        </div>
-
-        <!-- Oficios varios y "hago de todo" -->
-        <div class="category-card">
-            <h3 class="category-title">
-                <span class="category-icon">📦</span>
-                Oficios varios y "hago de todo"
-            </h3>
-            <ul class="subcategories">
-                <li>Toderos</li>
-                <li>Ayudas ocasionales</li>
-                <li>Servicios rurales o de campo</li>
-                <li>Acompañantes para trámites o citas</li>
-                <li>Vigilancia informal / cuidadores de finca</li>
-            </ul>
-        </div>
-
-        <!-- Trabajo remoto / digital -->
-        <div class="category-card">
-            <h3 class="category-title">
-                <span class="category-icon">🌐</span>
-                Trabajo remoto / digital
-            </h3>
-            <ul class="subcategories">
-                <li>Asistentes virtuales</li>
-                <li>Freelancers (diseño, video, copywriting)</li>
-                <li>Soporte al cliente digital</li>
-                <li>Community managers</li>
-                <li>Marketing por redes sociales</li>
-            </ul>
-        </div>
-
-        <!-- Eventos y creativos -->
-        <div class="category-card">
-            <h3 class="category-title">
-                <span class="category-icon">📸</span>
-                Eventos y creativos
-            </h3>
-            <ul class="subcategories">
-                <li>Fotografía de eventos</li>
-                <li>Edición digital y retoque</li>
-                <li>Organizadores de eventos</li>
-                <li>Decoradores y ambientadores de fiestas</li>
-            </ul>
-        </div>
+        <?php if (!empty($categorias)): ?>
+            <?php foreach ($categorias as $categoria): ?>
+                <div class="category-card" data-categoria-id="<?= $categoria['id'] ?>">
+                    <h3 class="category-title">
+                        <span class="category-icon"><?= htmlspecialchars($categoria['icono']) ?></span>
+                        <?= htmlspecialchars($categoria['nombre']) ?>
+                    </h3>
+                    
+                    <?php if (!empty($categoria['oficios'])): ?>
+                        <ul class="subcategories">
+                            <?php foreach ($categoria['oficios'] as $oficio): ?>
+                                <li class="oficio-item" data-oficio-id="<?= $oficio['id'] ?>"><?= htmlspecialchars($oficio['nombre']) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <ul class="subcategories">
+                            <li style="font-style: italic; color: #999;">No hay oficios registrados</li>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <!-- Fallback: mostrar mensaje de carga o error -->
+            <div class="category-card">
+                <h3 class="category-title">
+                    <span class="category-icon">⚙️</span>
+                    Sistema inicializándose...
+                </h3>
+                <ul class="subcategories">
+                    <li style="font-style: italic; color: #666;">
+                        Las categorías se están cargando. 
+                        <a href="javascript:location.reload()" style="color: #007bff;">Actualizar página</a>
+                    </li>
+                </ul>
+            </div>
+        <?php endif; ?>
     </div>
 </section>
 
@@ -198,170 +94,219 @@ $pageTitle = "Inicio";
     <div class="cta-grid">
         <div class="cta-card">
             <div class="cta-icon"><i class="fas fa-user-tie"></i></div>
-            <h3>¿Buscas Empleo?</h3>
-            <p>Encuentra tu próxima oportunidad profesional entre miles de ofertas de las mejores empresas.</p>
-            <a href="index.php?view=buscar-empleo" class="btn btn-primary">
-                <i class="fas fa-search"></i> Buscar Empleos
-            </a>
+            <h3>¿Buscas Talento?</h3>
+            <p>Encuentra profesionales calificados para tu empresa o proyecto.</p>
+            <a href="index.php?view=publicar-oferta" class="btn btn-primary">Publicar Oferta</a>
         </div>
         
         <div class="cta-card">
-            <div class="cta-icon"><i class="fas fa-building"></i></div>
-            <h3>¿Eres una Empresa?</h3>
-            <p>Conecta con los mejores talentos y encuentra al candidato perfecto para tu organización.</p>
-            <a href="index.php?view=publicar-oferta" class="btn btn-success">
-                <i class="fas fa-plus-circle"></i> Publicar Oferta
-            </a>
+            <div class="cta-icon"><i class="fas fa-search"></i></div>
+            <h3>¿Buscas Trabajo?</h3>
+            <p>Explora miles de ofertas laborales en toda Colombia.</p>
+            <a href="index.php?view=buscar-empleo" class="btn btn-secondary">Buscar Empleo</a>
         </div>
         
         <div class="cta-card">
-            <div class="cta-icon"><i class="fas fa-star"></i></div>
-            <h3>Freelancers</h3>
-            <p>Ofrece tus servicios profesionales y conecta con empresas que buscan tu expertise.</p>
-            <a href="index.php?view=registro" class="btn btn-info">
-                <i class="fas fa-rocket"></i> Registrarse
-            </a>
+            <div class="cta-icon"><i class="fas fa-users"></i></div>
+            <h3>Únete a Nuestra Red</h3>
+            <p>Forma parte de la comunidad laboral más grande de Colombia.</p>
+            <a href="index.php?view=registro" class="btn btn-accent">Registrarse Gratis</a>
         </div>
     </div>
 </section>
 
+<!-- Estadísticas -->
+<section class="stats-section">
+    <div class="stats-container">
+        <div class="stat-item">
+            <div class="stat-number">
+                <span class="counter" data-target="1250">0</span>+
+            </div>
+            <div class="stat-label">Ofertas Activas</div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-number">
+                <span class="counter" data-target="3500">0</span>+
+            </div>
+            <div class="stat-label">Profesionales Registrados</div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-number">
+                <span class="counter" data-target="890">0</span>+
+            </div>
+            <div class="stat-label">Empresas Confían en Nosotros</div>
+        </div>
+        
+        <div class="stat-item">
+            <div class="stat-number">
+                <span class="counter" data-target="2100">0</span>+
+            </div>
+            <div class="stat-label">Conexiones Exitosas</div>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript para interactividad -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Manejar clic en categorías dinámicas
+    const categoryCards = document.querySelectorAll('.category-card[data-categoria-id]');
+    
+    categoryCards.forEach(card => {
+        const categoriaId = card.dataset.categoriaId;
+        
+        // Clic en la categoría completa
+        card.addEventListener('click', function(e) {
+            // No procesar si se hizo clic en un oficio específico
+            if (e.target.classList.contains('oficio-item')) {
+                return;
+            }
+            
+            console.log('Categoría seleccionada:', categoriaId);
+            
+            // Aquí se puede agregar lógica para navegar o filtrar
+            // Por ejemplo: window.location.href = `index.php?view=buscar-empleo&categoria=${categoriaId}`;
+        });
+    });
+    
+    // Manejar clic en oficios específicos
+    const oficios = document.querySelectorAll('.oficio-item');
+    oficios.forEach(oficio => {
+        oficio.addEventListener('click', function(e) {
+            e.stopPropagation(); // Evitar que se dispare el evento de la categoría
+            
+            const oficioId = this.dataset.oficioId;
+            const categoriaId = this.closest('.category-card').dataset.categoriaId;
+            
+            console.log('Oficio seleccionado:', oficioId, 'de categoría:', categoriaId);
+            
+            // Navegar a búsqueda específica
+            // window.location.href = `index.php?view=buscar-empleo&categoria=${categoriaId}&oficio=${oficioId}`;
+        });
+    });
+    
+    // Animación de contadores
+    const counters = document.querySelectorAll('.counter');
+    const observerOptions = {
+        threshold: 0.1
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counter = entry.target;
+                const target = parseInt(counter.dataset.target);
+                
+                animateCounter(counter, 0, target, 2000);
+                observer.unobserve(counter);
+            }
+        });
+    }, observerOptions);
+    
+    counters.forEach(counter => observer.observe(counter));
+    
+    function animateCounter(element, start, end, duration) {
+        const startTime = performance.now();
+        
+        function updateCounter(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            const current = Math.floor(progress * (end - start) + start);
+            element.textContent = current;
+            
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            }
+        }
+        
+        requestAnimationFrame(updateCounter);
+    }
+    
+    console.log('Sistema de categorías dinámicas inicializado');
+    console.log('Categorías cargadas:', <?= count($categorias) ?>);
+});
+
+// Función para cargar categorías vía API (si es necesario)
+function cargarCategoriasAPI() {
+    fetch('index.php?api=categorias')
+        .then(response => response.json())
+        .then(data => {
+            if (data.exito) {
+                console.log('Categorías cargadas:', data.datos);
+                // Aquí se puede actualizar el DOM si es necesario
+            } else {
+                console.error('Error cargando categorías:', data.mensaje);
+            }
+        })
+        .catch(error => {
+            console.error('Error en la petición:', error);
+        });
+}
+</script>
+
 <style>
-/* Estilos específicos para la página de inicio */
-.home-hero {
+/* Estilos adicionales para elementos dinámicos manteniendo maquetación original */
+.category-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.oficio-item {
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.oficio-item:hover {
+    background-color: var(--amarillo-colombia);
+    color: var(--azul-fondo);
+    font-weight: 500;
+}
+
+.no-categories,
+.no-oficios {
     text-align: center;
-    margin-bottom: 3rem;
-}
-
-.stats-section {
-    margin: 3rem 0;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-}
-
-.stat-card {
-    background: var(--gradiente-header);
-    color: var(--color-blanco);
-    text-align: center;
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--sombra-azul);
-    transition: var(--transition-normal);
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-}
-
-.stat-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    opacity: 0.9;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-}
-
-.stat-label {
-    font-size: 1rem;
-    opacity: 0.9;
-}
-
-.section-title {
-    text-align: center;
-    color: var(--color-azul);
-    font-size: 2rem;
-    margin-bottom: var(--spacing-xl);
-    background: var(--gradiente-header);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.categories-section {
-    margin: 4rem 0;
-}
-
-.cta-section {
-    margin: 4rem 0 2rem;
-}
-
-.cta-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.cta-card {
-    background: white;
-    border: 2px solid #e9ecef;
-    border-radius: 15px;
     padding: 2rem;
-    text-align: center;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.cta-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
-    transition: left 0.5s;
-}
-
-.cta-card:hover::before {
-    left: 100%;
-}
-
-.cta-card:hover {
-    border-color: var(--color-amarillo);
-    box-shadow: var(--sombra-amarillo);
-    transform: translateY(-5px);
-}
-
-.cta-icon {
-    font-size: 3rem;
-    color: var(--color-azul);
-    margin-bottom: var(--spacing-md);
-}
-
-.cta-card h3 {
-    color: var(--color-azul);
-    margin-bottom: var(--spacing-md);
-    font-size: 1.5rem;
-}
-
-.cta-card p {
     color: var(--color-gris);
-    margin-bottom: var(--spacing-lg);
-    line-height: 1.6;
+    font-style: italic;
 }
 
-.btn-primary {
-    background: var(--color-azul);
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid;
 }
 
-.btn-primary:hover {
-    background: var(--azul-claro);
+.alert-info {
+    background-color: rgba(52, 144, 220, 0.1);
+    border-left-color: var(--azul-fondo);
+    color: var(--azul-fondo);
 }
 
-.btn-info {
-    background: #17a2b8;
+.alert i {
+    margin-right: 0.5rem;
 }
 
-.btn-info:hover {
-    background: #138496;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .category-card {
+        margin-bottom: 1rem;
+    }
+    
+    .oficio-item {
+        padding: 0.5rem;
+        margin: 0.25rem 0;
+        border-radius: 6px;
+        background-color: rgba(255, 255, 255, 0.5);
+    }
 }
 </style>
