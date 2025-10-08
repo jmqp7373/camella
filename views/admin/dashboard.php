@@ -88,7 +88,11 @@ include 'partials/header.php';
                             <span class="category-icon"><?= htmlspecialchars($categoria['icono']) ?></span>
                             <h3><?= htmlspecialchars($categoria['nombre']) ?></h3>
                             <div class="category-actions">
-                                <button class="btn-icon" title="Editar">
+                                <button class="btn-icon btn-edit-categoria" 
+                                        data-categoria-id="<?= $categoria['id'] ?>" 
+                                        data-categoria-nombre="<?= htmlspecialchars($categoria['nombre']) ?>"
+                                        data-categoria-icono="<?= htmlspecialchars($categoria['icono']) ?>"
+                                        title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
                                 <button class="btn-icon btn-add-oficio" data-categoria-id="<?= $categoria['id'] ?>" title="Agregar Oficio">
@@ -134,7 +138,8 @@ include 'partials/header.php';
             <h3>Nueva Categoría</h3>
             <button class="modal-close">&times;</button>
         </div>
-        <form id="form-nueva-categoria" action="index.php?view=admin&action=agregarCategoria" method="POST">
+        <form id="form-nueva-categoria" action="index.php" method="POST">
+            <input type="hidden" name="action" value="agregarCategoria">
             <div class="form-group">
                 <label for="nombre">Nombre de la Categoría</label>
                 <input type="text" id="nombre" name="nombre" required>
@@ -155,13 +160,39 @@ include 'partials/header.php';
     </div>
 </div>
 
+<div id="modal-editar-categoria" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Editar Categoría</h3>
+            <button class="modal-close">&times;</button>
+        </div>
+        <form id="form-editar-categoria" action="index.php" method="POST">
+            <input type="hidden" name="action" value="editarCategoria">
+            <input type="hidden" id="edit_categoria_id" name="id">
+            <div class="form-group">
+                <label for="edit_nombre">Nombre de la Categoría</label>
+                <input type="text" id="edit_nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="edit_icono">Ícono (Emoji)</label>
+                <input type="text" id="edit_icono" name="icono" placeholder="🏠">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary modal-close">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Actualizar Categoría</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div id="modal-nuevo-oficio" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <h3>Nuevo Oficio</h3>
             <button class="modal-close">&times;</button>
         </div>
-        <form id="form-nuevo-oficio" action="index.php?view=admin&action=agregarOficio" method="POST">
+        <form id="form-nuevo-oficio" action="index.php" method="POST">
+            <input type="hidden" name="action" value="agregarOficio">
             <input type="hidden" id="categoria_id" name="categoria_id">
             <div class="form-group">
                 <label for="nombre_oficio">Nombre del Oficio</label>
@@ -472,6 +503,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Abrir modal nueva categoría
     document.getElementById('btn-nueva-categoria')?.addEventListener('click', function() {
         document.getElementById('modal-nueva-categoria').style.display = 'block';
+    });
+    
+    // Abrir modal editar categoría
+    document.querySelectorAll('.btn-edit-categoria').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const categoriaId = this.dataset.categoriaId;
+            const categoriaNombre = this.dataset.categoriaNombre;
+            const categoriaIcono = this.dataset.categoriaIcono;
+            
+            document.getElementById('edit_categoria_id').value = categoriaId;
+            document.getElementById('edit_nombre').value = categoriaNombre;
+            document.getElementById('edit_icono').value = categoriaIcono;
+            document.getElementById('modal-editar-categoria').style.display = 'block';
+        });
     });
     
     // Abrir modal nuevo oficio

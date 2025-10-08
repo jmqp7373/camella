@@ -382,6 +382,30 @@ class Categorias {
     }
     
     /**
+     * Actualizar una categoría existente
+     */
+    public function actualizarCategoria($id, $nombre, $icono = null) {
+        try {
+            $sql = "UPDATE categorias SET nombre = ?";
+            $params = [$nombre];
+            
+            if ($icono !== null) {
+                $sql .= ", icono = ?";
+                $params[] = $icono;
+            }
+            
+            $sql .= " WHERE id = ?";
+            $params[] = $id;
+            
+            $stmt = $this->conexion->prepare($sql);
+            return $stmt->execute($params);
+        } catch (Exception $e) {
+            error_log("Error actualizando categoría: " . $e->getMessage());
+            return false;
+        }
+    }
+    
+    /**
      * Verificar si las tablas existen y tienen datos
      */
     public function verificarEstadoTablasYDatos() {
