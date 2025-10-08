@@ -1,0 +1,9 @@
+# Denegar acceso público por defecto
+# Protege herramientas de desarrollo/diagnóstico
+# Solo permitir acceso mediante includes desde el backend
+
+Require all denied
+
+# Alternativamente, si usas Apache más antiguo:
+# Order deny,allow
+# Deny from all
