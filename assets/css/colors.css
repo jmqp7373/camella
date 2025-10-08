@@ -24,6 +24,11 @@
   --shadow-color: rgba(0, 0, 0, 0.1);  /* Sombra universal */
   --azul-fondo: #3a8be8;       /* Azul para fondos y elementos decorativos */
   
+  /* Variables adicionales para páginas de error */
+  --azul-oscuro: #1a365d;      /* Azul oscuro para gradientes */
+  --amarillo-colombia: #FFD200; /* Alias para amarillo Colombia */
+  --rojo-colombia: #CE1126;     /* Alias para rojo Colombia */
+  
   /* Gradientes minimalistas (2) */
   --gradiente-header: linear-gradient(135deg, var(--color-azul), #2a7bd4);
   --gradiente-fondo: linear-gradient(to bottom, var(--color-blanco), var(--gris-claro));

@@ -8,9 +8,9 @@ RewriteEngine On
 # ========================================
 # PÁGINAS DE ERROR PERSONALIZADAS
 # ========================================
-ErrorDocument 403 /403.html
-ErrorDocument 404 /404.html
-ErrorDocument 500 /500.html
+ErrorDocument 403 /403.php
+ErrorDocument 404 /404.php
+ErrorDocument 500 /500.php
 
 # ========================================
 # FORZAR HTTPS (Redirección HTTP -> HTTPS)
