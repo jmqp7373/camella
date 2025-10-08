@@ -153,6 +153,9 @@ $allowed_views = [
     'login',
     'registro',
     'recuperar-password',
+    'enviar-reset',
+    'reset-password', 
+    'procesar-reset',
     'privacidad',
     'terminos',
     'ayuda',
@@ -196,6 +199,35 @@ if ($view === 'procesar-cambiar-password') {
     require_once 'controllers/UsuarioController.php';
     $controller = new UsuarioController();
     $controller->procesarCambiarPassword();
+    exit;
+}
+
+// Manejar rutas de PasswordController (recuperar contraseña)
+if ($view === 'recuperar-password') {
+    require_once 'controllers/PasswordController.php';
+    $controller = new PasswordController();
+    $controller->mostrarSolicitud();
+    exit;
+}
+
+if ($view === 'enviar-reset') {
+    require_once 'controllers/PasswordController.php';
+    $controller = new PasswordController();
+    $controller->procesarSolicitud();
+    exit;
+}
+
+if ($view === 'reset-password') {
+    require_once 'controllers/PasswordController.php';
+    $controller = new PasswordController();
+    $controller->mostrarReset();
+    exit;
+}
+
+if ($view === 'procesar-reset') {
+    require_once 'controllers/PasswordController.php';
+    $controller = new PasswordController();
+    $controller->procesarReset();
     exit;
 }
 
