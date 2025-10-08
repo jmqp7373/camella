@@ -171,6 +171,8 @@ class UsuarioController extends BaseController {
     private function verificarAcceso($rolesPermitidos) {
         // Verificar si hay sesión activa
         if (empty($_SESSION['usuario_id'])) {
+            // Setear aviso no intrusivo antes de redirigir
+            $_SESSION['flash_error'] = 'Inicia sesión para continuar.';
             header('Location: index.php?view=login');
             exit();
         }

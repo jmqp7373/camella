@@ -296,6 +296,13 @@
                 </div>
             <?php endif; ?>
             
+            <?php if (!empty($_SESSION['flash_error'])): ?>
+                <div class="alert alert-error">
+                    <?php echo htmlspecialchars($_SESSION['flash_error']); ?>
+                </div>
+                <?php unset($_SESSION['flash_error']); ?>
+            <?php endif; ?>
+            
             <!-- Campo de email -->
             <div class="form-group">
                 <label for="email">Correo electrónico</label>

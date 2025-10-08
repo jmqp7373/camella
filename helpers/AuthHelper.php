@@ -84,6 +84,8 @@ function verificarAcceso($rolesPermitidos) {
     
     // Validación 1: Verificar que existe una sesión de usuario activa
     if (!isset($_SESSION['usuario_id']) || empty($_SESSION['usuario_id'])) {
+        // Setear aviso no intrusivo antes de redirigir
+        $_SESSION['flash_error'] = 'Inicia sesión para continuar.';
         // Usuario no autenticado - redirigir a login
         header('Location: index.php?view=login');
         exit;
@@ -91,6 +93,8 @@ function verificarAcceso($rolesPermitidos) {
     
     // Validación 2: Verificar que el usuario tiene un rol válido en la sesión
     if (!isset($_SESSION['rol']) || empty($_SESSION['rol'])) {
+        // Setear aviso no intrusivo antes de redirigir
+        $_SESSION['flash_error'] = 'Inicia sesión para continuar.';
         // Rol no definido o corrupto - cerrar sesión y redirigir
         cerrarSesion();
         header('Location: index.php?view=login');
