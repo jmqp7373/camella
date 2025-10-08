@@ -169,3 +169,173 @@ body{
   outline: 2px solid var(--camella-blanco);
   outline-offset: 2px;
 }
+
+/* ========================================
+   MENÚ DE USUARIO AUTENTICADO
+   ======================================== */
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-greeting {
+  color: var(--camella-blanco);
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.role-badge {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-badge.admin {
+  background: var(--camella-rojo);
+  color: var(--camella-blanco);
+}
+
+.role-badge.promotor {
+  background: var(--color-verde);
+  color: var(--camella-blanco);
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Botón Admin específico */
+.btn-admin {
+  background: linear-gradient(135deg, var(--camella-rojo), #b91c1c);
+  color: var(--camella-blanco);
+  border: 2px solid transparent;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.btn-admin:hover {
+  background: linear-gradient(135deg, #b91c1c, var(--camella-rojo));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+/* Botón Promotor específico */
+.btn-promotor {
+  background: linear-gradient(135deg, var(--color-verde), #16a34a);
+  color: var(--camella-blanco);
+  border: 2px solid transparent;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.btn-promotor:hover {
+  background: linear-gradient(135deg, #16a34a, var(--color-verde));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+/* Botón Logout específico */
+.btn-logout {
+  background: transparent;
+  color: var(--camella-blanco);
+  border: 2px solid var(--camella-blanco);
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.btn-logout:hover {
+  background: var(--camella-blanco);
+  color: var(--camella-azul);
+  transform: translateY(-1px);
+}
+
+/* ========================================
+   RESPONSIVE - MENÚ DE USUARIO
+   ======================================== */
+
+@media (max-width: 768px) {
+  .user-menu {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+  }
+  
+  .user-greeting {
+    font-size: 0.8rem;
+    text-align: right;
+  }
+  
+  .user-actions {
+    gap: 0.3rem;
+  }
+  
+  .user-actions .btn {
+    padding: 6px 8px;
+    font-size: 0.75rem;
+  }
+  
+  .role-badge {
+    font-size: 0.6rem;
+    padding: 1px 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-greeting strong {
+    display: block;
+  }
+  
+  .user-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  
+  .user-actions .btn {
+    padding: 5px 6px;
+    font-size: 0.7rem;
+  }
+  
+  .user-actions .btn i {
+    margin-right: 0;
+  }
+  
+  /* Ocultar texto en móviles muy pequeños, solo iconos */
+  @media (max-width: 360px) {
+    .btn-admin span:not(.fas),
+    .btn-promotor span:not(.fas),
+    .btn-logout span:not(.fas) {
+      display: none;
+    }
+  }
+}

@@ -9,6 +9,20 @@ function getCacheBuster($filepath) {
     }
     return '?v=' . time();
 }
+
+// Verificar estado de autenticación
+$usuarioLogueado = false;
+$usuarioActual = null;
+
+if (session_status() === PHP_SESSION_ACTIVE) {
+    require_once 'helpers/AuthHelper.php';
+    $authHelper = new AuthHelper();
+    
+    if ($authHelper->estaAutenticado()) {
+        $usuarioLogueado = true;
+        $usuarioActual = $authHelper->obtenerUsuarioActual();
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -59,8 +73,46 @@ function getCacheBuster($filepath) {
                 <img src="assets/images/logo/logo_horizontal.png" alt="Camella Logo">
             </a>
             <nav class="header-actions" aria-label="Acciones">
-                <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
-                <a href="index.php?view=login" class="btn btn-login">Login</a>
+                <?php if ($usuarioLogueado): ?>
+                    <!-- Usuario autenticado -->
+                    <div class="user-menu">
+                        <span class="user-greeting">
+                            Hola, <strong><?php echo htmlspecialchars($usuarioActual['nombre']); ?></strong>
+                            <?php if ($usuarioActual['rol'] === 'admin'): ?>
+                                <span class="role-badge admin">Admin</span>
+                            <?php elseif ($usuarioActual['rol'] === 'promotor'): ?>
+                                <span class="role-badge promotor">Promotor</span>
+                            <?php endif; ?>
+                        </span>
+                        
+                        <div class="user-actions">
+                            <?php if ($usuarioActual['rol'] === 'admin'): ?>
+                                <a href="index.php?view=admin" class="btn btn-admin" title="Panel de Administración">
+                                    <i class="fas fa-cog"></i> Admin
+                                </a>
+                            <?php elseif ($usuarioActual['rol'] === 'promotor'): ?>
+                                <a href="index.php?view=promotor" class="btn btn-promotor" title="Panel de Promotor">
+                                    <i class="fas fa-bullhorn"></i> Promotor
+                                </a>
+                            <?php elseif ($usuarioActual['rol'] === 'publicante'): ?>
+                                <a href="index.php?view=publicante" class="btn btn-publish" title="Panel de Publicante">
+                                    <i class="fas fa-briefcase"></i> Mi Panel
+                                </a>
+                            <?php endif; ?>
+                            
+                            <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
+                            <a href="/logout" class="btn btn-logout" title="Cerrar Sesión">
+                                <i class="fas fa-sign-out-alt"></i> Salir
+                            </a>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <!-- Usuario no autenticado -->
+                    <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
+                    <a href="/login" class="btn btn-login">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                <?php endif; ?>
             </nav>
         </div>
     </header>

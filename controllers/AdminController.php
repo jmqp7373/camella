@@ -2,10 +2,53 @@
 /**
  * Controlador de Administración
  * Gestiona las funciones administrativas y la inicialización de datos
+ * 
+ * PROTECCIÓN POR ROL: Solo usuarios con rol 'admin' pueden acceder
+ * Se verifica el acceso al inicio de cada método público
  */
 
 require_once 'models/Categorias.php';
 require_once 'debug_logger.php';
+require_once __DIR__ . '/../helpers/AuthHelper.php';
+
+/**
+ * Función auxiliar para verificar acceso de administrador
+ * 
+ * Propósito: Centralizar la verificación de permisos admin en una función
+ * reutilizable para todos los métodos del controlador.
+ * 
+ * @param array $rolesPermitidos Lista de roles que pueden acceder ['admin']
+ * @throws void Redirecciona si no tiene permisos, no retorna si falla
+ */
+function verificarAcceso($rolesPermitidos = ['admin']) {
+    $authHelper = new AuthHelper();
+    
+    // Verificar si está autenticado
+    if (!$authHelper->estaAutenticado()) {
+        // Redirigir a login con la URL actual para regresar después
+        header('Location: /login?redirect=' . urlencode($_SERVER['REQUEST_URI']));
+        exit;
+    }
+    
+    // Verificar si tiene el rol adecuado
+    $tieneAcceso = false;
+    foreach ($rolesPermitidos as $rol) {
+        if ($authHelper->verificarAcceso($rol)) {
+            $tieneAcceso = true;
+            break;
+        }
+    }
+    
+    if (!$tieneAcceso) {
+        // Log del intento de acceso no autorizado
+        $usuario = $authHelper->obtenerUsuarioActual();
+        error_log("Acceso denegado - Usuario: {$usuario['email']}, Rol: {$usuario['rol']}, Intentó: " . $_SERVER['REQUEST_URI']);
+        
+        // Redirigir a página principal con mensaje de error
+        header('Location: /?error=' . urlencode('No tiene permisos para acceder a esta sección'));
+        exit;
+    }
+}
 
 class AdminController {
     private $categoriasModel;
@@ -16,8 +59,13 @@ class AdminController {
     
     /**
      * Vista principal de administración
+     * 
+     * PROTECCIÓN: Solo usuarios admin pueden acceder a esta función
      */
     public function index() {
+        // Verificar permisos de administrador antes de proceder
+        verificarAcceso(['admin']);
+        
         // Inicializar automáticamente las tablas y datos
         $estado = $this->inicializarSistema();
         
@@ -120,6 +168,9 @@ class AdminController {
      * Agregar nueva categoría
      */
     public function agregarCategoria() {
+        // Verificar permisos admin antes de agregar categoría
+        verificarAcceso(['admin']);
+        
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: index.php?view=admin&action=categorias');
             return;
@@ -188,6 +239,9 @@ class AdminController {
      * Editar categoría existente
      */
     public function editarCategoria() {
+        // Verificar permisos admin antes de editar categoría
+        verificarAcceso(['admin']);
+        
         // Log detallado para debugging
         logCategoria('INICIO_EDICION', [
             'REQUEST_METHOD' => $_SERVER['REQUEST_METHOD'],

@@ -26,9 +26,11 @@ function sanitize_input($data) {
     return $data;
 }
 
+// Inicializar sesión para todo el sitio
+session_start();
+
 // Manejar acciones POST antes de cargar vistas
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
-    session_start();
     $action = sanitize_input($_POST['action']);
     
     switch($action) {
@@ -53,6 +55,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     exit;
 }
 
+// Manejar rutas de autenticación
+$request_uri = $_SERVER['REQUEST_URI'];
+$path = parse_url($request_uri, PHP_URL_PATH);
+
+// Sistema de routing simple
+if ($path === '/login' || $path === '/auth/login') {
+    require_once 'controllers/LoginController.php';
+    $controller = new LoginController();
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $controller->procesarLogin();
+    } else {
+        $controller->mostrarLogin();
+    }
+    exit;
+}
+
+if ($path === '/logout' || $path === '/auth/logout') {
+    require_once 'controllers/LoginController.php';
+    $controller = new LoginController();
+    $controller->logout();
+    exit;
+}
+
+if ($path === '/registro' || $path === '/auth/registro') {
+    require_once 'controllers/LoginController.php';
+    $controller = new LoginController();
+    $controller->mostrarRegistro();
+    exit;
+}
+
 // Obtener la vista solicitada (default: home)
 $view = isset($_GET['view']) ? sanitize_input($_GET['view']) : 'home';
 
@@ -64,13 +97,12 @@ $allowed_views = [
     'buscar-empleo',
     'registro-empresa',
     'registro-talento',
-    'login',
-    'registro',
-    'recuperar-password',
     'privacidad',
     'terminos',
     'ayuda',
-    'admin'
+    'admin',
+    'promotor',
+    'publicante'
 ];
 
 // Verificar que la vista sea válida
@@ -78,14 +110,20 @@ if (!in_array($view, $allowed_views)) {
     $view = 'home';
 }
 
-// Manejar rutas especiales (admin y APIs)
+// Manejar rutas especiales (admin, promotor y APIs)
 if ($view === 'admin') {
-    // Inicializar sesión para admin
-    session_start();
-    
     $action = isset($_GET['action']) ? sanitize_input($_GET['action']) : 'index';
     
     require_once 'controllers/AdminController.php';
+    require_once 'controllers/LoginController.php';
+    
+    $loginController = new LoginController();
+    
+    // Verificar autenticación para admin
+    if (!$loginController->requireAuth('admin')) {
+        exit;
+    }
+    
     $controller = new AdminController();
     
     if (method_exists($controller, $action)) {
@@ -93,6 +131,40 @@ if ($view === 'admin') {
     } else {
         $controller->index();
     }
+    exit;
+}
+
+if ($view === 'promotor') {
+    require_once 'controllers/PromotorController.php';
+    require_once 'controllers/LoginController.php';
+    
+    $loginController = new LoginController();
+    
+    // Verificar autenticación para promotor o admin
+    if (!$loginController->requireAuth('promotor')) {
+        exit;
+    }
+    
+    // Crear instancia del controlador de promotor
+    $controller = new PromotorController();
+    $controller->index();
+    exit;
+}
+
+if ($view === 'publicante') {
+    require_once 'controllers/PublicanteController.php';
+    require_once 'controllers/LoginController.php';
+    
+    $loginController = new LoginController();
+    
+    // Verificar autenticación para publicante o admin
+    if (!$loginController->requireAuth('publicante')) {
+        exit;
+    }
+    
+    // Crear instancia del controlador de publicante
+    $controller = new PublicanteController();
+    $controller->index();
     exit;
 }
 
