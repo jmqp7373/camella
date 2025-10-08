@@ -65,28 +65,31 @@ if (session_status() === PHP_SESSION_NONE) {
  */
 require_once __DIR__ . '/errors/handler.php';
 
-// ------------------------------------------------------
-//  Inicialización segura de PDO (si no se ha hecho aún)
-// ------------------------------------------------------
-// Este bloque garantiza que getPDO() esté disponible y que $pdo 
-// global se inicialice correctamente en cada carga de bootstrap.
-// No imprime nada al usuario y solo loggea para diagnóstico.
-// No rompe flujo, incluso si la DB está caída.
-
+// -----------------------------------------------
+//  PDO global y disponible (instancia única)
+// -----------------------------------------------
 if (!function_exists('getPDO')) {
     require_once __DIR__ . '/config/config.php';
 }
 
 try {
-    $pdo = getPDO();
+    // Instanciar siempre (singleton interno de getPDO)
+    $pdoInstance = getPDO();
+
+    // Publicar en ámbito global para código legacy que espera $pdo
+    $GLOBALS['pdo'] = $pdoInstance;
+
+    // (Opcional) compat: variable local $pdo si algún include la usa
+    $pdo = $pdoInstance;
+
     if ($pdo instanceof PDO) {
-        // Confirmación en logs para diagnóstico
-        error_log('[bootstrap] PDO instanciado correctamente.');
+        error_log('[bootstrap] PDO instanciado y publicado en $GLOBALS[\'pdo\'].');
     } else {
-        error_log('[bootstrap] PDO no retornó instancia válida.');
+        error_log('[bootstrap] Advertencia: getPDO() no devolvió instancia PDO.');
     }
 } catch (Throwable $e) {
     error_log('[bootstrap] Error inicializando PDO: ' . $e->getMessage());
+    // No cortar ejecución; el handler global gestiona fatales.
 }
 
 /**

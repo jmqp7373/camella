@@ -118,51 +118,38 @@ echo "Error reporting: " . $errorReporting . "\n";
 echo "\n4) BASE DE DATOS\n";
 echo "----------------\n";
 
-// LÍNEA CLAVE: Intentar obtener conexión PDO del sistema
-$pdo = null;
-
-// Verificar variables globales comunes que el bootstrap podría haber establecido
-if (isset($GLOBALS['pdo']) && $GLOBALS['pdo'] instanceof PDO) {
-    $pdo = $GLOBALS['pdo'];
-} elseif (isset($pdo) && $pdo instanceof PDO) {
-    // ok - ya asignado
-} elseif (isset($db) && $db instanceof PDO) {
-    $pdo = $db;
-}
+// 4) Conexión DB
+$pdo = $pdo ?? ($GLOBALS['pdo'] ?? null);
 
 echo "PDO instance: ";
 if ($pdo instanceof PDO) {
-    echo "instanciado\n";
-    
+    echo "instanciado (via bootstrap)\n";
+} else {
+    // Intentar vía getPDO() si existe
+    if (!function_exists('getPDO')) {
+        $cfg = __DIR__ . '/../config/config.php';
+        if (file_exists($cfg)) require_once $cfg;
+    }
     try {
-        // LÍNEA CLAVE: Test básico de conectividad con query simple
-        $result = $pdo->query('SELECT 1 as test')->fetchColumn();
-        echo "Query SELECT 1: " . ($result == 1 ? "OK\n" : "FAIL (unexpected result)\n");
-        
-        // Test de una tabla del proyecto (si existe)
-        try {
-            $stmt = $pdo->prepare('SHOW TABLES LIKE ?');
-            $stmt->execute(['usuarios']);
-            $hasUsersTable = $stmt->fetch() ? 'SI' : 'NO';
-            echo "Tabla usuarios: {$hasUsersTable}\n";
-        } catch (Throwable $e) {
-            echo "Tabla usuarios: ERROR (" . $e->getMessage() . ")\n";
+        if (function_exists('getPDO')) {
+            $pdo = getPDO();
+            $GLOBALS['pdo'] = $pdo; // publicar para próximos includes
         }
-        
+    } catch (Throwable $e) {
+        // continuar; se reporta como no instanciado
+    }
+    echo ($pdo instanceof PDO) ? "instanciado (via getPDO)\n" : "NO instanciado\n";
+}
+
+if ($pdo instanceof PDO) {
+    try {
+        $ok = $pdo->query('SELECT 1')->fetchColumn();
+        echo "Query SELECT 1: " . ($ok ? "OK\n" : "FAIL\n");
     } catch (Throwable $e) {
         echo "Query SELECT 1: FAIL (" . $e->getMessage() . ")\n";
     }
 } else {
-    echo "NO instanciado\n";
-    
-    // Intentar diagnosticar por qué no hay PDO
-    if (!extension_loaded('pdo')) {
-        echo "ERROR: Extensión PDO no está cargada\n";
-    } elseif (!extension_loaded('pdo_mysql')) {
-        echo "ERROR: Extensión PDO_MySQL no está cargada\n";
-    } else {
-        echo "INFO: PDO disponible pero no inicializado por bootstrap\n";
-    }
+    echo "INFO: PDO disponible pero no inicializado por bootstrap\n";
 }
 
 // ------------------------------------------------------------
