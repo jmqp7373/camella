@@ -6,6 +6,25 @@
 
 $pageTitle = "Inicio";
 
+// ========== TRACKING DE REFERIDOS ==========
+// Verificar si viene de un enlace de referido
+if (isset($_GET['ref']) && !empty($_GET['ref'])) {
+    $codigo_referido = sanitize_input($_GET['ref']);
+    
+    // JavaScript para rastrear la visita de forma asíncrona
+    echo "<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('index.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'action=rastrear_visita&codigo=' + encodeURIComponent('$codigo_referido')
+        }).catch(console.error);
+    });
+    </script>";
+}
+
 // Cargar categorías dinámicas desde la base de datos
 $categorias = [];
 try {

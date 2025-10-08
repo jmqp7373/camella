@@ -494,5 +494,342 @@ class AdminController {
             ]);
         }
     }
+    
+    /**
+     * ========================================
+     * GESTIÓN DE PROMOTORES - ADMINISTRACIÓN
+     * ========================================
+     */
+    
+    /**
+     * Vista principal de gestión de promotores
+     */
+    public function promotores() {
+        verificarAcceso(['admin']);
+        
+        try {
+            require_once 'models/Promotor.php';
+            require_once 'models/Referidos.php';
+            require_once 'models/Comisiones.php';
+            
+            $promotorModel = new Promotor();
+            $referidosModel = new Referidos();
+            $comisionesModel = new Comisiones();
+            
+            // Obtener lista de promotores con estadísticas
+            $promotores = $promotorModel->listarTodos();
+            
+            // Enriquecer con estadísticas
+            foreach ($promotores as &$promotor) {
+                $estadisticas = $referidosModel->getEstadisticasPromotor($promotor['id']);
+                $promotor = array_merge($promotor, $estadisticas);
+            }
+            
+            // Estadísticas generales del sistema de referidos
+            $estadisticas_sistema = [
+                'total_promotores' => count($promotores),
+                'promotores_activos' => count(array_filter($promotores, function($p) { 
+                    return $p['estado'] === 'activo'; 
+                })),
+                'total_visitas' => array_sum(array_column($promotores, 'total_visitas')),
+                'total_registros' => array_sum(array_column($promotores, 'total_registros')),
+                'comision_pendiente' => $comisionesModel->getTotalPendiente(),
+                'comision_pagada' => $comisionesModel->getTotalPagada()
+            ];
+            
+            include 'views/admin/promotores/lista.php';
+            
+        } catch (Exception $e) {
+            error_log("Error en admin promotores: " . $e->getMessage());
+            $_SESSION['mensaje_error'] = 'Error cargando promotores: ' . $e->getMessage();
+            header('Location: index.php?view=admin');
+            exit;
+        }
+    }
+    
+    /**
+     * Cambiar estado de un promotor
+     */
+    public function cambiarEstadoPromotor() {
+        verificarAcceso(['admin']);
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+        
+        $response = ['exito' => false, 'mensaje' => ''];
+        
+        try {
+            $promotor_id = $_POST['promotor_id'] ?? null;
+            $nuevo_estado = $_POST['estado'] ?? null;
+            
+            if (!$promotor_id || !$nuevo_estado) {
+                throw new Exception('Datos incompletos');
+            }
+            
+            if (!in_array($nuevo_estado, ['activo', 'inactivo', 'suspendido'])) {
+                throw new Exception('Estado no válido');
+            }
+            
+            require_once 'models/Promotor.php';
+            $promotorModel = new Promotor();
+            
+            $resultado = $promotorModel->cambiarEstado($promotor_id, $nuevo_estado);
+            
+            if ($resultado) {
+                $response['exito'] = true;
+                $response['mensaje'] = 'Estado actualizado correctamente';
+            } else {
+                $response['mensaje'] = 'Error al actualizar el estado';
+            }
+            
+        } catch (Exception $e) {
+            $response['mensaje'] = $e->getMessage();
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    
+    /**
+     * Vista de comisiones para administración
+     */
+    public function comisiones() {
+        verificarAcceso(['admin']);
+        
+        try {
+            require_once 'models/Comisiones.php';
+            require_once 'models/Promotor.php';
+            
+            $comisionesModel = new Comisiones();
+            $promotorModel = new Promotor();
+            
+            // Parámetros de filtrado
+            $estado = $_GET['estado'] ?? 'pendiente';
+            $promotor_id = $_GET['promotor'] ?? null;
+            $pagina = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+            $por_pagina = 50;
+            
+            // Obtener comisiones
+            $filtros = [];
+            if ($estado !== 'todas') {
+                $filtros['estado'] = $estado;
+            }
+            if ($promotor_id) {
+                $filtros['promotor_id'] = $promotor_id;
+            }
+            
+            $comisiones = $comisionesModel->listarParaAdmin($filtros, $por_pagina, ($pagina - 1) * $por_pagina);
+            $total_comisiones = $comisionesModel->contarParaAdmin($filtros);
+            $total_paginas = ceil($total_comisiones / $por_pagina);
+            
+            // Lista de promotores para filtro
+            $promotores = $promotorModel->listarTodos();
+            
+            // Estadísticas de comisiones
+            $estadisticas = $comisionesModel->getEstadisticasAdmin();
+            
+            include 'views/admin/promotores/comisiones.php';
+            
+        } catch (Exception $e) {
+            error_log("Error en admin comisiones: " . $e->getMessage());
+            $_SESSION['mensaje_error'] = 'Error cargando comisiones: ' . $e->getMessage();
+            header('Location: index.php?view=admin');
+            exit;
+        }
+    }
+    
+    /**
+     * Aprobar o rechazar comisión
+     */
+    public function procesarComision() {
+        verificarAcceso(['admin']);
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+        
+        $response = ['exito' => false, 'mensaje' => ''];
+        
+        try {
+            $comision_id = $_POST['comision_id'] ?? null;
+            $accion = $_POST['accion'] ?? null; // 'aprobar' o 'rechazar'
+            $notas = $_POST['notas'] ?? '';
+            
+            if (!$comision_id || !$accion) {
+                throw new Exception('Datos incompletos');
+            }
+            
+            if (!in_array($accion, ['aprobar', 'rechazar'])) {
+                throw new Exception('Acción no válida');
+            }
+            
+            require_once 'models/Comisiones.php';
+            $comisionesModel = new Comisiones();
+            
+            $authHelper = new AuthHelper();
+            $admin = $authHelper->obtenerUsuarioActual();
+            
+            if ($accion === 'aprobar') {
+                $resultado = $comisionesModel->aprobar($comision_id, $admin['id'], $notas);
+                $mensaje_exito = 'Comisión aprobada correctamente';
+            } else {
+                $resultado = $comisionesModel->rechazar($comision_id, $admin['id'], $notas);
+                $mensaje_exito = 'Comisión rechazada correctamente';
+            }
+            
+            if ($resultado) {
+                $response['exito'] = true;
+                $response['mensaje'] = $mensaje_exito;
+            } else {
+                $response['mensaje'] = 'Error al procesar la comisión';
+            }
+            
+        } catch (Exception $e) {
+            $response['mensaje'] = $e->getMessage();
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    
+    /**
+     * Marcar comisión como pagada
+     */
+    public function marcarComisionPagada() {
+        verificarAcceso(['admin']);
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            return;
+        }
+        
+        $response = ['exito' => false, 'mensaje' => ''];
+        
+        try {
+            $comision_id = $_POST['comision_id'] ?? null;
+            $referencia_pago = $_POST['referencia'] ?? '';
+            $notas = $_POST['notas'] ?? '';
+            
+            if (!$comision_id) {
+                throw new Exception('ID de comisión requerido');
+            }
+            
+            require_once 'models/Comisiones.php';
+            $comisionesModel = new Comisiones();
+            
+            $authHelper = new AuthHelper();
+            $admin = $authHelper->obtenerUsuarioActual();
+            
+            $resultado = $comisionesModel->marcarPagada($comision_id, $admin['id'], $referencia_pago, $notas);
+            
+            if ($resultado) {
+                $response['exito'] = true;
+                $response['mensaje'] = 'Comisión marcada como pagada';
+            } else {
+                $response['mensaje'] = 'Error al marcar como pagada';
+            }
+            
+        } catch (Exception $e) {
+            $response['mensaje'] = $e->getMessage();
+        }
+        
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    
+    /**
+     * Obtener detalles de un promotor específico
+     */
+    public function detallePromotor() {
+        verificarAcceso(['admin']);
+        
+        $promotor_id = $_GET['id'] ?? null;
+        
+        if (!$promotor_id) {
+            $_SESSION['mensaje_error'] = 'ID de promotor requerido';
+            header('Location: index.php?action=admin_promotores');
+            exit;
+        }
+        
+        try {
+            require_once 'models/Promotor.php';
+            require_once 'models/Referidos.php';
+            require_once 'models/Comisiones.php';
+            
+            $promotorModel = new Promotor();
+            $referidosModel = new Referidos();
+            $comisionesModel = new Comisiones();
+            
+            $promotor = $promotorModel->getById($promotor_id);
+            if (!$promotor) {
+                throw new Exception('Promotor no encontrado');
+            }
+            
+            // Estadísticas detalladas
+            $estadisticas = $referidosModel->getEstadisticasPromotor($promotor_id);
+            
+            // Historial de referidos
+            $referidos_recientes = $referidosModel->getByPromotorId($promotor_id, 20);
+            
+            // Comisiones recientes
+            $comisiones_recientes = $comisionesModel->getByPromotorId($promotor_id, 'todas', 20);
+            
+            include 'views/admin/promotores/detalle.php';
+            
+        } catch (Exception $e) {
+            error_log("Error detalle promotor: " . $e->getMessage());
+            $_SESSION['mensaje_error'] = 'Error: ' . $e->getMessage();
+            header('Location: index.php?action=admin_promotores');
+            exit;
+        }
+    }
+    
+    /**
+     * Configuración del sistema de promotores
+     */
+    public function configuracionPromotores() {
+        verificarAcceso(['admin']);
+        
+        try {
+            require_once 'models/Comisiones.php';
+            $comisionesModel = new Comisiones();
+            
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Procesar actualización de configuración
+                $config = [
+                    'comision_por_referido' => (float)($_POST['comision_por_referido'] ?? 0),
+                    'comision_activa' => isset($_POST['comision_activa']) ? 1 : 0,
+                    'limite_visitas_diarias' => (int)($_POST['limite_visitas_diarias'] ?? 100),
+                    'tiempo_expiracion_cookie' => (int)($_POST['tiempo_expiracion_cookie'] ?? 30),
+                    'requiere_aprobacion_manual' => isset($_POST['requiere_aprobacion_manual']) ? 1 : 0
+                ];
+                
+                $resultado = $comisionesModel->actualizarConfiguracion($config);
+                
+                if ($resultado) {
+                    $_SESSION['mensaje_exito'] = 'Configuración actualizada correctamente';
+                } else {
+                    $_SESSION['mensaje_error'] = 'Error al actualizar configuración';
+                }
+                
+                header('Location: index.php?action=admin_config_promotores');
+                exit;
+            }
+            
+            // Cargar configuración actual
+            $config_actual = $comisionesModel->getConfiguracion();
+            
+            include 'views/admin/promotores/configuracion.php';
+            
+        } catch (Exception $e) {
+            error_log("Error config promotores: " . $e->getMessage());
+            $_SESSION['mensaje_error'] = 'Error: ' . $e->getMessage();
+            header('Location: index.php?view=admin');
+            exit;
+        }
+    }
 }
 ?>

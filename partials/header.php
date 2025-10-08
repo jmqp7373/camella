@@ -60,7 +60,37 @@ function getCacheBuster($filepath) {
             </a>
             <nav class="header-actions" aria-label="Acciones">
                 <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
-                <a href="index.php?view=login" class="btn btn-login">Login</a>
+                
+                <?php
+                // Verificar estado de autenticación para mostrar enlace de promotor
+                $authHelper = new AuthHelper();
+                if ($authHelper->estaAutenticado()):
+                    $usuario = $authHelper->obtenerUsuarioActual();
+                ?>
+                    <!-- Enlaces para usuarios autenticados -->
+                    <a href="index.php?action=promotor_panel" class="btn btn-promotor" title="Panel de Promotor">
+                        <i class="fas fa-bullhorn"></i> Promotor
+                    </a>
+                    
+                    <?php if ($authHelper->verificarAcceso('admin')): ?>
+                    <a href="index.php?view=admin" class="btn btn-admin" title="Panel de Administración">
+                        <i class="fas fa-cogs"></i> Admin
+                    </a>
+                    <?php endif; ?>
+                    
+                    <div class="user-menu">
+                        <span class="user-greeting">
+                            <i class="fas fa-user-circle"></i> 
+                            Hola, <?= htmlspecialchars($usuario['nombre'] ?? 'Usuario') ?>
+                        </span>
+                        <a href="index.php?action=logout" class="btn btn-logout" title="Cerrar sesión">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </a>
+                    </div>
+                <?php else: ?>
+                    <!-- Enlaces para usuarios no autenticados -->
+                    <a href="index.php?view=login" class="btn btn-login">Login</a>
+                <?php endif; ?>
             </nav>
         </div>
     </header>

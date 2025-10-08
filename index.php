@@ -61,6 +61,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $controller = new AdminController();
             $controller->agregarOficio();
             break;
+            
+        // ========== ACCIONES DE PROMOTORES ==========
+        case 'rastrear_visita':
+            require_once 'controllers/PromotorController.php';
+            $controller = new PromotorController();
+            $controller->rastrearVisita();
+            break;
+            
+        case 'atribuir_registro':
+            require_once 'controllers/PromotorController.php';
+            $controller = new PromotorController();
+            $controller->atribuirRegistro();
+            break;
+            
+        // Admin - Promotores
+        case 'admin_cambiar_estado_promotor':
+            require_once 'controllers/AdminController.php';
+            $controller = new AdminController();
+            $controller->cambiarEstadoPromotor();
+            break;
+            
+        case 'admin_procesar_comision':
+            require_once 'controllers/AdminController.php';
+            $controller = new AdminController();
+            $controller->procesarComision();
+            break;
+            
+        case 'admin_marcar_comision_pagada':
+            require_once 'controllers/AdminController.php';
+            $controller = new AdminController();
+            $controller->marcarComisionPagada();
+            break;
     }
     exit;
 }
@@ -90,7 +122,7 @@ if (!in_array($view, $allowed_views)) {
     $view = 'home';
 }
 
-// Manejar rutas especiales (admin y APIs)
+// Manejar rutas especiales (admin, promotor y APIs)
 if ($view === 'admin') {
     // Inicializar sesión para admin
     session_start();
@@ -104,6 +136,59 @@ if ($view === 'admin') {
         $controller->$action();
     } else {
         $controller->index();
+    }
+    exit;
+}
+
+// Manejar acciones GET generales
+if (isset($_GET['action'])) {
+    session_start();
+    $action = sanitize_input($_GET['action']);
+    
+    switch($action) {
+        // ========== VISTAS DE PROMOTORES ==========
+        case 'promotor_panel':
+            require_once 'controllers/PromotorController.php';
+            $controller = new PromotorController();
+            $controller->panel();
+            break;
+            
+        case 'promotor_comisiones':
+            require_once 'controllers/PromotorController.php';
+            $controller = new PromotorController();
+            $controller->comisiones();
+            break;
+            
+        // ========== VISTAS ADMIN - PROMOTORES ==========
+        case 'admin_promotores':
+            require_once 'controllers/AdminController.php';
+            $controller = new AdminController();
+            $controller->promotores();
+            break;
+            
+        case 'admin_comisiones':
+            require_once 'controllers/AdminController.php';
+            $controller = new AdminController();
+            $controller->comisiones();
+            break;
+            
+        case 'admin_detalle_promotor':
+            require_once 'controllers/AdminController.php';
+            $controller = new AdminController();
+            $controller->detallePromotor();
+            break;
+            
+        case 'admin_config_promotores':
+            require_once 'controllers/AdminController.php';
+            $controller = new AdminController();
+            $controller->configuracionPromotores();
+            break;
+            
+        // Otras acciones...
+        default:
+            // Redirigir a home si la acción no existe
+            header('Location: index.php');
+            exit;
     }
     exit;
 }
