@@ -6,23 +6,76 @@
 
 $pageTitle = "Inicio";
 
-// ========== TRACKING DE REFERIDOS ==========
-// Verificar si viene de un enlace de referido
-if (isset($_GET['ref']) && !empty($_GET['ref'])) {
-    $codigo_referido = sanitize_input($_GET['ref']);
-    
-    // JavaScript para rastrear la visita de forma asíncrona
-    echo "<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        fetch('index.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'action=rastrear_visita&codigo=' + encodeURIComponent('$codigo_referido')
-        }).catch(console.error);
-    });
-    </script>";
+/**
+ * Tracking de referidos — Hotfix tolerante.
+ * 
+ * INTENCIÓN:
+ * - Procesar ?ref= sin romper la vista si faltan dependencias.
+ * - No altera maquetación ni estilos existentes.
+ * - Si falla cualquier paso, se ignora silenciosamente y se registra.
+ * 
+ * EFECTOS:
+ * - Establece cookie 'ref_code' si código válido.
+ * - Registra visita en base de datos si modelos disponibles.
+ * - Loggea errores sin mostrarlos al usuario.
+ * 
+ * NOTAS DEV NOVATO:
+ * - Este bloque es provisional hasta mover tracking al router/controlador.
+ * - No iniciar sesión aquí; depender de bootstrap.php existente.
+ * - Si se migra el tracking a index.php, eliminar este bloque completo.
+ */
+try {
+    // LÍNEA CLAVE: Solo actuar si viene ?ref= en la URL
+    if (isset($_GET['ref']) && is_string($_GET['ref'])) {
+
+        // LÍNEA CLAVE: Cargar bootstrap para sesión + helpers solo si existe
+        $bootstrap = dirname(__DIR__) . '/bootstrap.php';
+        if (file_exists($bootstrap)) {
+            require_once $bootstrap; // Comentario: centraliza session_start y helpers
+        }
+
+        // LÍNEA CLAVE: Valida el código de referido (ajustar regex si formato distinto)
+        $code = trim($_GET['ref']);
+        if (preg_match('/^[a-f0-9]{16,64}$/i', $code)) {
+
+            // LÍNEA CLAVE: Evitar romper si las clases no están disponibles
+            if (class_exists('Promotor') && class_exists('Referidos')) {
+
+                // LÍNEA CLAVE: Recuperar promotor por código (método del modelo)
+                if (method_exists('Promotor', 'getByCodigo')) {
+                    $promotorModel = new Promotor();
+                    $promotor = $promotorModel->getByCodigo($code);
+
+                    // LÍNEA CLAVE: Si existe promotor válido, persistir cookie y registrar visita
+                    if ($promotor && !headers_sent()) {
+                        // Cookie 7 días; httpOnly; samesite=Lax
+                        setcookie('ref_code', $code, [
+                            'expires'  => time() + 7 * 24 * 60 * 60,
+                            'path'     => '/',
+                            'secure'   => !empty($_SERVER['HTTPS']),
+                            'httponly' => true,
+                            'samesite' => 'Lax',
+                        ]);
+
+                        // LÍNEA CLAVE: Fingerprint liviano para conteo de visitas
+                        $ip  = $_SERVER['REMOTE_ADDR']      ?? '';
+                        $ua  = $_SERVER['HTTP_USER_AGENT']  ?? '';
+                        $sid = session_id() ?: '';
+                        $fp  = hash('sha256', $code . $ip . $ua . $sid);
+
+                        // LÍNEA CLAVE: Registrar visita si el método existe (no fallar si no)
+                        if (method_exists('Referidos', 'registrarVisita')) {
+                            $referidosModel = new Referidos();
+                            @$referidosModel->registrarVisita((int)$promotor['id'], $fp, $ip, $ua);
+                        }
+                    }
+                }
+            }
+        }
+    }
+} catch (Throwable $e) {
+    // LÍNEA CLAVE: Silenciar para no romper la home; registrar para diagnóstico
+    @error_log('[home tracking] ' . $e->getMessage());
 }
 
 // Cargar categorías dinámicas desde la base de datos
