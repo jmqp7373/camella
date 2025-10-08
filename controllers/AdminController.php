@@ -192,7 +192,12 @@ class AdminController {
      */
     public function editarCategoria() {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: index.php?view=admin&action=categorias');
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                header('Content-Type: application/json');
+                echo json_encode(['exito' => false, 'mensaje' => 'Método no permitido']);
+            } else {
+                header('Location: index.php?view=admin');
+            }
             return;
         }
         
@@ -201,8 +206,14 @@ class AdminController {
         $icono = trim($_POST['icono'] ?? '');
         
         if (!$id || empty($nombre)) {
-            $_SESSION['mensaje_error'] = 'ID y nombre son obligatorios';
-            header('Location: index.php?view=admin&action=categorias');
+            $error = 'ID y nombre son obligatorios';
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                header('Content-Type: application/json');
+                echo json_encode(['exito' => false, 'mensaje' => $error]);
+            } else {
+                $_SESSION['mensaje_error'] = $error;
+                header('Location: index.php?view=admin');
+            }
             return;
         }
         
@@ -210,15 +221,50 @@ class AdminController {
             $resultado = $this->categoriasModel->actualizarCategoria($id, $nombre, $icono ?: null);
             
             if ($resultado) {
-                $_SESSION['mensaje_exito'] = 'Categoría actualizada exitosamente';
+                $mensaje = 'Categoría actualizada exitosamente';
+                if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                    header('Content-Type: application/json');
+                    echo json_encode([
+                        'exito' => true, 
+                        'mensaje' => $mensaje,
+                        'categoria' => [
+                            'id' => $id,
+                            'nombre' => $nombre,
+                            'icono' => $icono
+                        ]
+                    ]);
+                } else {
+                    $_SESSION['mensaje_exito'] = $mensaje;
+                    header('Location: index.php?view=admin');
+                }
             } else {
-                $_SESSION['mensaje_error'] = 'Error al actualizar la categoría';
+                $error = 'Error al actualizar la categoría';
+                if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                    header('Content-Type: application/json');
+                    echo json_encode(['exito' => false, 'mensaje' => $error]);
+                } else {
+                    $_SESSION['mensaje_error'] = $error;
+                    header('Location: index.php?view=admin');
+                }
             }
         } catch (Exception $e) {
-            $_SESSION['mensaje_error'] = 'Error: ' . $e->getMessage();
+            $error = 'Error: ' . $e->getMessage();
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                header('Content-Type: application/json');
+                echo json_encode(['exito' => false, 'mensaje' => $error]);
+            } else {
+                $_SESSION['mensaje_error'] = $error;
+                header('Location: index.php?view=admin');
+            }
         }
-        
-        header('Location: index.php?view=admin&action=categorias');
+    }
+    
+    /**
+     * Gestión de categorías (redirección a dashboard)
+     */
+    public function categorias() {
+        header('Location: index.php?view=admin');
+        exit;
     }
     
     /**
