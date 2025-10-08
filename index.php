@@ -26,116 +26,53 @@ function sanitize_input($data) {
     return $data;
 }
 
-// Inicializar sesión
-session_start();
-
-// Obtener parámetros de la URL
+// Obtener la vista solicitada (default: home)
 $view = isset($_GET['view']) ? sanitize_input($_GET['view']) : 'home';
-$action = isset($_GET['action']) ? sanitize_input($_GET['action']) : 'index';
 
-// Rutas y controladores
-$routes = [
-    'home' => 'HomeController',
-    'admin' => 'AdminController',
-    'contacto' => 'ContactoController',
-    'publicar-oferta' => 'OfertasController',
-    'buscar-empleo' => 'BusquedaController',
-    'registro-empresa' => 'RegistroController',
-    'registro-talento' => 'RegistroController',
-    'login' => 'AuthController',
-    'registro' => 'AuthController',
-    'recuperar-password' => 'AuthController',
-    'privacidad' => 'LegalController',
-    'terminos' => 'LegalController',
-    'ayuda' => 'SoporteController'
+// Lista de vistas permitidas (seguridad)
+$allowed_views = [
+    'home',
+    'contacto',
+    'publicar-oferta',
+    'buscar-empleo',
+    'registro-empresa',
+    'registro-talento',
+    'login',
+    'registro',
+    'recuperar-password',
+    'privacidad',
+    'terminos',
+    'ayuda',
+    'admin'
 ];
 
-// Verificar si es una llamada API
-if (isset($_GET['api'])) {
-    $api = sanitize_input($_GET['api']);
-    handleAPI($api);
+// Verificar que la vista sea válida
+if (!in_array($view, $allowed_views)) {
+    $view = 'home';
+}
+
+// Manejar rutas especiales (admin y APIs)
+if ($view === 'admin') {
+    // Inicializar sesión para admin
+    session_start();
+    
+    $action = isset($_GET['action']) ? sanitize_input($_GET['action']) : 'index';
+    
+    require_once 'controllers/AdminController.php';
+    $controller = new AdminController();
+    
+    if (method_exists($controller, $action)) {
+        $controller->$action();
+    } else {
+        $controller->index();
+    }
     exit;
 }
 
-try {
-    // Determinar el controlador
-    if (isset($routes[$view])) {
-        $controllerName = $routes[$view];
-        $controllerFile = CONTROLLERS_PATH . $controllerName . '.php';
-        
-        if (file_exists($controllerFile)) {
-            require_once $controllerFile;
-            
-            if (class_exists($controllerName)) {
-                $controller = new $controllerName();
-                
-                // Verificar si el método existe
-                if (method_exists($controller, $action)) {
-                    $controller->$action();
-                } else {
-                    // Método por defecto
-                    $controller->index();
-                }
-            } else {
-                loadStaticView($view);
-            }
-        } else {
-            loadStaticView($view);
-        }
-    } else {
-        loadStaticView($view);
-    }
-    
-} catch (Exception $e) {
-    error_log("Error en index.php: " . $e->getMessage());
-    loadErrorView();
-}
-
-/**
- * Cargar vista estática (sin controlador)
- */
-function loadStaticView($view) {
-    $allowed_static_views = [
-        'contacto', 'privacidad', 'terminos', 'ayuda',
-        'publicar-oferta', 'buscar-empleo', 'registro-empresa',
-        'registro-talento', 'login', 'registro', 'recuperar-password'
-    ];
-    
-    if (in_array($view, $allowed_static_views)) {
-        $viewPath = VIEWS_PATH . $view . '.php';
-        
-        include 'partials/header.php';
-        
-        if (file_exists($viewPath)) {
-            include $viewPath;
-        } else {
-            loadErrorView();
-        }
-        
-        include 'partials/footer.php';
-    } else {
-        loadErrorView();
-    }
-}
-
-/**
- * Cargar vista de error
- */
-function loadErrorView() {
-    include 'partials/header.php';
-    echo '<div style="text-align: center; padding: 4rem;">';
-    echo '<h2><i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i> Vista no encontrada</h2>';
-    echo '<p>La página solicitada no existe o está en desarrollo.</p>';
-    echo '<a href="index.php" class="btn btn-primary"><i class="fas fa-home"></i> Volver al Inicio</a>';
-    echo '</div>';
-    include 'partials/footer.php';
-}
-
-/**
- * Manejar llamadas API
- */
-function handleAPI($api) {
+// Verificar si es una llamada API
+if (isset($_GET['api'])) {
     header('Content-Type: application/json');
+    $api = sanitize_input($_GET['api']);
     
     switch($api) {
         case 'categorias':
@@ -162,5 +99,27 @@ function handleAPI($api) {
                 'mensaje' => 'API no encontrada'
             ]);
     }
+    exit;
 }
+
+// Definir la ruta del archivo de vista
+$viewPath = VIEWS_PATH . $view . '.php';
+
+// Incluir header
+include 'partials/header.php';
+
+// Cargar la vista correspondiente
+if (file_exists($viewPath)) {
+    include $viewPath;
+} else {
+    // Vista de error 404 personalizada
+    echo '<div style="text-align: center; padding: 4rem;">';
+    echo '<h2><i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i> Vista no encontrada</h2>';
+    echo '<p>La página <strong>"' . htmlspecialchars($view) . '"</strong> no existe o está en desarrollo.</p>';
+    echo '<a href="index.php" class="btn btn-primary"><i class="fas fa-home"></i> Volver al Inicio</a>';
+    echo '</div>';
+}
+
+// Incluir footer
+include 'partials/footer.php';
 ?>
