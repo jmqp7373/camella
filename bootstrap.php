@@ -66,6 +66,26 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/errors/handler.php';
 
 /**
+ * CARGAR CONFIG Y EXPONER PDO GLOBAL
+ * 
+ * Propósito: Centralizar la conexión PDO y hacerla disponible globalmente
+ * para compatibilidad con código legacy que espera $pdo como variable global.
+ * 
+ * Se prefiere usar getPDO() en código nuevo, pero $pdo está disponible
+ * para piezas existentes que la necesiten.
+ */
+require_once __DIR__ . '/config/config.php';
+
+// Disponibilizar en variable global $pdo para código legacy que la espera
+try {
+    $pdo = getPDO();
+    error_log("[BOOTSTRAP] PDO inicializado correctamente");
+} catch (Throwable $e) {
+    error_log('[BOOTSTRAP PDO ERROR] ' . $e->getMessage());
+    // No cortamos la ejecución: el handler global ya se encarga de fatales.
+}
+
+/**
  * CARGA SEGURA DE AUTHHELPER
  * 
  * Incluye AuthHelper de forma centralizada con verificación de existencia
