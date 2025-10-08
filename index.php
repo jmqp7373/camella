@@ -26,6 +26,33 @@ function sanitize_input($data) {
     return $data;
 }
 
+// Manejar acciones POST antes de cargar vistas
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    session_start();
+    $action = sanitize_input($_POST['action']);
+    
+    switch($action) {
+        case 'agregarCategoria':
+            require_once 'controllers/AdminController.php';
+            $controller = new AdminController();
+            $controller->agregarCategoria();
+            break;
+            
+        case 'editarCategoria':
+            require_once 'controllers/AdminController.php';
+            $controller = new AdminController();
+            $controller->editarCategoria();
+            break;
+            
+        case 'agregarOficio':
+            require_once 'controllers/AdminController.php';
+            $controller = new AdminController();
+            $controller->agregarOficio();
+            break;
+    }
+    exit;
+}
+
 // Obtener la vista solicitada (default: home)
 $view = isset($_GET['view']) ? sanitize_input($_GET['view']) : 'home';
 

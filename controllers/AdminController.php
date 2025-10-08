@@ -188,6 +188,40 @@ class AdminController {
     }
     
     /**
+     * Editar categoría existente
+     */
+    public function editarCategoria() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?view=admin&action=categorias');
+            return;
+        }
+        
+        $id = intval($_POST['id'] ?? 0);
+        $nombre = trim($_POST['nombre'] ?? '');
+        $icono = trim($_POST['icono'] ?? '');
+        
+        if (!$id || empty($nombre)) {
+            $_SESSION['mensaje_error'] = 'ID y nombre son obligatorios';
+            header('Location: index.php?view=admin&action=categorias');
+            return;
+        }
+        
+        try {
+            $resultado = $this->categoriasModel->actualizarCategoria($id, $nombre, $icono ?: null);
+            
+            if ($resultado) {
+                $_SESSION['mensaje_exito'] = 'Categoría actualizada exitosamente';
+            } else {
+                $_SESSION['mensaje_error'] = 'Error al actualizar la categoría';
+            }
+        } catch (Exception $e) {
+            $_SESSION['mensaje_error'] = 'Error: ' . $e->getMessage();
+        }
+        
+        header('Location: index.php?view=admin&action=categorias');
+    }
+    
+    /**
      * Verificar estado del sistema
      */
     public function verificarSistema() {
