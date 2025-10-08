@@ -118,27 +118,31 @@ echo "Error reporting: " . $errorReporting . "\n";
 echo "\n4) BASE DE DATOS\n";
 echo "----------------\n";
 
+echo "PDO drivers: " . implode(',', PDO::getAvailableDrivers()) . "\n";
+
 // 4) Conexión DB
 $pdo = $pdo ?? ($GLOBALS['pdo'] ?? null);
 
 echo "PDO instance: ";
-if ($pdo instanceof PDO) {
-    echo "instanciado (via bootstrap)\n";
-} else {
-    // Intentar vía getPDO() si existe
+if (!($pdo instanceof PDO)) {
     if (!function_exists('getPDO')) {
         $cfg = __DIR__ . '/../config/config.php';
         if (file_exists($cfg)) require_once $cfg;
     }
     try {
-        if (function_exists('getPDO')) {
-            $pdo = getPDO();
-            $GLOBALS['pdo'] = $pdo; // publicar para próximos includes
+        $pdo = function_exists('getPDO') ? getPDO() : null;
+        if ($pdo instanceof PDO) {
+            $GLOBALS['pdo'] = $pdo;
+            echo "instanciado (via getPDO)\n";
+        } else {
+            echo "NO instanciado\n";
         }
     } catch (Throwable $e) {
-        // continuar; se reporta como no instanciado
+        echo "NO instanciado\n";
+        error_log('[selfcheck PDO] ' . $e->getMessage());
     }
-    echo ($pdo instanceof PDO) ? "instanciado (via getPDO)\n" : "NO instanciado\n";
+} else {
+    echo "instanciado (via bootstrap)\n";
 }
 
 if ($pdo instanceof PDO) {
@@ -146,7 +150,8 @@ if ($pdo instanceof PDO) {
         $ok = $pdo->query('SELECT 1')->fetchColumn();
         echo "Query SELECT 1: " . ($ok ? "OK\n" : "FAIL\n");
     } catch (Throwable $e) {
-        echo "Query SELECT 1: FAIL (" . $e->getMessage() . ")\n";
+        echo "Query SELECT 1: FAIL\n";
+        error_log('[selfcheck SELECT1] ' . $e->getMessage());
     }
 } else {
     echo "INFO: PDO disponible pero no inicializado por bootstrap\n";
