@@ -492,6 +492,29 @@ include 'partials/header.php';
         grid-template-columns: 1fr;
     }
 }
+
+/* Animaciones para mensajes de feedback */
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
 </style>
 
 <script>
@@ -525,6 +548,51 @@ document.addEventListener('DOMContentLoaded', function() {
             const categoriaId = this.dataset.categoriaId;
             document.getElementById('categoria_id').value = categoriaId;
             document.getElementById('modal-nuevo-oficio').style.display = 'block';
+        });
+    });
+    
+    // Manejo del formulario de editar categoría con AJAX
+    document.getElementById('form-editar-categoria')?.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        
+        // Mostrar estado de carga
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Actualizando...';
+        submitBtn.disabled = true;
+        
+        fetch('index.php', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.exito) {
+                // Actualizar la categoría en la interfaz sin recargar
+                actualizarCategoriaEnVista(data.categoria);
+                
+                // Cerrar modal
+                document.getElementById('modal-editar-categoria').style.display = 'none';
+                
+                // Mostrar mensaje de éxito
+                mostrarMensaje('Categoría actualizada exitosamente', 'success');
+            } else {
+                mostrarMensaje('Error: ' + data.mensaje, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            mostrarMensaje('Error de conexión. Intente nuevamente.', 'error');
+        })
+        .finally(() => {
+            // Restaurar botón
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
         });
     });
     
@@ -579,6 +647,64 @@ document.addEventListener('DOMContentLoaded', function() {
             location.reload();
         }
     });
+    
+    // Función para actualizar categoría en la vista sin recargar
+    function actualizarCategoriaEnVista(categoria) {
+        // Buscar la tarjeta de categoría por ID
+        const categoriaCard = document.querySelector(`[data-categoria-id="${categoria.id}"]`).closest('.admin-category-card');
+        
+        if (categoriaCard) {
+            // Actualizar el nombre en la tarjeta
+            const nombreElement = categoriaCard.querySelector('.category-header h3');
+            const iconoElement = categoriaCard.querySelector('.category-icon');
+            
+            if (nombreElement) nombreElement.textContent = categoria.nombre;
+            if (iconoElement) iconoElement.textContent = categoria.icono;
+            
+            // Actualizar los data-attributes del botón de editar
+            const editBtn = categoriaCard.querySelector('.btn-edit-categoria');
+            if (editBtn) {
+                editBtn.dataset.categoriaNombre = categoria.nombre;
+                editBtn.dataset.categoriaIcono = categoria.icono;
+            }
+        }
+    }
+    
+    // Función para mostrar mensajes de feedback
+    function mostrarMensaje(mensaje, tipo) {
+        // Crear elemento de mensaje
+        const messageEl = document.createElement('div');
+        messageEl.className = `alert alert-${tipo}`;
+        messageEl.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            max-width: 400px;
+            animation: slideIn 0.3s ease;
+        `;
+        
+        if (tipo === 'success') {
+            messageEl.style.backgroundColor = '#28a745';
+            messageEl.innerHTML = '<i class="fas fa-check-circle"></i> ' + mensaje;
+        } else {
+            messageEl.style.backgroundColor = '#dc3545';
+            messageEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + mensaje;
+        }
+        
+        // Agregar al DOM
+        document.body.appendChild(messageEl);
+        
+        // Remover después de 4 segundos
+        setTimeout(() => {
+            messageEl.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => messageEl.remove(), 300);
+        }, 4000);
+    }
 });
 </script>
 
