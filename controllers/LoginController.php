@@ -125,6 +125,28 @@ class LoginController extends BaseController {
         }
         
         try {
+            /**
+             * VERIFICACIÓN DE TOKEN CSRF - LÍNEA CRÍTICA DE SEGURIDAD
+             * 
+             * Propósito: Verificar que el request proviene del formulario legítimo
+             * y no de un sitio malicioso intentando un ataque CSRF.
+             * 
+             * Flujo de validación:
+             * 1. Verificar que el token fue enviado en POST
+             * 2. Comparar con el token almacenado en sesión
+             * 3. Usar hash_equals() para prevenir timing attacks
+             * 4. Rechazar request si no coincide
+             * 
+             * Comentario: Evita ataques CSRF en login donde un atacante
+             * podría forzar login con sus propias credenciales en la sesión
+             * de la víctima para acceder a datos posteriormente.
+             */
+            if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+                error_log("CSRF token inválido en login - IP: " . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+                http_response_code(400);
+                exit('Solicitud inválida. Por favor recarga la página e intenta nuevamente.');
+            }
+            
             // Obtener y validar datos del formulario
             $email = isset($_POST['email']) ? trim($_POST['email']) : '';
             $password = isset($_POST['password']) ? $_POST['password'] : '';
@@ -145,6 +167,18 @@ class LoginController extends BaseController {
                 $sesionIniciada = $this->authHelper->iniciarSesionSegura($usuario, $recordar);
                 
                 if ($sesionIniciada) {
+                    /**
+                     * REGENERACIÓN DE TOKEN CSRF POST-LOGIN - SEGURIDAD CRÍTICA
+                     * 
+                     * Propósito: Generar nuevo token CSRF después de login exitoso
+                     * para prevenir session fixation y ataques posteriores.
+                     * 
+                     * Razón del cambio: El token anterior ya se usó para validar
+                     * este login, debe ser regenerado para futuras operaciones
+                     * sensibles del usuario autenticado.
+                     */
+                    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+                    
                     // Log del login exitoso
                     error_log("Login exitoso - Usuario: {$usuario['email']}, Rol: {$usuario['rol']}, IP: " . $_SERVER['REMOTE_ADDR']);
                     
@@ -315,40 +349,53 @@ class LoginController extends BaseController {
     }
     
     /**
-     * Redireccionar según el rol del usuario
+     * Redireccionar según el rol del usuario (CON LISTA BLANCA ESTRICTA)
      * 
      * Propósito: Enviar a cada tipo de usuario a su panel correspondiente
-     * después de un login exitoso. Actualizado para usar rutas de paneles específicos.
+     * usando una lista blanca estricta para prevenir redirects maliciosos.
      * 
-     * Lógica de redirección actualizada:
-     * - admin: /admin/dashboard.php (panel administrativo)
-     * - promotor: /promotor/panel.php (panel de promotor)
-     * - publicante: /publicante/panel.php (panel de publicante)
+     * LISTA BLANCA DE REDIRECCIONES POR ROL:
+     * Esta implementación usa un array asociativo que mapea roles específicos
+     * a URLs específicas, ignorando cualquier parámetro redirect externo.
      * 
-     * Motivo del cambio: Cada rol tiene su propio espacio de trabajo
-     * diferenciado en lugar de usar la página principal genérica.
+     * Motivo de la lista blanca estricta:
+     * - Previene open redirect attacks donde un atacante podría manipular
+     *   el parámetro redirect para enviar usuarios a sitios maliciosos
+     * - Garantiza que solo se usen rutas internas del sistema
+     * - Facilita auditoría de seguridad al tener rutas centralizadas
+     * 
+     * Cómo extender para nuevos roles:
+     * 1. Agregar entrada al array $whitelist
+     * 2. Crear el archivo de panel correspondiente
+     * 3. Verificar que la ruta sea accesible
      * 
      * @param string $rol Rol del usuario autenticado
      */
     private function redireccionarSegunRol($rol) {
-        switch ($rol) {
-            case 'admin':
-                // Redireccionar a dashboard de administración
-                $this->redireccionar('/admin/dashboard.php');
-                break;
-            case 'promotor':
-                // Redireccionar a panel de promotor
-                $this->redireccionar('/promotor/panel.php');
-                break;
-            case 'publicante':
-                // Redireccionar a panel de publicante
-                $this->redireccionar('/publicante/panel.php');
-                break;
-            default:
-                // Rol no reconocido - redirigir a página principal
-                error_log("Rol no reconocido en login: $rol");
-                $this->redireccionar('/');
-                break;
+        /**
+         * LISTA BLANCA ESTRICTA DE REDIRECCIONES POR ROL
+         * 
+         * Cada rol tiene exactamente UNA ruta de destino permitida.
+         * No se aceptan parámetros externos ni modificaciones.
+         * 
+         * Propósito de seguridad: Eliminar completamente la posibilidad
+         * de open redirect attacks en el flujo de login.
+         */
+        $whitelist = [
+            'admin' => '/admin/dashboard.php',
+            'promotor' => '/promotor/panel.php', 
+            'publicante' => '/publicante/panel.php'
+        ];
+        
+        // Verificar si el rol está en la lista blanca
+        if (isset($whitelist[$rol])) {
+            $destinoSeguro = $whitelist[$rol];
+            error_log("Redirección segura - Rol: $rol -> $destinoSeguro");
+            $this->redireccionar($destinoSeguro);
+        } else {
+            // Rol no reconocido - usar destino por defecto seguro
+            error_log("Rol no reconocido en login: $rol - redirigiendo a página principal");
+            $this->redireccionar('/');
         }
     }
     

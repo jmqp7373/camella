@@ -51,6 +51,21 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 /**
+ * INICIALIZACIÓN DEL MANEJADOR DE ERRORES GLOBAL
+ * 
+ * Propósito: Activar el sistema de manejo controlado de errores
+ * después de inicializar la sesión pero antes de cargar dependencias.
+ * 
+ * Se carga aquí para:
+ * - Interceptar errores en AuthHelper y otras dependencias
+ * - Tener control completo sobre respuestas de error
+ * - Registrar problemas técnicos sin exponer detalles al usuario
+ * 
+ * Orden crítico: Después de session_start(), antes de includes
+ */
+require_once __DIR__ . '/errors/handler.php';
+
+/**
  * CARGA SEGURA DE AUTHHELPER
  * 
  * Incluye AuthHelper de forma centralizada con verificación de existencia

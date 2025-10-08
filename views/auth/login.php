@@ -259,6 +259,30 @@
         <!-- Formulario de login -->
         <form method="POST" action="/login" class="login-form" id="loginForm">
             
+            <?php
+            /**
+             * GENERACIÓN DE TOKEN CSRF PARA PROTECCIÓN DE FORMULARIO
+             * 
+             * Propósito: Prevenir ataques Cross-Site Request Forgery (CSRF)
+             * donde un sitio malicioso podría enviar requests al formulario
+             * de login usando la sesión del usuario.
+             * 
+             * Flujo:
+             * 1. Generar token único por sesión si no existe
+             * 2. Incluir token en formulario como campo oculto
+             * 3. Validar token en controlador antes de procesar login
+             * 4. Regenerar token después de login exitoso
+             * 
+             * Seguridad: Usa random_bytes() criptográficamente seguro
+             */
+            if (empty($_SESSION['csrf_token'])) {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            }
+            ?>
+            
+            <!-- Token CSRF para prevenir ataques -->
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
+            
             <!-- Mensajes de estado -->
             <?php if (isset($error) && $error): ?>
                 <div class="alert alert-error">
