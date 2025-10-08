@@ -12,8 +12,40 @@
  * @date 2025
  */
 
-// Incluir configuración
-require_once __DIR__ . '/config/config.php';
+// ========================================
+// CONFIGURACIÓN DE DEPURACIÓN
+// ========================================
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+// Capturar cualquier error fatal
+function fatalErrorHandler() {
+    $error = error_get_last();
+    if ($error && $error['type'] === E_ERROR) {
+        echo "<div style='color: red; padding: 20px; background: #fee;'>";
+        echo "<h2>Error Fatal PHP:</h2>";
+        echo "<strong>Mensaje:</strong> " . $error['message'] . "<br>";
+        echo "<strong>Archivo:</strong> " . $error['file'] . "<br>";
+        echo "<strong>Línea:</strong> " . $error['line'];
+        echo "</div>";
+    }
+}
+register_shutdown_function('fatalErrorHandler');
+
+// Intentar incluir configuración con manejo de errores
+try {
+    if (!file_exists(__DIR__ . '/config/config.php')) {
+        throw new Exception("El archivo config/config.php no existe. Verifica que esté creado.");
+    }
+    require_once __DIR__ . '/config/config.php';
+} catch (Exception $e) {
+    echo "<div style='color: red; padding: 20px; background: #fee;'>";
+    echo "<h2>Error al cargar configuración:</h2>";
+    echo htmlspecialchars($e->getMessage());
+    echo "</div>";
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -103,24 +135,43 @@ require_once __DIR__ . '/config/config.php';
         echo '<h3>🚀 Resultado de la Prueba:</h3>';
         
         try {
-            // Probar conexión usando la función del config
-            $pdo = getDBConnection();
+            // Verificar que las constantes estén definidas
+            if (!defined('DB_HOST') || !defined('DB_NAME') || !defined('DB_USER') || !defined('DB_PASS')) {
+                throw new Exception("Las constantes de base de datos no están definidas en config.php");
+            }
+
+            // Probar conexión manual primero (más control de errores)
+            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+            $pdo = new PDO($dsn, DB_USER, DB_PASS, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ]);
             
-            // Si llegamos aquí, la conexión fue exitosa
-            echo '<div class="status success">';
-            echo '✅ <strong>¡CONEXIÓN EXITOSA!</strong><br>';
-            echo 'La base de datos está correctamente configurada y accesible.';
-            echo '</div>';
-            
-            // Información adicional de la conexión
-            $version = $pdo->query('SELECT VERSION()')->fetchColumn();
-            echo '<div class="info">';
-            echo '<strong>Información del Servidor:</strong><br>';
-            echo '🗄️ Versión MySQL/MariaDB: ' . $version . '<br>';
-            echo '📊 Estado de conexión: Activa<br>';
-            echo '🔒 Modo de error PDO: Exception<br>';
-            echo '⚡ Conexión establecida: ' . date('Y-m-d H:i:s');
-            echo '</div>';
+            // Verificar conexión adicional
+            if ($pdo->getAttribute(PDO::ATTR_CONNECTION_STATUS)) {
+                echo '<div class="status success">';
+                echo '✅ <strong>¡CONEXIÓN EXITOSA!</strong><br>';
+                echo 'La base de datos está correctamente configurada y accesible.';
+                echo '</div>';
+                
+                // Información adicional de la conexión
+                try {
+                    $version = $pdo->query('SELECT VERSION()')->fetchColumn();
+                    $charset = $pdo->query("SELECT @@character_set_database")->fetchColumn();
+                    
+                    echo '<div class="info">';
+                    echo '<strong>Información del Servidor:</strong><br>';
+                    echo '🗄️ Versión MySQL/MariaDB: ' . htmlspecialchars($version) . '<br>';
+                    echo '� Charset de BD: ' . htmlspecialchars($charset) . '<br>';
+                    echo '�📊 Estado de conexión: Activa<br>';
+                    echo '🔒 Modo de error PDO: Exception<br>';
+                    echo '⚡ Conexión establecida: ' . date('Y-m-d H:i:s');
+                    echo '</div>';
+                } catch (Exception $infoError) {
+                    echo '<div class="info">ℹ️ Conexión exitosa pero no se pudo obtener información adicional del servidor.</div>';
+                }
+            }
             
         } catch (PDOException $e) {
             // Error de conexión
