@@ -226,43 +226,103 @@ class AdminController {
         }
         
         try {
-            // Log para debugging
-            error_log("AdminController::editarCategoria - Recibido: ID=$id, Nombre='$nombre', Ícono='$icono'");
+            // Log para debugging con logger
+            logCategoria('CONTROLLER_INICIO', [
+                'id' => $id,
+                'nombre' => $nombre,
+                'icono' => $icono,
+                'timestamp' => date('Y-m-d H:i:s')
+            ]);
             
             $resultado = $this->categoriasModel->actualizarCategoria($id, $nombre, $icono ?: null);
             
-            if ($resultado) {
-                $mensaje = 'Categoría actualizada exitosamente';
-                error_log("Actualización exitosa para categoría ID: $id");
+            logCategoria('CONTROLLER_RESULTADO', $resultado);
+            
+            // Manejar diferentes tipos de respuesta del modelo
+            if (is_array($resultado)) {
+                $status = $resultado['status'];
+                $mensaje = $resultado['message'];
                 
-                if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                    header('Content-Type: application/json');
-                    echo json_encode([
-                        'exito' => true, 
-                        'mensaje' => $mensaje,
-                        'categoria' => [
-                            'id' => $id,
-                            'nombre' => $nombre,
-                            'icono' => $icono
-                        ]
-                    ]);
+                if ($status === 'success') {
+                    // Éxito
+                    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                        header('Content-Type: application/json');
+                        echo json_encode([
+                            'exito' => true,
+                            'mensaje' => $mensaje,
+                            'categoria' => $resultado['categoria'] ?? [
+                                'id' => $id,
+                                'nombre' => $nombre,
+                                'icono' => $icono
+                            ]
+                        ]);
+                    } else {
+                        $_SESSION['mensaje_exito'] = $mensaje;
+                        header('Location: index.php?view=admin');
+                    }
+                } else if ($status === 'warning') {
+                    // Advertencia (sin cambios)
+                    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                        header('Content-Type: application/json');
+                        echo json_encode([
+                            'exito' => false,
+                            'mensaje' => $mensaje,
+                            'tipo' => 'warning'
+                        ]);
+                    } else {
+                        $_SESSION['mensaje_error'] = $mensaje;
+                        header('Location: index.php?view=admin');
+                    }
                 } else {
-                    $_SESSION['mensaje_exito'] = $mensaje;
-                    header('Location: index.php?view=admin');
+                    // Error
+                    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                        header('Content-Type: application/json');
+                        echo json_encode([
+                            'exito' => false,
+                            'mensaje' => $mensaje,
+                            'tipo' => 'error'
+                        ]);
+                    } else {
+                        $_SESSION['mensaje_error'] = $mensaje;
+                        header('Location: index.php?view=admin');
+                    }
                 }
             } else {
-                $error = 'Error al actualizar la categoría - No se encontró la categoría o no hubo cambios';
-                error_log("Fallo al actualizar categoría ID: $id - Resultado: false");
-                
-                if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
-                    header('Content-Type: application/json');
-                    echo json_encode(['exito' => false, 'mensaje' => $error]);
+                // Respuesta legacy (booleana) - manejo de compatibilidad
+                if ($resultado) {
+                    $mensaje = 'Categoría actualizada exitosamente';
+                    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                        header('Content-Type: application/json');
+                        echo json_encode([
+                            'exito' => true,
+                            'mensaje' => $mensaje,
+                            'categoria' => [
+                                'id' => $id,
+                                'nombre' => $nombre,
+                                'icono' => $icono
+                            ]
+                        ]);
+                    } else {
+                        $_SESSION['mensaje_exito'] = $mensaje;
+                        header('Location: index.php?view=admin');
+                    }
                 } else {
-                    $_SESSION['mensaje_error'] = $error;
-                    header('Location: index.php?view=admin');
+                    $error = 'Error al actualizar la categoría';
+                    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
+                        header('Content-Type: application/json');
+                        echo json_encode(['exito' => false, 'mensaje' => $error]);
+                    } else {
+                        $_SESSION['mensaje_error'] = $error;
+                        header('Location: index.php?view=admin');
+                    }
                 }
             }
         } catch (Exception $e) {
+            logCategoria('CONTROLLER_EXCEPTION', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             $error = 'Error: ' . $e->getMessage();
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
                 header('Content-Type: application/json');

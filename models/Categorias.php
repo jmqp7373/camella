@@ -16,6 +16,16 @@ class Categorias {
     }
     
     /**
+     * Método de logging para debugging
+     */
+    private function log($mensaje) {
+        $timestamp = date('Y-m-d H:i:s');
+        $logEntry = "[$timestamp] $mensaje\n";
+        error_log($logEntry);
+        file_put_contents(__DIR__ . '/../debug_categorias.log', $logEntry, FILE_APPEND | LOCK_EX);
+    }
+    
+    /**
      * Inicializar tablas y datos si no existen
      */
     public function inicializarTablasYDatos() {
@@ -382,52 +392,169 @@ class Categorias {
     }
     
     /**
-     * Actualizar una categoría existente
+     * Actualizar una categoría existente con verificación completa y logging
      */
     public function actualizarCategoria($id, $nombre, $icono = null) {
+        $this->log("🔄 INICIO actualizarCategoria - ID: $id, Nombre: '$nombre', Ícono: '$icono'");
+        
         try {
-            // Log para debugging
-            error_log("Actualizando categoría - ID: $id, Nombre: $nombre, Ícono: $icono");
+            // 1. Verificar que la categoría existe antes de actualizar
+            $this->log("🔍 Verificando existencia de categoría ID: $id");
+            $checkSql = "SELECT id, nombre, icono FROM categorias WHERE id = ?";
+            $checkStmt = $this->conexion->prepare($checkSql);
             
+            if (!$checkStmt) {
+                $this->log("❌ Error en prepare() para verificación: " . $this->conexion->error);
+                return [
+                    'status' => 'error',
+                    'message' => 'Error de base de datos en verificación: ' . $this->conexion->error
+                ];
+            }
+            
+            $checkStmt->bind_param("i", $id);
+            $checkResult = $checkStmt->execute();
+            
+            if (!$checkResult) {
+                $this->log("❌ Error en execute() para verificación: " . $checkStmt->error);
+                $checkStmt->close();
+                return [
+                    'status' => 'error',
+                    'message' => 'Error ejecutando verificación: ' . $checkStmt->error
+                ];
+            }
+            
+            $result = $checkStmt->get_result();
+            $categoriaActual = $result->fetch_assoc();
+            $checkStmt->close();
+            
+            if (!$categoriaActual) {
+                $this->log("❌ Categoría ID $id no encontrada");
+                return [
+                    'status' => 'error',
+                    'message' => "Categoría con ID $id no encontrada"
+                ];
+            }
+            
+            $this->log("✅ Categoría encontrada: " . json_encode($categoriaActual));
+            
+            // 2. Verificar si realmente hay cambios
+            $nombreActual = $categoriaActual['nombre'];
+            $iconoActual = $categoriaActual['icono'];
+            $haycambios = false;
+            
+            if ($nombreActual !== $nombre) {
+                $this->log("📝 Cambio detectado en nombre: '$nombreActual' -> '$nombre'");
+                $haycambios = true;
+            }
+            
+            if ($icono !== null && $icono !== '' && $iconoActual !== $icono) {
+                $this->log("🎨 Cambio detectado en ícono: '$iconoActual' -> '$icono'");
+                $haycambios = true;
+            }
+            
+            if (!$haycambios) {
+                $this->log("ℹ️ No se detectaron cambios en los datos");
+                return [
+                    'status' => 'warning',
+                    'message' => 'No se realizaron cambios (los datos eran idénticos)'
+                ];
+            }
+            
+            // 3. Verificar que la columna icono existe
+            $this->log("🔍 Verificando existencia de columna 'icono'");
+            $columnCheck = $this->conexion->query("SHOW COLUMNS FROM categorias LIKE 'icono'");
+            
+            if ($columnCheck->num_rows === 0) {
+                $this->log("❌ Error: la columna 'icono' no existe en la tabla 'categorias'");
+                return [
+                    'status' => 'error',
+                    'message' => "Error de estructura: columna 'icono' no existe"
+                ];
+            }
+            
+            $this->log("✅ Columna 'icono' verificada correctamente");
+            
+            // 4. Construir la consulta de actualización
             $sql = "UPDATE categorias SET nombre = ?";
             $params = [$nombre];
+            $types = "s";
             
             if ($icono !== null && $icono !== '') {
                 $sql .= ", icono = ?";
                 $params[] = $icono;
+                $types .= "s";
             }
             
             $sql .= " WHERE id = ?";
             $params[] = $id;
+            $types .= "i";
             
-            error_log("SQL Query: $sql");
-            error_log("Parámetros: " . print_r($params, true));
+            $this->log("📋 SQL Query: $sql");
+            $this->log("📋 Parámetros: " . json_encode($params));
+            $this->log("📋 Types: $types");
             
+            // 5. Preparar la sentencia
             $stmt = $this->conexion->prepare($sql);
             
             if (!$stmt) {
-                error_log("Error preparando statement: " . $this->conexion->error);
-                return false;
+                $this->log("❌ Error en prepare(): " . $this->conexion->error);
+                return [
+                    'status' => 'error',
+                    'message' => 'Error preparando consulta: ' . $this->conexion->error
+                ];
             }
             
-            $resultado = $stmt->execute($params);
+            $this->log("✅ Statement preparado correctamente");
+            
+            // 6. Bind parameters
+            $stmt->bind_param($types, ...$params);
+            
+            // 7. Ejecutar la consulta
+            $resultado = $stmt->execute();
             
             if (!$resultado) {
-                error_log("Error ejecutando query: " . $stmt->error);
-                return false;
+                $this->log("❌ Error en execute(): " . $stmt->error);
+                $stmt->close();
+                return [
+                    'status' => 'error',
+                    'message' => 'Error ejecutando actualización: ' . $stmt->error
+                ];
             }
             
+            // 8. Verificar filas afectadas
             $affectedRows = $stmt->affected_rows;
-            error_log("Filas afectadas: $affectedRows");
+            $this->log("ℹ️ affected_rows: " . $affectedRows);
             
             $stmt->close();
             
-            // Verificar que al menos una fila fue afectada
-            return $affectedRows > 0;
+            if ($affectedRows === 0) {
+                $this->log("⚠️ No se actualizaron filas (affected_rows = 0)");
+                return [
+                    'status' => 'warning',
+                    'message' => 'No se realizaron cambios en la base de datos'
+                ];
+            }
+            
+            $this->log("✅ Categoría actualizada correctamente para ID $id");
+            
+            return [
+                'status' => 'success',
+                'message' => 'Categoría actualizada exitosamente',
+                'affected_rows' => $affectedRows,
+                'categoria' => [
+                    'id' => $id,
+                    'nombre' => $nombre,
+                    'icono' => $icono ?: $iconoActual
+                ]
+            ];
             
         } catch (Exception $e) {
-            error_log("Error actualizando categoría: " . $e->getMessage());
-            return false;
+            $this->log("❌ Exception capturada: " . $e->getMessage());
+            $this->log("❌ Stack trace: " . $e->getTraceAsString());
+            return [
+                'status' => 'error',
+                'message' => 'Error interno: ' . $e->getMessage()
+            ];
         }
     }
     
