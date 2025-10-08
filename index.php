@@ -156,7 +156,9 @@ $allowed_views = [
     'privacidad',
     'terminos',
     'ayuda',
-    'admin'
+    'admin',
+    'cambiar-password',
+    'procesar-cambiar-password'
 ];
 
 // Verificar que la vista sea válida
@@ -179,6 +181,21 @@ if ($view === 'admin') {
     } else {
         $controller->index();
     }
+    exit;
+}
+
+// Manejar rutas de UsuarioController (cambio de contraseña)
+if ($view === 'cambiar-password') {
+    require_once 'controllers/UsuarioController.php';
+    $controller = new UsuarioController();
+    $controller->mostrarCambiarPassword();
+    exit;
+}
+
+if ($view === 'procesar-cambiar-password') {
+    require_once 'controllers/UsuarioController.php';
+    $controller = new UsuarioController();
+    $controller->procesarCambiarPassword();
     exit;
 }
 
