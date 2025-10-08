@@ -19,7 +19,15 @@
  * @date 2025-10-08
  */
 
-require_once __DIR__ . '/../helpers/AuthHelper.php';
+/**
+ * NOTA: AuthHelper ya está cargado via bootstrap.php centralizado
+ * 
+ * Antes: require_once __DIR__ . '/../helpers/AuthHelper.php';
+ * Ahora: Se carga automáticamente en index.php via bootstrap.php
+ * 
+ * Propósito del cambio: Centralizar carga de AuthHelper para evitar
+ * redefiniciones y problemas de rutas que causan error 500.
+ */
 
 /**
  * Función auxiliar para verificar acceso de publicante

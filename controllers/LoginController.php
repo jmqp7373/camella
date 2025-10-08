@@ -28,7 +28,15 @@
  * @date 2025-10-07
  */
 
-require_once 'helpers/AuthHelper.php';
+/**
+ * NOTA: AuthHelper ya está cargado via bootstrap.php centralizado
+ * 
+ * Antes: require_once 'helpers/AuthHelper.php';
+ * Ahora: Se carga automáticamente en index.php via bootstrap.php
+ * 
+ * Propósito del cambio: Centralizar carga de dependencias críticas
+ * para evitar problemas de rutas y includes duplicados.
+ */
 require_once 'models/Usuario.php';
 require_once 'controllers/BaseController.php';
 

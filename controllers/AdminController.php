@@ -9,7 +9,16 @@
 
 require_once 'models/Categorias.php';
 require_once 'debug_logger.php';
-require_once __DIR__ . '/../helpers/AuthHelper.php';
+
+/**
+ * NOTA: AuthHelper ya está cargado via bootstrap.php centralizado
+ * 
+ * Antes: require_once __DIR__ . '/../helpers/AuthHelper.php';
+ * Ahora: Se carga automáticamente en index.php via bootstrap.php
+ * 
+ * Propósito del cambio: Evitar includes duplicados y problemas de rutas
+ * que pueden causar errores 500 en producción.
+ */
 
 /**
  * Función auxiliar para verificar acceso de administrador
