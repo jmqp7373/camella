@@ -67,6 +67,84 @@ class AdminController {
     }
     
     /**
+     * Dashboard de estadísticas del sistema
+     * 
+     * Propósito: Mostrar métricas y contadores principales del sistema
+     * de forma segura, tolerante a tablas ausentes y con manejo robusto
+     * de errores que garantice disponibilidad del panel administrativo.
+     * 
+     * Flujo de ejecución:
+     * 1. Verificar acceso de rol admin (redirige si no autorizado)
+     * 2. Establecer conexión PDO segura usando configuración existente
+     * 3. Cargar modelo Stats y obtener contadores del sistema
+     * 4. Preparar datos para vista y renderizar dashboard de estadísticas
+     * 
+     * Posibles errores:
+     * - Acceso denegado: Redirige a login o página principal
+     * - Error BD: Muestra mensaje controlado, stats en 0
+     * - Stats no disponibles: Vista muestra mensaje de estadísticas no disponibles
+     * 
+     * @return void Renderiza vista o redirige, nunca retorna valor
+     */
+    public function dashboard() {
+        // Bloque 1: Verificación de acceso y permisos
+        // Solo usuarios con rol 'admin' pueden acceder al dashboard de estadísticas
+        verificarAcceso(['admin']);
+        
+        // Bloque 2: Obtención de conexión PDO usando configuración del proyecto
+        // Usar el mismo mecanismo de BD que el resto del sistema para consistencia
+        $db = null;
+        try {
+            // Cargar configuración de base de datos del proyecto
+            require_once dirname(__DIR__) . '/config/config.php';
+            
+            // Línea clave: Establecer conexión PDO con variables globales del proyecto
+            global $host, $usuario, $contrasena, $basedatos, $charset;
+            $dsn = "mysql:host=$host;dbname=$basedatos;charset=$charset";
+            $db = new PDO($dsn, $usuario, $contrasena, [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+            ]);
+            
+            error_log("[DASHBOARD] Conexión PDO establecida exitosamente");
+            
+        } catch (Exception $e) {
+            // Error crítico: Registrar pero continuar para no romper el dashboard
+            error_log("[DASHBOARD ERROR] Error conectando a BD: " . $e->getMessage());
+        }
+        
+        // Bloque 3: Carga de estadísticas usando modelo Stats
+        // Siempre inicializar stats, incluso si hay error de BD
+        $stats = null;
+        
+        if ($db !== null) {
+            try {
+                // Cargar modelo de estadísticas de forma segura
+                require_once dirname(__DIR__) . '/models/Stats.php';
+                
+                $statsModel = new Stats();
+                // Línea clave: Obtener contadores del sistema de forma tolerante a errores
+                $stats = $statsModel->getCounts($db);
+                
+                error_log("[DASHBOARD] Estadísticas cargadas: " . json_encode($stats));
+                
+            } catch (Exception $e) {
+                // Error en stats: Registrar y mantener $stats como null
+                error_log("[DASHBOARD ERROR] Error cargando estadísticas: " . $e->getMessage());
+                $stats = null;
+            }
+        }
+        
+        // Bloque 4: Preparación de datos para vista y renderizado
+        // Configurar variables necesarias para el template
+        $pageTitle = "Dashboard - Estadísticas del Sistema";
+        
+        // Incluir vista específica del dashboard de estadísticas
+        // Nota: Crear nueva vista que no interfiera con dashboard de categorías existente
+        include 'views/admin/stats-dashboard.php';
+    }
+
+    /**
      * Vista principal de administración
      * 
      * PROTECCIÓN: Solo usuarios admin pueden acceder a esta función

@@ -1,192 +1,125 @@
 <?php
 /**
- * admin/dashboard.php - Panel Principal de Administración
+ * Dashboard de Estadísticas - Front Controller
  * 
- * Propósito: Panel de control principal para usuarios administradores
- * Contenido mínimo para verificar acceso y funcionalidad de redirección.
+ * Propósito: Proporcionar acceso directo al dashboard de estadísticas
+ * del panel de administración mediante URL directa sin alterar el 
+ * sistema de routing actual del proyecto.
  * 
- * PROTECCIÓN: Solo usuarios con rol 'admin' pueden acceder
- * La verificación se realiza en el controlador antes de llegar aquí.
+ * Acceso: /admin/dashboard.php
  * 
- * @author Camella Development Team
- * @version 1.0
- * @date 2025-10-08
+ * Este archivo existe para permitir acceso por URL directa al dashboard
+ * de estadísticas sin modificar el router principal (index.php) del proyecto.
+ * Mantiene la arquitectura MVC actual y se integra con el sistema de
+ * autenticación y autorización existente.
+ * 
+ * Flujo de ejecución:
+ * 1. Cargar bootstrap para inicialización del sistema
+ * 2. Verificar acceso de rol admin (AuthHelper via bootstrap)
+ * 3. Instanciar controlador AdminController
+ * 4. Ejecutar método dashboard() que renderiza la vista
+ * 
+ * Seguridad: Integrado con sistema de verificación de roles
+ * Performance: Carga mínima, reutiliza componentes existentes
+ * Mantenimiento: Compatible con estructura MVC actual
  */
 
-// Verificar que se llegó aquí de forma apropiada
-if (!isset($_SESSION)) {
-    session_start();
-}
+// Cargar bootstrap del sistema para inicialización completa
+// Incluye: sesiones, helpers, configuración y manejo de errores
+require_once dirname(__DIR__) . '/bootstrap.php';
 
-require_once __DIR__ . '/../helpers/AuthHelper.php';
-
-$authHelper = new AuthHelper();
-
-// Doble verificación de seguridad
-if (!$authHelper->estaAutenticado() || !$authHelper->verificarAcceso('admin')) {
-    header('Location: /login?error=' . urlencode('Acceso no autorizado'));
+// Verificar acceso de administrador antes de proceder
+// Esta verificación está integrada en el método dashboard() del controlador
+// pero se puede hacer aquí también para fail-fast en caso de acceso no autorizado
+if (!isset($_SESSION['usuario']) || $_SESSION['usuario']['rol'] !== 'admin') {
+    // Redirigir a login con URL de retorno para mejor UX
+    header('Location: ../login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']));
     exit;
 }
 
-$usuario = $authHelper->obtenerUsuarioActual();
-?>
+// Cargar controlador de administración
+require_once dirname(__DIR__) . '/controllers/AdminController.php';
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - Camella.com.co</title>
+try {
+    // Instanciar controlador y ejecutar dashboard de estadísticas
+    $adminController = new AdminController();
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+    // Ejecutar método dashboard que:
+    // - Verifica acceso admin (doble verificación por seguridad)
+    // - Obtiene conexión PDO segura
+    // - Carga modelo Stats para contadores
+    // - Renderiza vista stats-dashboard.php
+    $adminController->dashboard();
     
-    <!-- CSS básico sin modificar maquetación -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #3a8be8;
-        }
-        .welcome-message {
-            background: #e3f2fd;
-            padding: 1rem;
-            border-radius: 4px;
-            border-left: 4px solid #2196f3;
-            margin-bottom: 2rem;
-        }
-        .actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        .action-card {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 6px;
-            border: 1px solid #dee2e6;
-            text-align: center;
-        }
-        .btn {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            margin: 0.25rem;
-            background-color: #3a8be8;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-        .btn:hover {
-            background-color: #2c7cd1;
-        }
-        .btn-danger {
-            background-color: #dc3545;
-        }
-        .btn-danger:hover {
-            background-color: #c82333;
-        }
-        .user-info {
-            background: #d4edda;
-            padding: 1rem;
-            border-radius: 4px;
-            border-left: 4px solid #28a745;
-            margin-bottom: 1rem;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>🔧 Panel de Administración</h1>
-            <p>Sistema de Gestión Camella.com.co</p>
+} catch (Exception $e) {
+    // Manejo de errores del dashboard - no romper la página
+    error_log("[DASHBOARD FRONT-CONTROLLER ERROR] " . $e->getMessage());
+    
+    // Mostrar página de error administrativa amigable
+    $pageTitle = "Error - Dashboard";
+    include dirname(__DIR__) . '/partials/header.php';
+    ?>
+    
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1 class="admin-title">
+                <i class="fas fa-exclamation-triangle text-danger"></i>
+                Error en Dashboard
+            </h1>
         </div>
         
-        <!-- Información del usuario actual -->
-        <div class="user-info">
-            <strong>👤 Usuario:</strong> <?php echo htmlspecialchars($usuario['nombre']); ?><br>
-            <strong>📧 Email:</strong> <?php echo htmlspecialchars($usuario['email']); ?><br>
-            <strong>🔑 Rol:</strong> <?php echo strtoupper($usuario['rol']); ?><br>
-            <strong>🕐 Sesión iniciada:</strong> <?php echo date('d/m/Y H:i:s'); ?>
-        </div>
-        
-        <!-- Mensaje de bienvenida principal -->
-        <div class="welcome-message">
-            <h2>✅ Bienvenido al panel de ADMIN</h2>
-            <p>
-                <strong>¡Acceso exitoso!</strong> Has iniciado sesión correctamente como administrador.
-                Desde aquí puedes gestionar todos los aspectos del sistema Camella.com.co.
-            </p>
-            <p>
-                <em>Nota:</em> Este es el contenido mínimo del dashboard para verificar 
-                la funcionalidad de protección por roles y redirección automática.
-            </p>
-        </div>
-        
-        <!-- Acciones disponibles -->
-        <div class="actions">
-            <div class="action-card">
-                <h3>🏠 Navegación</h3>
-                <a href="/" class="btn">Inicio</a>
-                <a href="/admin" class="btn">Admin Panel</a>
-            </div>
+        <div class="alert alert-danger">
+            <h4><i class="fas fa-bug"></i> Error Interno del Sistema</h4>
+            <p>No se pudo cargar el dashboard de estadísticas en este momento.</p>
+            <p><strong>Acción recomendada:</strong> Intentar nuevamente en unos minutos o contactar al equipo técnico.</p>
             
-            <div class="action-card">
-                <h3>👥 Gestión</h3>
-                <a href="#" class="btn">Usuarios</a>
-                <a href="#" class="btn">Categorías</a>
+            <div style="margin-top: 1rem;">
+                <a href="../?view=admin" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Volver al Panel Principal
+                </a>
+                <a href="javascript:location.reload()" class="btn btn-secondary">
+                    <i class="fas fa-sync"></i> Reintentar
+                </a>
             </div>
-            
-            <div class="action-card">
-                <h3>📊 Reportes</h3>
-                <a href="#" class="btn">Estadísticas</a>
-                <a href="#" class="btn">Analytics</a>
-            </div>
-            
-            <div class="action-card">
-                <h3>🔧 Sistema</h3>
-                <a href="/test_authentication.php" class="btn">Test Auth</a>
-                <a href="/logout" class="btn btn-danger">Cerrar Sesión</a>
-            </div>
-        </div>
-        
-        <!-- Información técnica -->
-        <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #dee2e6; font-size: 0.9rem; color: #666;">
-            <strong>📍 Ubicación:</strong> /admin/dashboard.php<br>
-            <strong>🔒 Protección:</strong> Verificación de rol 'admin' activa<br>
-            <strong>🚀 Estado:</strong> Sistema operativo y funcional<br>
-            <strong>📅 Versión:</strong> 1.0 - <?php echo date('Y-m-d'); ?>
         </div>
     </div>
     
-    <script>
-        // Log de acceso exitoso (solo para debugging)
-        console.log('✅ Dashboard Admin cargado exitosamente');
-        console.log('👤 Usuario:', <?php echo json_encode($usuario['email']); ?>);
-        console.log('🔑 Rol:', <?php echo json_encode($usuario['rol']); ?>);
-        
-        // Confirmación antes de cerrar sesión
-        document.querySelector('a[href="/logout"]').addEventListener('click', function(e) {
-            if (!confirm('¿Estás seguro que deseas cerrar la sesión?')) {
-                e.preventDefault();
-            }
-        });
-    </script>
-</body>
-</html>
+    <?php
+    include dirname(__DIR__) . '/partials/footer.php';
+}
+
+/**
+ * NOTAS DE IMPLEMENTACIÓN:
+ * 
+ * ROUTING ALTERNATIVO:
+ * Si tu proyecto ya controla rutas via index.php?view=admin-dashboard,
+ * entonces en lugar de este archivo, modificar index.php para mapear:
+ * 
+ * // En index.php
+ * case 'admin-dashboard':
+ *     require_once 'controllers/AdminController.php';
+ *     $controller = new AdminController();
+ *     $controller->dashboard();
+ *     break;
+ * 
+ * INTEGRACIÓN CON .HTACCESS:
+ * Para URLs más amigables, agregar a .htaccess:
+ * RewriteRule ^admin/stats/?$ admin/dashboard.php [L]
+ * 
+ * Esto permitiría acceder via /admin/stats en lugar de /admin/dashboard.php
+ * 
+ * SEGURIDAD ADICIONAL:
+ * - Verificación de CSRF token si implementado
+ * - Rate limiting para prevenir spam de requests
+ * - IP whitelist para acceso admin si requerido
+ * - Logging de accesos para auditoría
+ * 
+ * PERFORMANCE:
+ * - Cache de estadísticas con TTL de 5-10 minutos
+ * - Carga asíncrona de métricas pesadas via AJAX
+ * - Compresión gzip de respuesta
+ */
+
+// NO MAS CONTENIDO HTML - TODO SE MANEJA VIA CONTROLADOR Y VISTA
+
+?>
