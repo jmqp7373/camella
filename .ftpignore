@@ -17,10 +17,7 @@ test_*.php
 debug.php
 phpinfo.php
 
-# Páginas de error estáticas (respaldo - usar versiones .php)
-403.html
-404.html
-500.html
+# Páginas de error eliminadas - ahora usan versiones .php integradas con layout
 
 # Archivos temporales
 *.tmp
