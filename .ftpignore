@@ -1,0 +1,37 @@
+# FTP Ignore - Archivos que NO deben desplegarse en producción
+
+# Control de versiones
+.git/
+.gitignore
+.gitattributes
+
+# Documentación y desarrollo
+README.md
+.vscode/
+.github/
+
+# Archivos de prueba y desarrollo
+database_test.php
+test_*.php
+*_test.php
+debug.php
+phpinfo.php
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+# Node modules (si se usa en el futuro)
+node_modules/
+
+# Logs de desarrollo
+*.log
+error_log
+
+# Configuración local de desarrollo
+.env.local
+.env.development
+config.local.php
