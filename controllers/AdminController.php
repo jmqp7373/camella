@@ -36,15 +36,11 @@ class AdminController {
     }
     
     /**
-     * Gestión de categorías
+     * Gestión de categorías (redirección a dashboard)
      */
     public function categorias() {
-        $this->inicializarSistema();
-        
-        $categorias = $this->categoriasModel->obtenerCategoriasConOficios();
-        $pageTitle = "Gestión de Categorías";
-        
-        include 'views/admin/categorias.php';
+        header('Location: index.php?view=admin');
+        exit;
     }
     
     /**
@@ -257,14 +253,6 @@ class AdminController {
                 header('Location: index.php?view=admin');
             }
         }
-    }
-    
-    /**
-     * Gestión de categorías (redirección a dashboard)
-     */
-    public function categorias() {
-        header('Location: index.php?view=admin');
-        exit;
     }
     
     /**
