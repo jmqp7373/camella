@@ -1,5 +1,23 @@
 <?php
 /**
+ * Guardas mínimas de sesión para el header.
+ * Reemplazamos dependencia a clase AuthHelper inexistente por $_SESSION.
+ * No altera maquetación ni estilos.
+ */
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    @session_start();
+}
+
+$isLogged = !empty($_SESSION['usuario_id']);
+$rol      = $_SESSION['rol'] ?? null;
+$nombre   = $_SESSION['nombre'] ?? null;
+
+// Normalizar roles esperados:
+$esAdmin     = ($rol === 'admin');
+$esPromotor  = ($rol === 'promotor');
+$esPublicante= ($rol === 'publicante');
+
+/**
  * Función para generar cache buster para archivos CSS y JS
  * Usa la fecha de modificación del archivo si existe, o timestamp actual
  */
@@ -62,26 +80,32 @@ function getCacheBuster($filepath) {
                 <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
                 
                 <?php
-                // Verificar estado de autenticación para mostrar enlace de promotor
-                $authHelper = new AuthHelper();
-                if ($authHelper->estaAutenticado()):
-                    $usuario = $authHelper->obtenerUsuarioActual();
+                // reemplazo de AuthHelper::estaAutenticado() por $_SESSION
+                if ($isLogged):
                 ?>
                     <!-- Enlaces para usuarios autenticados -->
+                    <?php if ($esAdmin || $esPromotor): // reemplazo de AuthHelper::hasRole('promotor') por $_SESSION ?>
                     <a href="index.php?action=promotor_panel" class="btn btn-promotor" title="Panel de Promotor">
                         <i class="fas fa-bullhorn"></i> Promotor
                     </a>
+                    <?php endif; ?>
                     
-                    <?php if ($authHelper->verificarAcceso('admin')): ?>
+                    <?php if ($esAdmin): // reemplazo de AuthHelper::verificarAcceso('admin') por $_SESSION ?>
                     <a href="index.php?view=admin" class="btn btn-admin" title="Panel de Administración">
                         <i class="fas fa-cogs"></i> Admin
+                    </a>
+                    <?php endif; ?>
+                    
+                    <?php if ($esAdmin || $esPublicante): // reemplazo de AuthHelper::hasRole('publicante') por $_SESSION ?>
+                    <a href="index.php?view=publicante" class="btn btn-publicante" title="Mi Panel">
+                        <i class="fas fa-user-tie"></i> Mi Panel
                     </a>
                     <?php endif; ?>
                     
                     <div class="user-menu">
                         <span class="user-greeting">
                             <i class="fas fa-user-circle"></i> 
-                            Hola, <?= htmlspecialchars($usuario['nombre'] ?? 'Usuario') ?>
+                            Hola, <?= htmlspecialchars($nombre ?: 'Usuario', ENT_QUOTES, 'UTF-8'); ?>
                         </span>
                         <a href="index.php?action=logout" class="btn btn-logout" title="Cerrar sesión">
                             <i class="fas fa-sign-out-alt"></i>
