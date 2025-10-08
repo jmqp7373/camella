@@ -8,7 +8,7 @@
  * IMPORTANTE: Eliminar este archivo en producción por seguridad.
  * 
  * @author Camella Development Team
- * @version 1.0
+ * @version 2.0 - MySQLi
  * @date 2025
  */
 
@@ -39,6 +39,12 @@ try {
         throw new Exception("El archivo config/config.php no existe. Verifica que esté creado.");
     }
     require_once __DIR__ . '/config/config.php';
+    
+    // Verificar que las variables estén definidas
+    if (!isset($host) || !isset($usuario) || !isset($contrasena) || !isset($basedatos)) {
+        throw new Exception("Las variables de conexión no están definidas en config.php");
+    }
+    
 } catch (Exception $e) {
     echo "<div style='color: red; padding: 20px; background: #fee;'>";
     echo "<h2>Error al cargar configuración:</h2>";
@@ -52,7 +58,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test de Conexión - <?= APP_NAME ?></title>
+    <title>Test MySQLi - Camella.com.co</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -118,89 +124,86 @@ try {
 </head>
 <body>
     <div class="container">
-        <h1>🔍 Test de Conexión a Base de Datos</h1>
-        <h2><?= APP_NAME ?> v<?= APP_VERSION ?></h2>
+        <h1>🔍 Test de Conexión MySQLi</h1>
+        <h2>Camella.com.co v2.0</h2>
 
         <?php
         // Información de configuración (sin mostrar credenciales)
         echo '<h3>📋 Configuración Detectada:</h3>';
-        echo '<div class="config-item"><strong>Host:</strong> ' . DB_HOST . '</div>';
-        echo '<div class="config-item"><strong>Base de Datos:</strong> ' . DB_NAME . '</div>';
-        echo '<div class="config-item"><strong>Usuario:</strong> ' . DB_USER . '</div>';
-        echo '<div class="config-item"><strong>Charset:</strong> ' . DB_CHARSET . '</div>';
-        echo '<div class="config-item"><strong>Entorno:</strong> ' . APP_ENV . '</div>';
-        echo '<div class="config-item"><strong>Debug Mode:</strong> ' . (DEBUG_MODE ? 'Activado' : 'Desactivado') . '</div>';
+        echo '<div class="config-item"><strong>Host:</strong> ' . htmlspecialchars($host) . '</div>';
+        echo '<div class="config-item"><strong>Puerto:</strong> ' . htmlspecialchars($puerto) . '</div>';
+        echo '<div class="config-item"><strong>Base de Datos:</strong> ' . htmlspecialchars($basedatos) . '</div>';
+        echo '<div class="config-item"><strong>Usuario:</strong> ' . htmlspecialchars($usuario) . '</div>';
+        echo '<div class="config-item"><strong>Charset:</strong> ' . htmlspecialchars($charset) . '</div>';
+        echo '<div class="config-item"><strong>Tipo de Conexión:</strong> MySQLi</div>';
 
         // Intentar conexión
-        echo '<h3>🚀 Resultado de la Prueba:</h3>';
+        echo '<h3>🚀 Resultado de la Prueba MySQLi:</h3>';
         
-        try {
-            // Verificar que las constantes estén definidas
-            if (!defined('DB_HOST') || !defined('DB_NAME') || !defined('DB_USER') || !defined('DB_PASS')) {
-                throw new Exception("Las constantes de base de datos no están definidas en config.php");
-            }
-
-            // Probar conexión manual primero (más control de errores)
-            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
-            $pdo = new PDO($dsn, DB_USER, DB_PASS, [
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                PDO::ATTR_EMULATE_PREPARES => false,
-            ]);
+        // ========================================
+        // PRUEBA DE CONEXIÓN MYSQLI
+        // ========================================
+        
+        // Usar la función del config.php
+        $conexion = conectarBD();
+        
+        if ($conexion) {
+            echo '<div class="status success">';
+            echo '✅ <strong>¡CONEXIÓN EXITOSA!</strong><br>';
+            echo 'La base de datos está correctamente configurada y accesible con MySQLi.';
+            echo '</div>';
             
-            // Verificar conexión adicional
-            if ($pdo->getAttribute(PDO::ATTR_CONNECTION_STATUS)) {
-                echo '<div class="status success">';
-                echo '✅ <strong>¡CONEXIÓN EXITOSA!</strong><br>';
-                echo 'La base de datos está correctamente configurada y accesible.';
-                echo '</div>';
+            // Información adicional de la conexión
+            try {
+                $version_result = $conexion->query("SELECT VERSION()");
+                $charset_result = $conexion->query("SELECT @@character_set_database");
                 
-                // Información adicional de la conexión
-                try {
-                    $version = $pdo->query('SELECT VERSION()')->fetchColumn();
-                    $charset = $pdo->query("SELECT @@character_set_database")->fetchColumn();
+                if ($version_result && $charset_result) {
+                    $version = $version_result->fetch_row()[0];
+                    $db_charset = $charset_result->fetch_row()[0];
                     
                     echo '<div class="info">';
-                    echo '<strong>Información del Servidor:</strong><br>';
+                    echo '<strong>Información del Servidor MySQLi:</strong><br>';
                     echo '🗄️ Versión MySQL/MariaDB: ' . htmlspecialchars($version) . '<br>';
-                    echo '� Charset de BD: ' . htmlspecialchars($charset) . '<br>';
-                    echo '�📊 Estado de conexión: Activa<br>';
-                    echo '🔒 Modo de error PDO: Exception<br>';
+                    echo '🔤 Charset de BD: ' . htmlspecialchars($db_charset) . '<br>';
+                    echo '📊 Estado de conexión: Activa<br>';
+                    echo '🔒 Tipo de conexión: MySQLi<br>';
+                    echo '🌐 Host Info: ' . htmlspecialchars($conexion->host_info) . '<br>';
+                    echo '📋 Server Info: ' . htmlspecialchars($conexion->server_info) . '<br>';
                     echo '⚡ Conexión establecida: ' . date('Y-m-d H:i:s');
                     echo '</div>';
-                } catch (Exception $infoError) {
-                    echo '<div class="info">ℹ️ Conexión exitosa pero no se pudo obtener información adicional del servidor.</div>';
+                } else {
+                    echo '<div class="info">ℹ️ Conexión exitosa pero no se pudo obtener información del servidor.</div>';
                 }
+                
+            } catch (Exception $infoError) {
+                echo '<div class="info">ℹ️ Conexión exitosa pero error al obtener detalles: ' . htmlspecialchars($infoError->getMessage()) . '</div>';
             }
             
-        } catch (PDOException $e) {
-            // Error de conexión
+            // Cerrar conexión
+            cerrarBD($conexion);
+            
+        } else {
+            // Error de conexión MySQLi
             echo '<div class="status error">';
-            echo '❌ <strong>ERROR DE CONEXIÓN</strong><br>';
+            echo '❌ <strong>ERROR DE CONEXIÓN MySQLi</strong><br>';
             echo 'No se pudo conectar a la base de datos.<br><br>';
             
-            if (DEBUG_MODE) {
-                echo '<strong>Detalles del error:</strong><br>';
-                echo htmlspecialchars($e->getMessage());
-            } else {
-                echo 'Contacta al administrador del sistema.';
+            // Mostrar error específico de MySQLi
+            if (mysqli_connect_errno()) {
+                echo '<strong>Código de Error:</strong> ' . mysqli_connect_errno() . '<br>';
+                echo '<strong>Mensaje de Error:</strong> ' . htmlspecialchars(mysqli_connect_error()) . '<br>';
             }
             echo '</div>';
             
             // Sugerencias de solución
             echo '<div class="info">';
             echo '<strong>💡 Posibles soluciones:</strong><br>';
-            echo '• Verificar que el servidor de base de datos esté ejecutándose<br>';
+            echo '• Verificar que el servidor MySQL esté ejecutándose<br>';
             echo '• Comprobar las credenciales en config/config.php<br>';
-            echo '• Validar que la base de datos exista<br>';
-            echo '• Revisar permisos del usuario de base de datos';
-            echo '</div>';
-            
-        } catch (Exception $e) {
-            // Error general
-            echo '<div class="status error">';
-            echo '❌ <strong>ERROR GENERAL</strong><br>';
-            echo htmlspecialchars($e->getMessage());
+            echo '• Validar que la base de datos "' . htmlspecialchars($basedatos) . '" exista<br>';
+            echo '• Revisar permisos del usuario "' . htmlspecialchars($usuario) . '"<br>';
+            echo '• Verificar que el puerto ' . $puerto . ' esté abierto';
             echo '</div>';
         }
         ?>
@@ -211,7 +214,7 @@ try {
 
         <div class="info" style="text-align: center; margin-top: 30px;">
             <strong>Camella.com.co</strong> - Portal de Empleo Colombiano<br>
-            <small>Desarrollado con ❤️ para Colombia</small>
+            <small>Desarrollado con ❤️ para Colombia - Versión MySQLi</small>
         </div>
     </div>
 </body>
