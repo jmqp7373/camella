@@ -5,6 +5,7 @@
  */
 
 require_once 'models/Categorias.php';
+require_once 'debug_logger.php';
 
 class AdminController {
     private $categoriasModel;
@@ -187,7 +188,16 @@ class AdminController {
      * Editar categoría existente
      */
     public function editarCategoria() {
+        // Log detallado para debugging
+        logCategoria('INICIO_EDICION', [
+            'REQUEST_METHOD' => $_SERVER['REQUEST_METHOD'],
+            'HTTP_X_REQUESTED_WITH' => $_SERVER['HTTP_X_REQUESTED_WITH'] ?? 'No definido',
+            'POST_data' => $_POST,
+            'timestamp' => date('Y-m-d H:i:s')
+        ]);
+        
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            error_log("Error: Método no es POST");
             if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
                 header('Content-Type: application/json');
                 echo json_encode(['exito' => false, 'mensaje' => 'Método no permitido']);
@@ -200,6 +210,8 @@ class AdminController {
         $id = intval($_POST['id'] ?? 0);
         $nombre = trim($_POST['nombre'] ?? '');
         $icono = trim($_POST['icono'] ?? '');
+        
+        error_log("Valores parseados - ID: $id, Nombre: '$nombre', Ícono: '$icono'");
         
         if (!$id || empty($nombre)) {
             $error = 'ID y nombre son obligatorios';
@@ -214,10 +226,15 @@ class AdminController {
         }
         
         try {
+            // Log para debugging
+            error_log("AdminController::editarCategoria - Recibido: ID=$id, Nombre='$nombre', Ícono='$icono'");
+            
             $resultado = $this->categoriasModel->actualizarCategoria($id, $nombre, $icono ?: null);
             
             if ($resultado) {
                 $mensaje = 'Categoría actualizada exitosamente';
+                error_log("Actualización exitosa para categoría ID: $id");
+                
                 if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
                     header('Content-Type: application/json');
                     echo json_encode([
@@ -234,7 +251,9 @@ class AdminController {
                     header('Location: index.php?view=admin');
                 }
             } else {
-                $error = 'Error al actualizar la categoría';
+                $error = 'Error al actualizar la categoría - No se encontró la categoría o no hubo cambios';
+                error_log("Fallo al actualizar categoría ID: $id - Resultado: false");
+                
                 if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest') {
                     header('Content-Type: application/json');
                     echo json_encode(['exito' => false, 'mensaje' => $error]);

@@ -386,10 +386,13 @@ class Categorias {
      */
     public function actualizarCategoria($id, $nombre, $icono = null) {
         try {
+            // Log para debugging
+            error_log("Actualizando categoría - ID: $id, Nombre: $nombre, Ícono: $icono");
+            
             $sql = "UPDATE categorias SET nombre = ?";
             $params = [$nombre];
             
-            if ($icono !== null) {
+            if ($icono !== null && $icono !== '') {
                 $sql .= ", icono = ?";
                 $params[] = $icono;
             }
@@ -397,8 +400,31 @@ class Categorias {
             $sql .= " WHERE id = ?";
             $params[] = $id;
             
+            error_log("SQL Query: $sql");
+            error_log("Parámetros: " . print_r($params, true));
+            
             $stmt = $this->conexion->prepare($sql);
-            return $stmt->execute($params);
+            
+            if (!$stmt) {
+                error_log("Error preparando statement: " . $this->conexion->error);
+                return false;
+            }
+            
+            $resultado = $stmt->execute($params);
+            
+            if (!$resultado) {
+                error_log("Error ejecutando query: " . $stmt->error);
+                return false;
+            }
+            
+            $affectedRows = $stmt->affected_rows;
+            error_log("Filas afectadas: $affectedRows");
+            
+            $stmt->close();
+            
+            // Verificar que al menos una fila fue afectada
+            return $affectedRows > 0;
+            
         } catch (Exception $e) {
             error_log("Error actualizando categoría: " . $e->getMessage());
             return false;
