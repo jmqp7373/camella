@@ -1,199 +1,159 @@
 <?php
 /**
- * errors/handler.php — Manejo controlado de errores/fatales en producción
+ * errors/handler.php — Manejador global de errores y excepciones.
+ *
+ * PROPÓSITO:
+ * - Capturar todos los errores, warnings y excepciones de PHP.
+ * - Mostrar al usuario solo un mensaje genérico, sin exponer detalles.
+ * - Permitir que el sitio siga funcionando ante warnings/notices leves.
+ * - Registrar todo en error_log para análisis posterior.
+ *
+ * ESTRATEGIA:
+ * - Las excepciones no capturadas lanzan HTTP 500.
+ * - Los errores fatales (E_ERROR, E_PARSE, etc.) también lanzan 500.
+ * - Los warnings/notices se registran pero **no interrumpen** la ejecución.
+ *
+ * NOTAS:
+ * - El archivo debe cargarse en bootstrap.php **después** de session_start().
+ * - Los mensajes de usuario nunca deben revelar rutas o detalles técnicos.
+ * - Este comportamiento es ideal para producción (GoDaddy / hosting compartido).
  * 
- * Propósito: Interceptar errores fatales, excepciones no manejadas y errores
- * de PHP para mostrar mensajes controlados al usuario y registrar detalles
- * técnicos en el error_log para debugging.
- * 
- * Comportamiento:
- * - Usuarios ven mensaje genérico y limpio (sin exponer rutas del sistema)
- * - Desarrolladores tienen logging detallado en error_log
- * - Se mantiene la maquetación existente (no se cargan vistas complejas)
- * - Response codes HTTP apropiados para SEO y herramientas
- * 
- * Cómo desactivar para debugging local:
- * 1. Comentar require_once de este archivo en bootstrap.php
- * 2. O definir ENVIRONMENT=development antes de incluirlo
- * 3. O usar ini_set('display_errors', 1) en desarrollo
- * 
- * @author Camella Development Team - Security Hardening
- * @version 1.0
+ * NOTAS PARA DESARROLLADORES NOVATOS:
+ * - Warnings se registran en error_log pero NO interrumpen la ejecución.
+ * - Solo errores fatales (E_ERROR, E_PARSE) causan HTTP 500 y exit().
+ * - Para debugging local: comentar require de este archivo en bootstrap.php.
+ * - Usar tools/peek_log.php para ver errores registrados sin interrumpir.
+ *
+ * @author Camella Development Team - Error Handling v2
+ * @version 2.0 - Tolerante a warnings
  * @date 2025-10-08
  */
 
+declare(strict_types=1);
+
+// ------------------------------------------------------------
+// 1) Captura de excepciones no manejadas
+// ------------------------------------------------------------
 /**
- * MANEJADOR DE EXCEPCIONES NO CAPTURADAS
+ * Manejador de excepciones no capturadas
  * 
- * Propósito: Interceptar excepciones que no fueron manejadas por try/catch
- * en el código de la aplicación.
- * 
- * Flujo:
- * 1. Registrar detalles completos en error_log
- * 2. Mostrar mensaje genérico al usuario
- * 3. Enviar HTTP 500 para indicar error del servidor
- * 4. Terminar ejecución para evitar outputs adicionales
- * 
- * @param Exception $exception La excepción no manejada
- * @return void Termina la ejecución
+ * LÍNEA CLAVE: Solo las excepciones no manejadas causan HTTP 500
+ * Efectos: Logging detallado + mensaje genérico + terminación
  */
-set_exception_handler(function($exception) {
-    // Log detallado para desarrolladores
-    error_log("[EXCEPTION HANDLER] " . get_class($exception) . ": {$exception->getMessage()} @ {$exception->getFile()}:{$exception->getLine()}");
-    error_log("[EXCEPTION TRACE] " . $exception->getTraceAsString());
-    
-    // Limpiar output buffer si existe para evitar contenido parcial
+set_exception_handler(function ($e) {
+    // LÍNEA CLAVE: Logging detallado con archivo y línea
+    error_log("[EXCEPTION] {$e->getMessage()} @ {$e->getFile()}:{$e->getLine()}");
+    error_log("[EXCEPTION TRACE] " . $e->getTraceAsString());
+
+    // Limpiar buffer de salida para evitar contenido parcial
     if (ob_get_level()) {
         ob_end_clean();
     }
-    
-    // Respuesta HTTP apropiada
+
+    // LÍNEA CLAVE: Respuesta genérica al usuario (sin detalles técnicos)
     http_response_code(500);
-    
-    // Headers para evitar cache de páginas de error
-    header('Cache-Control: no-cache, no-store, must-revalidate');
-    header('Pragma: no-cache');
-    header('Expires: 0');
-    
-    // Mensaje controlado para usuarios (sin exponer detalles técnicos)
     exit('Ha ocurrido un error interno. Por favor intenta nuevamente.');
 });
 
+// ------------------------------------------------------------
+// 2) Captura de errores PHP en ejecución
+// ------------------------------------------------------------
 /**
- * MANEJADOR DE ERRORES DE PHP
+ * Manejador de errores PHP (warnings, notices, fatales)
  * 
- * Propósito: Interceptar errores de PHP (warnings, notices, errors)
- * y convertirlos en respuestas controladas.
- * 
- * Parámetros del error handler estándar de PHP:
- * @param int $severity Nivel de severidad del error
- * @param string $message Mensaje del error
- * @param string $file Archivo donde ocurrió el error
- * @param int $line Línea donde ocurrió el error
- * @return bool True para prevenir el handler por defecto de PHP
+ * COMPORTAMIENTO CLAVE:
+ * - Warnings/notices: se registran pero NO interrumpen ejecución
+ * - Errores fatales: se registran Y terminan ejecución con HTTP 500
+ * - Return true: evita el handler por defecto de PHP
  */
-set_error_handler(function($severity, $message, $file, $line) {
-    // Mapear severidades a texto legible
-    $severityNames = [
-        E_ERROR => 'ERROR',
-        E_WARNING => 'WARNING', 
-        E_PARSE => 'PARSE',
-        E_NOTICE => 'NOTICE',
-        E_CORE_ERROR => 'CORE_ERROR',
-        E_CORE_WARNING => 'CORE_WARNING',
-        E_USER_ERROR => 'USER_ERROR',
-        E_USER_WARNING => 'USER_WARNING',
-        E_USER_NOTICE => 'USER_NOTICE'
+set_error_handler(function ($severity, $message, $file, $line) {
+    // LÍNEA CLAVE: Registrar todo tipo de error para análisis posterior
+    $severityName = [
+        E_ERROR => 'ERROR', E_WARNING => 'WARNING', E_PARSE => 'PARSE',
+        E_NOTICE => 'NOTICE', E_CORE_ERROR => 'CORE_ERROR', 
+        E_CORE_WARNING => 'CORE_WARNING', E_COMPILE_ERROR => 'COMPILE_ERROR',
+        E_COMPILE_WARNING => 'COMPILE_WARNING', E_USER_ERROR => 'USER_ERROR',
+        E_USER_WARNING => 'USER_WARNING', E_USER_NOTICE => 'USER_NOTICE',
+        E_RECOVERABLE_ERROR => 'RECOVERABLE_ERROR', E_DEPRECATED => 'DEPRECATED',
+        E_USER_DEPRECATED => 'USER_DEPRECATED'
+    ][$severity] ?? "UNKNOWN_{$severity}";
+    
+    error_log("[{$severityName}] {$message} @ {$file}:{$line}");
+
+    // LÍNEA CLAVE: Solo interrumpir si el error es realmente crítico
+    $fatalTypes = [
+        E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR,
+        E_USER_ERROR, E_RECOVERABLE_ERROR
     ];
-    
-    $severityName = $severityNames[$severity] ?? 'UNKNOWN';
-    
-    // Log del error para desarrolladores
-    error_log("[ERROR HANDLER] {$severityName}: {$message} @ {$file}:{$line}");
-    
-    // Solo terminar ejecución en errores críticos
-    if (in_array($severity, [E_ERROR, E_CORE_ERROR, E_USER_ERROR, E_PARSE])) {
-        // Limpiar output si existe
+
+    if (in_array($severity, $fatalTypes, true)) {
+        // Limpiar buffer de salida
         if (ob_get_level()) {
             ob_end_clean();
         }
         
+        // LÍNEA CLAVE: Solo errores fatales causan HTTP 500 y exit()
         http_response_code(500);
-        header('Cache-Control: no-cache, no-store, must-revalidate');
-        exit('Ha ocurrido un error. Por favor intenta nuevamente.');
+        exit('Ha ocurrido un error interno. Por favor intenta nuevamente.');
     }
-    
-    // Para warnings y notices, continuar ejecución pero logear
-    return true; // Prevenir el handler por defecto de PHP
+
+    // LÍNEA CLAVE: En warnings/notices/deprecated - continuar ejecución normal
+    return true; // evita el handler por defecto de PHP
 });
 
+// ------------------------------------------------------------
+// 3) Captura de errores fatales en shutdown
+// ------------------------------------------------------------
 /**
- * MANEJADOR DE ERRORES FATALES
+ * Manejador de shutdown para errores fatales no capturados
  * 
- * Propósito: Interceptar errores fatales que ocurren durante la ejecución
- * y que normalmente terminarían el script sin control.
- * 
- * Se ejecuta al final del script (shutdown) para verificar si hubo
- * algún error fatal no manejado.
- * 
- * Tipos de errores fatales que maneja:
- * - E_ERROR: Errores fatales de runtime
- * - E_PARSE: Errores de sintaxis de PHP
- * - E_CORE_ERROR: Errores fatales del núcleo de PHP
- * - E_COMPILE_ERROR: Errores de compilación
- * 
- * @return void
+ * PROPÓSITO: Capturar errores que ocurren durante el shutdown de PHP
+ * como parse errors, memory exhausted, etc.
  */
-register_shutdown_function(function() {
-    // Obtener el último error que ocurrió
-    $lastError = error_get_last();
-    
-    // Verificar si fue un error fatal
-    if ($lastError && in_array($lastError['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR])) {
-        // Log detallado del error fatal
-        error_log("[FATAL ERROR HANDLER] {$lastError['message']} @ {$lastError['file']}:{$lastError['line']}");
+register_shutdown_function(function () {
+    $e = error_get_last();
+
+    // LÍNEA CLAVE: Solo actuar si hay error fatal real
+    if ($e && in_array($e['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        error_log("[FATAL] {$e['message']} @ {$e['file']}:{$e['line']}");
         
-        // Si no se han enviado headers aún, enviar respuesta controlada
+        // Solo enviar respuesta si no se ha enviado ya
         if (!headers_sent()) {
             http_response_code(500);
-            header('Cache-Control: no-cache, no-store, must-revalidate');
-            header('Content-Type: text/html; charset=utf-8');
-            
-            // Mensaje limpio para usuarios
-            echo 'Ha ocurrido un error fatal. Por favor intenta nuevamente.';
         }
+        
+        // LÍNEA CLAVE: Mensaje genérico sin detalles técnicos
+        echo 'Ha ocurrido un error interno. Por favor intenta nuevamente.';
+        exit();
     }
 });
 
 /**
- * LOGGING DE INICIALIZACIÓN DEL HANDLER
- * 
- * Registrar que el sistema de manejo de errores está activo
- * para confirmar en logs que las funciones están funcionando.
- */
-error_log("[ERROR HANDLER] Sistema de manejo de errores inicializado en " . date('Y-m-d H:i:s'));
-
-/**
- * NOTAS PARA DESARROLLADORES:
- * 
- * CUÁNDO SE ACTIVA CADA HANDLER:
- * 
- * 1. set_exception_handler():
- *    - Excepciones lanzadas con 'throw' que no son capturadas
- *    - Errores de conexión a BD sin try/catch
- *    - Llamadas a métodos inexistentes
- * 
- * 2. set_error_handler(): 
- *    - include/require de archivos inexistentes
- *    - Divisiones por cero
- *    - Variables indefinidas (notices)
- *    - Funciones deprecated (warnings)
- * 
- * 3. register_shutdown_function():
- *    - Errores de sintaxis PHP
- *    - Memory limit exceeded 
- *    - Maximum execution time exceeded
- *    - Parse errors en archivos incluidos
+ * NOTAS PARA MANTENIMIENTO FUTURO:
  * 
  * DEBUGGING EN DESARROLLO:
+ * - Para ver errores detallados: comentar require de este archivo en bootstrap.php
+ * - O definir ini_set('display_errors', 1) antes de incluir este handler
+ * - O usar ENVIRONMENT=development en configuración
  * 
- * Para ver errores completos en desarrollo local:
- * 1. Comentar este archivo en bootstrap.php
- * 2. O agregar al inicio de index.php:
- *    ini_set('display_errors', 1);
- *    error_reporting(E_ALL);
+ * MONITOREO EN PRODUCCIÓN:
+ * - Usar tools/peek_log.php para revisar errores registrados
+ * - Warnings/notices no interrumpen pero se registran para análisis
+ * - Solo errores fatales causan HTTP 500 visible al usuario
  * 
- * EXTENDER EL SISTEMA:
+ * PERSONALIZACIÓN:
+ * - Para cambiar mensaje de error: modificar texto en exit()
+ * - Para agregar notificación por email: usar error_log() con mail()
+ * - Para logging personalizado: reemplazar error_log() con custom logger
  * 
- * Para agregar notificaciones por email en errores críticos:
- * 1. Agregar mail() en los handlers de errores fatales
- * 2. Verificar que no se envíen emails duplicados
- * 3. Usar rate limiting para evitar spam de emails
+ * SEGURIDAD:
+ * - Nunca mostrar rutas de archivos al usuario final
+ * - Mantener logs accesibles solo para administradores
+ * - Considerar rotación de logs si crecen mucho
  * 
- * Para logging a archivos específicos:
- * 1. Usar error_log($mensaje, 3, '/path/to/custom.log')
- * 2. Rotar logs periódicamente
- * 3. Verificar permisos de escritura
+ * CÓMO REVERTIR:
+ * - Comentar require_once de este archivo en bootstrap.php
+ * - O restaurar handler anterior desde git history
+ * - O usar ini_set('display_errors', 1) para mostrar errores PHP nativos
  */
-
 ?>
