@@ -39,6 +39,7 @@
  */
 require_once 'models/Usuario.php';
 require_once 'controllers/BaseController.php';
+require_once 'helpers/AuthHelper.php';
 
 class LoginController extends BaseController {
     
@@ -159,43 +160,73 @@ class LoginController extends BaseController {
                 return;
             }
             
-            // Validar credenciales con el modelo
-            $usuario = $this->usuarioModel->validarCredenciales($email, $password);
+            // LÍNEA CLAVE: Sanitizar y validar entrada según especificaciones
+            $email = filter_var(trim($_POST['email'] ?? ''), FILTER_SANITIZE_EMAIL);
+            $password = trim($_POST['password'] ?? '');
+            
+            // Validaciones básicas mejoradas
+            if (empty($email) || empty($password)) {
+                error_log("[LOGIN] email={$email} resultado=FAIL_EMPTY_FIELDS user_id=null");
+                $this->redireccionar('/login?error=' . urlencode('Por favor complete todos los campos'));
+                return;
+            }
+            
+            // LÍNEA CLAVE: Validar credenciales usando buscarPorEmail según especificaciones
+            $usuario = $this->usuarioModel->buscarPorEmail($email);
             
             if ($usuario) {
-                // Login exitoso - iniciar sesión segura
-                $sesionIniciada = $this->authHelper->iniciarSesionSegura($usuario, $recordar);
+                // LÍNEA CLAVE: Verificar estados - permitir acceso solo si activo=1
+                if (isset($usuario['activo']) && $usuario['activo'] != 1) {
+                    error_log("[LOGIN] email={$email} resultado=FAIL_INACTIVE user_id={$usuario['id']}");
+                    $this->redireccionar('/login?error=' . urlencode('Cuenta inactiva'));
+                    return;
+                }
                 
-                if ($sesionIniciada) {
+                // LÍNEA CLAVE: Verificar contraseña con bcrypt según especificaciones
+                $ok = password_verify($password, $usuario['password'] ?? '');
+                
+                if ($ok) {
+                    // LÍNEA CLAVE: Iniciar sesión según especificaciones (asegurar session_start())
+                    iniciarSesionSegura();
+                    
+                    // LÍNEA CLAVE: Usar SIEMPRE las mismas claves según especificaciones
+                    $_SESSION['user_id']    = (int)$usuario['id'];
+                    $_SESSION['user_email'] = $usuario['email'];  
+                    $_SESSION['user_role']  = $usuario['rol'] ?? 'admin';
+                    
+                    // Compatibilidad con sistema existente
+                    $_SESSION['usuario_id'] = (int)$usuario['id'];
+                    $_SESSION['email'] = $usuario['email'];
+                    $_SESSION['rol'] = $usuario['rol'] ?? 'admin';
+                    $_SESSION['nombre'] = $usuario['nombre'] ?? '';
+                    
                     /**
                      * REGENERACIÓN DE TOKEN CSRF POST-LOGIN - SEGURIDAD CRÍTICA
                      * 
                      * Propósito: Generar nuevo token CSRF después de login exitoso
                      * para prevenir session fixation y ataques posteriores.
-                     * 
-                     * Razón del cambio: El token anterior ya se usó para validar
-                     * este login, debe ser regenerado para futuras operaciones
-                     * sensibles del usuario autenticado.
                      */
                     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
                     
-                    // Log del login exitoso
-                    error_log("Login exitoso - Usuario: {$usuario['email']}, Rol: {$usuario['rol']}, IP: " . $_SERVER['REMOTE_ADDR']);
+                    // LÍNEA CLAVE: Logging mínimo según especificaciones
+                    error_log("[LOGIN] email={$email} resultado=OK user_id={$usuario['id']}");
                     
-                    // Determinar destino de redirección
+                    // LÍNEA CLAVE: Redirección en éxito según especificaciones
                     if ($redirect && $this->esRedirectSegura($redirect)) {
                         $this->redireccionar($redirect);
                     } else {
-                        $this->redireccionarSegunRol($usuario['rol']);
+                        // Redireccionar a dashboard por defecto
+                        header('Location: /index.php?view=dashboard');
+                        exit;
                     }
                 } else {
-                    // Error iniciando sesión
-                    error_log("Error iniciando sesión para usuario: $email");
-                    $this->redireccionar('/login?error=' . urlencode('Error interno del sistema'));
+                    // LÍNEA CLAVE: Logging en fallo según especificaciones
+                    error_log("[LOGIN] email={$email} resultado=FAIL user_id=" . ($usuario['id'] ?? 'null'));
+                    $this->redireccionar('/login?error=' . urlencode('Email o contraseña incorrectos'));
                 }
             } else {
-                // Credenciales inválidas
-                error_log("Intento de login fallido para email: $email desde IP: " . $_SERVER['REMOTE_ADDR']);
+                // Usuario no encontrado
+                error_log("[LOGIN] email={$email} resultado=FAIL user_id=null");
                 $this->redireccionar('/login?error=' . urlencode('Email o contraseña incorrectos'));
             }
             

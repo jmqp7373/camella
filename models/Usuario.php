@@ -165,6 +165,52 @@ class Usuario {
      * @param string $password Password en texto plano
      * @return array|false Array con datos del usuario si login exitoso, false si falla
      */
+
+    /**
+     * Buscar usuario por email - MÉTODO PRINCIPAL para queries
+     * 
+     * @param string $email Email del usuario
+     * @return array|false Datos del usuario si existe, false si no
+     */
+    public function buscarPorEmail($email) {
+        try {
+            // Sanitizar input del email
+            $email = trim(strtolower($email));
+            
+            if (empty($email)) {
+                return false;
+            }
+            
+            // Buscar usuario por email (incluir usuarios inactivos para mejor control)
+            $sql = "SELECT id, nombre, email, password, rol, activo FROM usuarios WHERE email = ? LIMIT 1";
+            $stmt = $this->conexion->prepare($sql);
+            
+            if (!$stmt) {
+                error_log("Error preparando query buscarPorEmail: " . $this->conexion->error);
+                return false;
+            }
+            
+            $stmt->bind_param("s", $email);
+            $resultado = $stmt->execute();
+            
+            if (!$resultado) {
+                error_log("Error ejecutando buscarPorEmail: " . $stmt->error);
+                $stmt->close();
+                return false;
+            }
+            
+            $result = $stmt->get_result();
+            $usuario = $result->fetch_assoc();
+            $stmt->close();
+            
+            return $usuario ?: false;
+            
+        } catch (Exception $e) {
+            error_log("Excepción en buscarPorEmail: " . $e->getMessage());
+            return false;
+        }
+    }
+
     public function validarCredenciales($email, $password) {
         try {
             // Sanitizar input del email
