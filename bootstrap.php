@@ -65,24 +65,28 @@ if (session_status() === PHP_SESSION_NONE) {
  */
 require_once __DIR__ . '/errors/handler.php';
 
-/**
- * CARGAR CONFIG Y EXPONER PDO GLOBAL
- * 
- * Propósito: Centralizar la conexión PDO y hacerla disponible globalmente
- * para compatibilidad con código legacy que espera $pdo como variable global.
- * 
- * Se prefiere usar getPDO() en código nuevo, pero $pdo está disponible
- * para piezas existentes que la necesiten.
- */
-require_once __DIR__ . '/config/config.php';
+// ------------------------------------------------------
+//  Inicialización segura de PDO (si no se ha hecho aún)
+// ------------------------------------------------------
+// Este bloque garantiza que getPDO() esté disponible y que $pdo 
+// global se inicialice correctamente en cada carga de bootstrap.
+// No imprime nada al usuario y solo loggea para diagnóstico.
+// No rompe flujo, incluso si la DB está caída.
 
-// Disponibilizar en variable global $pdo para código legacy que la espera
+if (!function_exists('getPDO')) {
+    require_once __DIR__ . '/config/config.php';
+}
+
 try {
     $pdo = getPDO();
-    error_log("[BOOTSTRAP] PDO inicializado correctamente");
+    if ($pdo instanceof PDO) {
+        // Confirmación en logs para diagnóstico
+        error_log('[bootstrap] PDO instanciado correctamente.');
+    } else {
+        error_log('[bootstrap] PDO no retornó instancia válida.');
+    }
 } catch (Throwable $e) {
-    error_log('[BOOTSTRAP PDO ERROR] ' . $e->getMessage());
-    // No cortamos la ejecución: el handler global ya se encarga de fatales.
+    error_log('[bootstrap] Error inicializando PDO: ' . $e->getMessage());
 }
 
 /**
