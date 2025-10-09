@@ -37,10 +37,10 @@ class MailHelper {
      * 
      * @param string $to Email destinatario
      * @param string $subject Asunto del correo
-     * @param string $body Contenido HTML del correo
+     * @param string $html Contenido HTML del correo
      * @return bool True si se envió correctamente
      */
-    public static function send($to, $subject, $body) {
+    public static function send(string $to, string $subject, string $html): bool {
         // Validación básica
         if (!filter_var($to, FILTER_VALIDATE_EMAIL)) {
             error_log("[MAIL][ERROR] Email inválido: {$to}");
@@ -78,20 +78,22 @@ class MailHelper {
             $mail->isSMTP();
             $mail->SMTPDebug = 0; // Sin debug en producción
             
-            // Fallback y logging seguro para SMTP
-            if (trim(SMTP_PASS) === '') {
-                error_log('[MAIL] SMTP_PASS vacío. Usando fallback smtp-relay.gmail.com.');
-                $mail->Host = 'smtp-relay.gmail.com';
-                $mail->SMTPAuth = false;
-                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Port = 587;
-            } else {
+            // Fallback y logging seguro para SMTP - ESPECIFICACIÓN EXACTA
+            if (defined('SMTP_PASS') && trim(SMTP_PASS) !== '') {
+                // Gmail autenticado
                 $mail->Host = SMTP_HOST;
                 $mail->SMTPAuth = true;
                 $mail->Username = SMTP_USER;
                 $mail->Password = SMTP_PASS;
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port = SMTP_PORT;
+            } else {
+                // Fallback relay por dominio (SPF/DKIM/DMARC ya ok)
+                error_log('[MAIL] SMTP_PASS vacío o inválido. Fallback smtp-relay.gmail.com');
+                $mail->Host = 'smtp-relay.gmail.com';
+                $mail->SMTPAuth = false;
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port = 587;
             }
             
             // Configurar remitente y destinatario
@@ -110,7 +112,7 @@ class MailHelper {
                 error_log("[MAIL] Email enviado exitosamente a: " . substr($to, 0, 3) . "***");
                 return true;
             } else {
-                error_log('[MAIL][ERROR] ' . substr($mail->ErrorInfo, 0, 250));
+                error_log('[MAIL][ERROR] ' . substr($mail->ErrorInfo ?? 'unknown', 0, 250));
                 return false;
             }
             

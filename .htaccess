@@ -141,5 +141,12 @@ Options -Indexes
 </IfModule>
 
 # ========================================
+# RUTAS AMIGABLES PARA RECUPERACIÓN DE CONTRASEÑAS
+# ========================================
+
+# Mapear /forgot-password a index.php?view=recuperar-password
+RewriteRule ^forgot-password$ index.php?view=recuperar-password [L,QSA]
+
+# ========================================
 # FIN DE CONFIGURACIÓN
 # ========================================
