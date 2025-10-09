@@ -43,6 +43,8 @@ class PasswordController extends BaseController {
      * Procesar solicitud de recuperación - ROBUST IMPLEMENTATION
      */
     public function procesarSolicitud() {
+        error_log('[RESET] POST recibido');
+        
         try {
             // Sanitizar email según especificación
             $email = filter_var(trim(isset($_POST['email']) ? $_POST['email'] : ''), FILTER_SANITIZE_EMAIL);
