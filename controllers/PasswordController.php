@@ -64,9 +64,17 @@ class PasswordController extends BaseController {
             // limpiar tokens previos de ese correo (idempotencia)
             $pdo->prepare('DELETE FROM password_resets WHERE email = ?')->execute([$email]);
 
-            // generar token seguro
+            // generar token seguro y su hash HMAC
             $token = bin2hex(random_bytes(32));
-            $pdo->prepare('INSERT INTO password_resets (email, token) VALUES (?, ?)')->execute([$email, $token]);
+            
+            // Cargar APP_KEY si no está definido
+            if (!defined('APP_KEY')) {
+                require_once __DIR__ . '/../config/config.php';
+            }
+            $token_hash = hash_hmac('sha256', $token, APP_KEY);
+            
+            // Insertar con hash y expiración de 30 minutos
+            $pdo->prepare('INSERT INTO password_resets (email, token_hash, expires_at) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 30 MINUTE))')->execute([$email, $token_hash]);
 
             // armar link absoluto
             $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
@@ -104,14 +112,16 @@ class PasswordController extends BaseController {
             $sql = "CREATE TABLE IF NOT EXISTS password_resets (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 email VARCHAR(255) NOT NULL,
-                token VARCHAR(255) NOT NULL,
+                token_hash VARCHAR(64) NOT NULL,
+                expires_at TIMESTAMP NULL,
+                used_at TIMESTAMP NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 INDEX (email),
-                INDEX (token)
+                INDEX (token_hash)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
             
             $pdo->exec($sql);
-            error_log('[RESET] Tabla password_resets asegurada');
+            error_log('[RESET] Tabla password_resets asegurada con HMAC');
         } catch (Exception $e) {
             error_log('[RESET][ERROR] Error asegurando tabla: ' . $e->getMessage());
             throw $e;
@@ -120,53 +130,12 @@ class PasswordController extends BaseController {
     
     /**
      * Mostrar formulario de reset con token - GET
+     * DELEGADO a views/reset-password.php que maneja HMAC internamente
      */
     public function mostrarReset() {
-        $token = isset($_GET['token']) ? $_GET['token'] : '';
-        
-        if (empty($token)) {
-            $this->mostrarError('Token requerido.');
-            return;
-        }
-        
-        try {
-            $pdo = getPDO();
-            
-            // Validar que token existe y está vigente (<24h)
-            $stmt = $pdo->prepare("
-                SELECT email FROM password_resets 
-                WHERE token = ? AND created_at > (NOW() - INTERVAL 24 HOUR)
-                LIMIT 1
-            ");
-            $stmt->execute([$token]);
-            $resetData = $stmt->fetch();
-            
-            if (!$resetData) {
-                error_log('[RESET] token inválido o expirado: '.substr($token,0,10).'...');
-                $this->mostrarError('Token inválido o expirado.');
-                return;
-            }
-            
-            // Generar CSRF para el formulario de nueva contraseña
-            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-            $_SESSION['reset_token'] = $token; // Guardar para el POST
-            $_SESSION['reset_email'] = $resetData['email'];
-            
-            // Preparar datos para vista (mantener estructura UI existente)
-            $pageTitle = "Nueva Contraseña";
-            $mensaje = isset($_SESSION['mensaje']) ? $_SESSION['mensaje'] : null;
-            $tipo_mensaje = isset($_SESSION['tipo_mensaje']) ? $_SESSION['tipo_mensaje'] : null;
-            
-            // Limpiar mensajes de sesión
-            unset($_SESSION['mensaje'], $_SESSION['tipo_mensaje']);
-            
-            // Mostrar vista de "nueva contraseña" (no cambiar UI)
-            include __DIR__ . '/../views/auth/reset_password.php';
-            
-        } catch (Exception $e) {
-            error_log('[RESET][EXCEPTION] '.substr($e->getMessage(),0,300));
-            $this->mostrarError('Error procesando la solicitud.');
-        }
+        // La nueva implementación está en views/reset-password.php
+        // que maneja toda la lógica HMAC internamente
+        include __DIR__ . '/../views/reset-password.php';
     }
     
     /**
