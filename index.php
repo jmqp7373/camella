@@ -145,8 +145,8 @@ if ($uri === '/forgot-password') {
   $_GET['view'] = 'recuperar-password';
 }
 
-// Obtener la vista solicitada (default: home)
-$view = isset($_GET['view']) ? sanitize_input($_GET['view']) : 'home';
+// Asegurar que $view tome $_GET['view'] si viene
+$view = $_GET['view'] ?? $view ?? 'home';
 
 // Lista de vistas permitidas (seguridad)
 $allowed_views = [
