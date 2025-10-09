@@ -8,13 +8,13 @@ if (!class_exists('MailHelper')) {
      * Usa Gmail SMTP si SMTP_PASS está presente; de lo contrario fallback a smtp-relay,
      * y como último recurso usa mail() nativa. Retorna true/false.
      */
-    public static function send(string $to, string $subject, string $html): bool {
+    public static function send($to, $subject, $html) {
       try {
         // 1) Si hay PHPMailer, úsalo
-        $phpMailerPath = __DIR__ . '/../vendor/autoload.php';
-        if (is_file($phpMailerPath)) {
-          require_once $phpMailerPath;
-          $mailer = new PHPMailer\PHPMailer\PHPMailer(true);
+        $autoload = __DIR__ . '/../vendor/autoload.php';
+        if (is_file($autoload)) {
+          require_once $autoload;
+          $mailer = new \PHPMailer\PHPMailer\PHPMailer(true);
           $mailer->isSMTP();
 
           if (defined('SMTP_PASS') && trim(SMTP_PASS) !== '') {
@@ -23,14 +23,14 @@ if (!class_exists('MailHelper')) {
             $mailer->SMTPAuth = true;
             $mailer->Username = SMTP_USER;
             $mailer->Password = SMTP_PASS;
-            $mailer->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mailer->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
             $mailer->Port = (int) SMTP_PORT;
           } else {
             // Fallback relay por dominio
             error_log('[MAIL] SMTP_PASS vacío/ausente. Fallback smtp-relay.gmail.com');
             $mailer->Host = 'smtp-relay.gmail.com';
             $mailer->SMTPAuth = false;
-            $mailer->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mailer->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
             $mailer->Port = 587;
           }
 
@@ -43,7 +43,7 @@ if (!class_exists('MailHelper')) {
           $mailer->Body    = $html;
 
           $ok = $mailer->send();
-          if (!$ok) { error_log('[MAIL][ERROR] ' . substr($mailer->ErrorInfo ?? 'unknown', 0, 250)); }
+          if (!$ok) { error_log('[MAIL][ERROR] ' . substr(($mailer->ErrorInfo ? $mailer->ErrorInfo : 'unknown'), 0, 250)); }
           return $ok;
         }
 
@@ -65,14 +65,14 @@ if (!class_exists('MailHelper')) {
     }
 
     // (Opcional) Adapta nombres legacy: si existía enviar(), envíarCorreo(), etc., redirígelos:
-    public static function enviar(string $to, string $subject, string $html): bool {
+    public static function enviar($to, $subject, $html) {
       return self::send($to, $subject, $html);
     }
 
     /**
      * Enviar email de reset de contraseña - MÉTODO LEGACY para compatibilidad
      */
-    public static function enviarResetPassword(string $email, string $resetLink): bool {
+    public static function enviarResetPassword($email, $resetLink) {
       $subject = "Recuperar contraseña - " . (defined('APP_NAME') ? APP_NAME : 'Camella.com.co');
       $html = self::construirMensajeResetHTML($email, $resetLink);
       return self::send($email, $subject, $html);
@@ -81,7 +81,7 @@ if (!class_exists('MailHelper')) {
     /**
      * Construir mensaje HTML de recuperación de contraseña
      */
-    private static function construirMensajeResetHTML(string $email, string $resetLink): string {
+    private static function construirMensajeResetHTML($email, $resetLink) {
       $appName = defined('APP_NAME') ? APP_NAME : 'Camella.com.co';
       return "
       <!DOCTYPE html>

@@ -28,7 +28,7 @@ require __DIR__ . '/../../partials/header.php';
                 </div>
                 <div class="card-body">
                     
-                    <?php if (!empty($mensaje)): ?>
+                    <?php if (isset($mensaje) && !empty($mensaje)): ?>
                         <div class="alert alert-<?= $tipo_mensaje === 'success' ? 'success' : ($tipo_mensaje === 'error' ? 'danger' : 'info') ?>" role="alert">
                             <?= htmlspecialchars($mensaje, ENT_QUOTES, 'UTF-8') ?>
                         </div>
@@ -41,41 +41,37 @@ require __DIR__ . '/../../partials/header.php';
                     <form method="POST" action="index.php?view=procesar-reset">
                         
                         <!-- Token CSRF (campo oculto) -->
-                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
-                        
-                        <!-- Token de reset y email (campos ocultos) -->
-                        <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
-                        <input type="hidden" name="email" value="<?= htmlspecialchars($_GET['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : '', ENT_QUOTES, 'UTF-8') ?>">
                         
                         <div class="form-group mb-3">
-                            <label for="new_password" class="form-label">
+                            <label for="password" class="form-label">
                                 <i class="fas fa-key"></i> Nueva contraseña
                             </label>
                             <input 
                                 type="password" 
                                 class="form-control" 
-                                id="new_password" 
-                                name="new_password" 
+                                id="password" 
+                                name="password" 
                                 required 
-                                minlength="10"
-                                placeholder="Mínimo 10 caracteres"
+                                minlength="8"
+                                placeholder="Mínimo 8 caracteres"
                             >
                             <small class="form-text text-muted">
-                                Debe incluir: al menos 10 caracteres, mayúsculas, minúsculas y números
+                                Debe tener al menos 8 caracteres
                             </small>
                         </div>
 
                         <div class="form-group mb-3">
-                            <label for="new_password_confirm" class="form-label">
+                            <label for="password_confirm" class="form-label">
                                 <i class="fas fa-check-double"></i> Confirmar contraseña
                             </label>
                             <input 
                                 type="password" 
                                 class="form-control" 
-                                id="new_password_confirm" 
-                                name="new_password_confirm" 
+                                id="password_confirm" 
+                                name="password_confirm" 
                                 required 
-                                minlength="10"
+                                minlength="8"
                                 placeholder="Repite la contraseña"
                             >
                         </div>

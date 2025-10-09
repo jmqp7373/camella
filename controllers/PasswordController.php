@@ -1,478 +1,275 @@
 <?php
 /**
- * PasswordController - Controlador para recuperación de contraseñas
+ * PasswordController - Robust password reset flow for PHP 7.1 + GoDaddy
  * 
- * PROPÓSITO:
- * - Manejo completo del flujo "Olvidé mi contraseña"
- * - Generación segura de tokens temporales
- * - Envío de emails de recuperación
- * - Reset seguro con validaciones CSRF
- * 
- * CARACTERÍSTICAS DE SEGURIDAD:
- * - Tokens hasheados en BD (no se guarda token plano)
- * - Rate limiting por email (5 minutos entre requests)
- * - Mensajes genéricos (no revelar existencia de emails)
- * - Tokens de un solo uso con expiración (30 minutos)
- * - Protección CSRF en todos los formularios
- * 
- * FLUJO COMPLETO:
- * 1. Usuario solicita reset → formulario con email
- * 2. Sistema genera token → lo hashea → guarda en BD → envía por email
- * 3. Usuario hace clic en enlace → valida token → formulario nueva contraseña
- * 4. Sistema valida → actualiza contraseña → marca token como usado
- * 
- * NOTAS PARA DESARROLLADORES NOVATOS:
- * - Cambiar RESET_EXPIRY_MINUTES para ajustar tiempo de expiración
- * - Cambiar RATE_LIMIT_MINUTES para ajustar frecuencia de requests
- * - Los mensajes son genéricos a propósito (seguridad)
- * - Tokens solo se pueden usar una vez
+ * PROPÓSITO: Flujo completo "Olvidé mi contraseña" robusto
+ * - Tabla simple password_resets (id, email, token, created_at)
+ * - Tokens seguros con bin2hex(random_bytes(32))
+ * - Logging detallado [RESET] sin exponer datos sensibles
+ * - Compatibilidad PHP 7.1 (sin type hints)
  * 
  * @author Camella Development Team
- * @version 1.0
+ * @version 3.0 - Robust + PHP 7.1 Compatible
  * @date 2025-10-08
  */
 
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/BaseController.php';
-require_once __DIR__ . '/../helpers/MailHelper.php';
 
 class PasswordController extends BaseController {
     
-    // Configuración de tiempos (en minutos)
-    const RESET_EXPIRY_MINUTES = 30;
-    const RATE_LIMIT_MINUTES = 5;
-    
     /**
      * Mostrar formulario de solicitud de reset
-     * 
-     * PROPÓSITO: Renderizar formulario donde el usuario ingresa su email
-     * para solicitar recuperación de contraseña.
-     * 
-     * NO REQUIERE AUTENTICACIÓN: Esta función debe ser accesible sin login
-     * 
-     * @return void Renderiza vista recuperar_password.php
      */
     public function mostrarSolicitud() {
-        // Generar token CSRF si no existe
+        // Generar token CSRF para el formulario
         if (empty($_SESSION['csrf_token'])) {
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
         }
         
-        // Preparar datos para la vista
+        // Preparar datos para la vista (mantener estructura existente)
         $pageTitle = "Recuperar Contraseña";
-        $mensaje = $_SESSION['mensaje'] ?? null;
-        $tipo_mensaje = $_SESSION['tipo_mensaje'] ?? null;
+        $mensaje = isset($_SESSION['mensaje']) ? $_SESSION['mensaje'] : null;
+        $tipo_mensaje = isset($_SESSION['tipo_mensaje']) ? $_SESSION['tipo_mensaje'] : null;
         
         // Limpiar mensajes de sesión después de mostrarlos
         unset($_SESSION['mensaje'], $_SESSION['tipo_mensaje']);
         
-        // Renderizar vista
+        // Renderizar vista existente (no cambiar UI)
         include __DIR__ . '/../views/auth/recuperar_password.php';
     }
     
     /**
-     * Procesar solicitud de reset (POST)
-     * 
-     * PROPÓSITO: Generar token de reset y enviar email de recuperación.
-     * 
-     * VALIDACIONES:
-     * - Token CSRF válido
-     * - Email válido y normalizado
-     * - Rate limiting (no más de 1 request por 5 min por email)
-     * 
-     * FLUJO:
-     * 1. Validar CSRF y email
-     * 2. Verificar rate limiting
-     * 3. Generar token seguro
-     * 4. Guardar en BD con hash del token
-     * 5. Enviar email (o loggear si no hay SMTP)
-     * 6. Mostrar mensaje genérico SIEMPRE
-     * 
-     * SEGURIDAD: No revelar si el email existe en el sistema
-     * 
-     * @return void Redirige con mensaje genérico
+     * Procesar solicitud de recuperación - ROBUST IMPLEMENTATION
      */
     public function procesarSolicitud() {
-        // Verificar método POST
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            exit('Método no permitido.');
-        }
-        
-        // LÍNEA CLAVE: Verificación CSRF
-        if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
-            http_response_code(400);
-            exit('Solicitud inválida.');
-        }
-        
-        // Obtener y normalizar email
-        $email = trim(strtolower($_POST['email'] ?? ''));
-        
-        // Validar formato de email
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $_SESSION['mensaje'] = 'Si existe una cuenta con ese correo, te enviaremos instrucciones.';
-            $_SESSION['tipo_mensaje'] = 'info';
-            header('Location: index.php?view=recuperar-password');
-            exit();
-        }
-        
         try {
+            // Sanitizar email según especificación
+            $email = filter_var(trim(isset($_POST['email']) ? $_POST['email'] : ''), FILTER_SANITIZE_EMAIL);
+            if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                error_log('[RESET] email inválido');
+                // devolver genérico (no revelar detalles a la UI)
+                $this->mostrarExito();
+                return;
+            }
+
+            // Crear/verificar tabla password_resets (idempotente)
+            $this->asegurarTablaPasswordResets();
+
+            // (Opcional) comprobar si existe usuario; si no, igual continuar para no revelar existencia.
             $pdo = getPDO();
-            
-            // LÍNEA CLAVE: Rate limiting - verificar si ya existe un reset reciente
-            if ($this->verificarRateLimit($pdo, $email)) {
-                // Ya hay un reset reciente - mostrar mensaje genérico sin crear otro
-                $_SESSION['mensaje'] = 'Si existe una cuenta con ese correo, te enviaremos instrucciones.';
-                $_SESSION['tipo_mensaje'] = 'info';
-                header('Location: index.php?view=recuperar-password');
-                exit();
+
+            // limpiar tokens previos de ese correo (idempotencia)
+            $pdo->prepare('DELETE FROM password_resets WHERE email = ?')->execute([$email]);
+
+            // generar token seguro
+            $token = bin2hex(random_bytes(32));
+            $pdo->prepare('INSERT INTO password_resets (email, token) VALUES (?, ?)')->execute([$email, $token]);
+
+            // armar link absoluto
+            $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://';
+            $base = $scheme . $_SERVER['HTTP_HOST'];
+            $link = $base . '/index.php?view=reset-password&token=' . urlencode($token);
+
+            // enviar correo
+            $subject = 'Recupera tu contraseña en Camella.com.co';
+            $html = '<p>Para recuperar tu contraseña haz clic en el botón:</p>
+                     <p><a href="'.$link.'" style="display:inline-block;background:#0a58ca;color:#fff;padding:10px 16px;border-radius:6px;text-decoration:none;">Cambiar mi contraseña</a></p>
+                     <p>Si no fuiste tú, ignora este mensaje.</p>';
+
+            if (!class_exists('MailHelper')) { 
+                require_once __DIR__ . '/../helpers/MailHelper.php'; 
             }
+            $sent = MailHelper::send($email, $subject, $html);
+            error_log('[RESET] email='.$email.' token='.substr($token,0,8).'... sent=' . ($sent?'OK':'FAIL'));
+
+            // La UI conserva su texto genérico de éxito/fracaso; no revelar existencia de cuenta.
+            $this->mostrarExito();
             
-            // LÍNEA CLAVE: Verificar si el email existe en usuarios (sin revelar resultado)
-            $stmt = $pdo->prepare("SELECT email FROM usuarios WHERE email = ? LIMIT 1");
-            $stmt->execute([$email]);
-            $usuarioExiste = $stmt->fetch();
-            
-            // Solo generar token si el usuario existe, pero SIEMPRE mostrar mensaje genérico
-            if ($usuarioExiste) {
-                // Generar token aleatorio seguro (32 bytes = 64 caracteres hex)
-                $token = bin2hex(random_bytes(32));
-                $tokenHash = hash('sha256', $token);
-                
-                // Calcular tiempo de expiración
-                $expiresAt = date('Y-m-d H:i:s', time() + (self::RESET_EXPIRY_MINUTES * 60));
-                
-                // Obtener IP y User-Agent para auditoría
-                $ip = $this->obtenerIPCliente();
-                $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-                
-                // LÍNEA CLAVE: Insertar token hasheado en BD
-                $stmt = $pdo->prepare("
-                    INSERT INTO password_resets (email, token_hash, expires_at, ip, user_agent) 
-                    VALUES (?, ?, ?, INET6_ATON(?), ?)
-                ");
-                $stmt->execute([$email, $tokenHash, $expiresAt, $ip, $userAgent]);
-                
-                // Construir enlace de reset
-                $resetLink = $this->construirEnlaceReset($token, $email);
-                
-                // LÍNEA CLAVE: Enviar email (o loggear si no hay SMTP)
-                MailHelper::enviarResetPassword($email, $resetLink);
-                
-                // Log para auditoría (sin exponer token)
-                error_log("[password_reset] Solicitud para: " . substr($email, 0, 3) . "*** desde IP: " . $ip);
-            }
-            
-            // MENSAJE GENÉRICO SIEMPRE (seguridad)
-            $_SESSION['mensaje'] = 'Si existe una cuenta con ese correo, te enviaremos instrucciones.';
-            $_SESSION['tipo_mensaje'] = 'info';
-            
-        } catch (Exception $e) {
-            // Log del error sin exponer detalles al usuario
-            error_log("[password_reset] Error procesando solicitud: " . $e->getMessage());
-            
-            $_SESSION['mensaje'] = 'Error procesando la solicitud. Inténtalo más tarde.';
-            $_SESSION['tipo_mensaje'] = 'error';
+        } catch (Exception $e) { // Use Exception for PHP 7.1 compatibility
+            error_log('[RESET][EXCEPTION] '.substr($e->getMessage(),0,300));
+            // La UI sigue mostrando "Error procesando la solicitud"
+            $this->mostrarError('Error procesando la solicitud.');
         }
-        
-        header('Location: index.php?view=recuperar-password');
-        exit();
     }
     
     /**
-     * Mostrar formulario de reset con token
-     * 
-     * PROPÓSITO: Validar token recibido por email y mostrar formulario
-     * para establecer nueva contraseña.
-     * 
-     * VALIDACIONES:
-     * - Token presente en URL
-     * - Email presente en URL
-     * - Token existe en BD
-     * - Token no expirado
-     * - Token no usado previamente
-     * 
-     * @return void Renderiza formulario de nueva contraseña o mensaje de error
+     * Crear tabla password_resets si no existe (idempotente)
+     */
+    private function asegurarTablaPasswordResets() {
+        try {
+            $pdo = getPDO();
+            $sql = "CREATE TABLE IF NOT EXISTS password_resets (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                email VARCHAR(255) NOT NULL,
+                token VARCHAR(255) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX (email),
+                INDEX (token)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+            
+            $pdo->exec($sql);
+            error_log('[RESET] Tabla password_resets asegurada');
+        } catch (Exception $e) {
+            error_log('[RESET][ERROR] Error asegurando tabla: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+    
+    /**
+     * Mostrar formulario de reset con token - GET
      */
     public function mostrarReset() {
-        $token = $_GET['token'] ?? '';
-        $email = $_GET['email'] ?? '';
+        $token = isset($_GET['token']) ? $_GET['token'] : '';
         
-        // Validaciones básicas de parámetros URL
-        if (empty($token) || empty($email)) {
-            $this->mostrarErrorToken();
+        if (empty($token)) {
+            $this->mostrarError('Token requerido.');
             return;
         }
         
         try {
             $pdo = getPDO();
             
-            // LÍNEA CLAVE: Validar token (hash, no expirado, no usado)
-            $tokenValido = $this->validarToken($pdo, $token, $email);
+            // Validar que token existe y está vigente (<24h)
+            $stmt = $pdo->prepare("
+                SELECT email FROM password_resets 
+                WHERE token = ? AND created_at > (NOW() - INTERVAL 24 HOUR)
+                LIMIT 1
+            ");
+            $stmt->execute([$token]);
+            $resetData = $stmt->fetch();
             
-            if (!$tokenValido) {
-                $this->mostrarErrorToken();
+            if (!$resetData) {
+                error_log('[RESET] token inválido o expirado: '.substr($token,0,10).'...');
+                $this->mostrarError('Token inválido o expirado.');
                 return;
             }
             
-            // Token válido - generar CSRF y mostrar formulario
-            if (empty($_SESSION['csrf_token'])) {
-                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-            }
+            // Generar CSRF para el formulario de nueva contraseña
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            $_SESSION['reset_token'] = $token; // Guardar para el POST
+            $_SESSION['reset_email'] = $resetData['email'];
             
-            // Preparar datos para la vista
+            // Preparar datos para vista (mantener estructura UI existente)
             $pageTitle = "Nueva Contraseña";
-            $mensaje = $_SESSION['mensaje'] ?? null;
-            $tipo_mensaje = $_SESSION['tipo_mensaje'] ?? null;
+            $mensaje = isset($_SESSION['mensaje']) ? $_SESSION['mensaje'] : null;
+            $tipo_mensaje = isset($_SESSION['tipo_mensaje']) ? $_SESSION['tipo_mensaje'] : null;
             
             // Limpiar mensajes de sesión
             unset($_SESSION['mensaje'], $_SESSION['tipo_mensaje']);
             
-            // Renderizar vista
+            // Mostrar vista de "nueva contraseña" (no cambiar UI)
             include __DIR__ . '/../views/auth/reset_password.php';
             
         } catch (Exception $e) {
-            error_log("[password_reset] Error validando token: " . $e->getMessage());
-            $this->mostrarErrorToken();
+            error_log('[RESET][EXCEPTION] '.substr($e->getMessage(),0,300));
+            $this->mostrarError('Error procesando la solicitud.');
         }
     }
     
     /**
-     * Procesar reset de contraseña (POST)
-     * 
-     * PROPÓSITO: Actualizar contraseña del usuario tras validar token y datos.
-     * 
-     * VALIDACIONES:
-     * - Token CSRF válido
-     * - Token de reset válido (mismo proceso que mostrarReset)
-     * - Fortaleza de nueva contraseña
-     * - Confirmación de contraseña
-     * 
-     * FLUJO:
-     * 1. Validar CSRF y token de reset
-     * 2. Validar nueva contraseña
-     * 3. Hashear nueva contraseña (bcrypt)
-     * 4. Actualizar en usuarios
-     * 5. Marcar token como usado
-     * 6. Redirigir a login con mensaje de éxito
-     * 
-     * @return void Redirige a login tras éxito o muestra error
+     * Procesar nueva contraseña - POST
      */
     public function procesarReset() {
-        // Verificar método POST
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            exit('Método no permitido.');
-        }
-        
-        // LÍNEA CLAVE: Verificación CSRF
-        if (!isset($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
-            http_response_code(400);
-            exit('Solicitud inválida.');
-        }
-        
-        $token = $_POST['token'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $newPassword = $_POST['new_password'] ?? '';
-        $newPasswordConfirm = $_POST['new_password_confirm'] ?? '';
-        
         try {
+            // Verificar método POST
+            if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                http_response_code(405);
+                exit('Método no permitido.');
+            }
+            
+            // Verificar CSRF
+            $csrfSession = isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : '';
+            $csrfPost = isset($_POST['csrf_token']) ? $_POST['csrf_token'] : '';
+            if (!$csrfPost || !hash_equals($csrfSession, $csrfPost)) {
+                error_log('[RESET] CSRF token inválido en reset');
+                $this->mostrarError('Solicitud inválida.');
+                return;
+            }
+            
+            $token = isset($_SESSION['reset_token']) ? $_SESSION['reset_token'] : '';
+            $email = isset($_SESSION['reset_email']) ? $_SESSION['reset_email'] : '';
+            $newPassword = isset($_POST['password']) ? $_POST['password'] : '';
+            
+            if (empty($token) || empty($email) || empty($newPassword)) {
+                $this->mostrarError('Datos incompletos.');
+                return;
+            }
+            
+            // Validar longitud mínima (≥ 8)
+            if (strlen($newPassword) < 8) {
+                $this->mostrarError('La contraseña debe tener al menos 8 caracteres.');
+                return;
+            }
+            
             $pdo = getPDO();
             
-            // LÍNEA CLAVE: Re-validar token (por seguridad)
-            $tokenData = $this->validarToken($pdo, $token, $email, true);
+            // Verificar token una vez más
+            $stmt = $pdo->prepare("
+                SELECT email FROM password_resets 
+                WHERE token = ? AND email = ? AND created_at > (NOW() - INTERVAL 24 HOUR)
+                LIMIT 1
+            ");
+            $stmt->execute([$token, $email]);
+            $resetData = $stmt->fetch();
             
-            if (!$tokenData) {
-                $_SESSION['mensaje'] = 'Enlace inválido o expirado. Solicita uno nuevo.';
-                $_SESSION['tipo_mensaje'] = 'error';
-                header('Location: index.php?view=recuperar-password');
-                exit();
+            if (!$resetData) {
+                error_log('[RESET] token inválido en procesarReset: '.substr($token,0,10).'...');
+                $this->mostrarError('Token inválido o expirado.');
+                return;
             }
             
-            // Validar fortaleza de nueva contraseña
-            if (!$this->esPasswordFuerte($newPassword)) {
-                $_SESSION['mensaje'] = 'La contraseña debe tener al menos 10 caracteres, incluyendo mayúsculas, minúsculas y números.';
-                $_SESSION['tipo_mensaje'] = 'error';
-                header('Location: index.php?view=reset-password&token=' . urlencode($token) . '&email=' . urlencode($email));
-                exit();
-            }
+            // Hash de nueva contraseña
+            $hashedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
             
-            // Validar confirmación de contraseña
-            if ($newPassword !== $newPasswordConfirm) {
-                $_SESSION['mensaje'] = 'Las contraseñas no coinciden.';
-                $_SESSION['tipo_mensaje'] = 'error';
-                header('Location: index.php?view=reset-password&token=' . urlencode($token) . '&email=' . urlencode($email));
-                exit();
-            }
+            // UPDATE usuarios SET password=? WHERE email=?
+            $stmt = $pdo->prepare("UPDATE usuarios SET password = ? WHERE email = ?");
+            $updateOk = $stmt->execute([$hashedPassword, $email]);
             
-            // LÍNEA CLAVE: Hashear nueva contraseña con bcrypt
-            $passwordHash = password_hash($newPassword, PASSWORD_BCRYPT);
-            
-            // Iniciar transacción para operaciones atómicas
-            $pdo->beginTransaction();
-            
-            try {
-                // LÍNEA CLAVE: Actualizar contraseña del usuario
-                $stmt = $pdo->prepare("
-                    UPDATE usuarios 
-                    SET password = ?, actualizado_en = NOW() 
-                    WHERE email = ?
-                ");
-                $resultado = $stmt->execute([$passwordHash, $email]);
+            if ($updateOk && $stmt->rowCount() > 0) {
+                // DELETE FROM password_resets WHERE token=?
+                $stmt = $pdo->prepare("DELETE FROM password_resets WHERE token = ?");
+                $stmt->execute([$token]);
                 
-                if (!$resultado || $stmt->rowCount() === 0) {
-                    throw new Exception("No se pudo actualizar la contraseña");
-                }
+                // Limpiar sesión
+                unset($_SESSION['reset_token'], $_SESSION['reset_email']);
                 
-                // LÍNEA CLAVE: Marcar token como usado
-                $stmt = $pdo->prepare("
-                    UPDATE password_resets 
-                    SET used_at = NOW() 
-                    WHERE id = ?
-                ");
-                $stmt->execute([$tokenData['id']]);
+                // Log según especificación
+                error_log('[RESET] token usado OK para '.$email);
                 
-                $pdo->commit();
-                
-                // Log de éxito para auditoría
-                error_log("[password_reset] Contraseña actualizada para: " . substr($email, 0, 3) . "***");
-                
-                // Mensaje de éxito y redirección a login
-                $_SESSION['mensaje'] = 'Contraseña actualizada correctamente. Ahora puedes iniciar sesión.';
+                // Mensaje de éxito (mantener formato UI existente)
+                $_SESSION['mensaje'] = 'Contraseña actualizada exitosamente. Puedes iniciar sesión.';
                 $_SESSION['tipo_mensaje'] = 'success';
-                header('Location: index.php?view=login');
+                header('Location: /index.php?view=login');
                 exit();
-                
-            } catch (Exception $e) {
-                $pdo->rollBack();
-                throw $e;
+            } else {
+                error_log('[RESET][ERROR] no se pudo actualizar password para '.$email);
+                $this->mostrarError('Error actualizando contraseña.');
             }
             
         } catch (Exception $e) {
-            error_log("[password_reset] Error procesando reset: " . $e->getMessage());
-            
-            $_SESSION['mensaje'] = 'Error procesando la solicitud. Inténtalo más tarde.';
-            $_SESSION['tipo_mensaje'] = 'error';
-            header('Location: index.php?view=recuperar-password');
-            exit();
+            error_log('[RESET][EXCEPTION] '.substr($e->getMessage(),0,300));
+            $this->mostrarError('Error procesando la solicitud.');
         }
     }
     
     /**
-     * Verificar rate limiting para un email
-     * 
-     * @param PDO $pdo Conexión a base de datos
-     * @param string $email Email a verificar
-     * @return bool True si ya hay un reset reciente (rate limited)
+     * Mostrar mensaje de éxito genérico
      */
-    private function verificarRateLimit($pdo, $email) {
-        $stmt = $pdo->prepare("
-            SELECT COUNT(*) 
-            FROM password_resets 
-            WHERE email = ? 
-            AND creado_en > DATE_SUB(NOW(), INTERVAL ? MINUTE)
-            AND used_at IS NULL
-        ");
-        $stmt->execute([$email, self::RATE_LIMIT_MINUTES]);
-        
-        return $stmt->fetchColumn() > 0;
+    private function mostrarExito() {
+        $_SESSION['mensaje'] = 'Si existe una cuenta con ese correo, te enviaremos instrucciones de recuperación.';
+        $_SESSION['tipo_mensaje'] = 'info';
+        header('Location: /index.php?view=recuperar-password');
+        exit();
     }
     
     /**
-     * Validar token de reset
-     * 
-     * @param PDO $pdo Conexión a base de datos
-     * @param string $token Token plano recibido
-     * @param string $email Email asociado
-     * @param bool $returnData Si debe retornar datos del token
-     * @return bool|array True/false o datos del token si $returnData es true
+     * Mostrar mensaje de error genérico
      */
-    private function validarToken($pdo, $token, $email, $returnData = false) {
-        $tokenHash = hash('sha256', $token);
-        
-        $stmt = $pdo->prepare("
-            SELECT id, email, expires_at, used_at
-            FROM password_resets 
-            WHERE email = ? 
-            AND token_hash = ? 
-            AND expires_at > NOW()
-            AND used_at IS NULL
-            LIMIT 1
-        ");
-        $stmt->execute([$email, $tokenHash]);
-        $tokenData = $stmt->fetch();
-        
-        if ($returnData) {
-            return $tokenData ?: false;
-        }
-        
-        return $tokenData !== false;
-    }
-    
-    /**
-     * Construir enlace de reset completo
-     * 
-     * @param string $token Token plano
-     * @param string $email Email del usuario
-     * @return string URL completa del enlace de reset
-     */
-    private function construirEnlaceReset($token, $email) {
-        $baseUrl = $this->obtenerBaseUrl();
-        return $baseUrl . 'index.php?view=reset-password&token=' . urlencode($token) . '&email=' . urlencode($email);
-    }
-    
-    /**
-     * Obtener URL base del sitio
-     * 
-     * @return string URL base con protocolo y dominio
-     */
-    private function obtenerBaseUrl() {
-        $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'] ?? 'camella.com.co';
-        return $protocol . '://' . $host . '/';
-    }
-    
-    /**
-     * Obtener IP del cliente (considera proxies)
-     * 
-     * @return string IP del cliente
-     */
-    private function obtenerIPCliente() {
-        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'] ?? 
-              $_SERVER['HTTP_X_REAL_IP'] ?? 
-              $_SERVER['REMOTE_ADDR'] ?? 
-              '0.0.0.0';
-              
-        // Si hay múltiples IPs (proxies), tomar la primera
-        if (strpos($ip, ',') !== false) {
-            $ip = trim(explode(',', $ip)[0]);
-        }
-        
-        return $ip;
-    }
-    
-    /**
-     * Verificar fortaleza de contraseña
-     * 
-     * @param string $password Contraseña a validar
-     * @return bool True si cumple criterios de fortaleza
-     */
-    private function esPasswordFuerte($password) {
-        return strlen($password) >= 10 && 
-               preg_match('/[A-Z]/', $password) && 
-               preg_match('/[a-z]/', $password) && 
-               preg_match('/\d/', $password);
-    }
-    
-    /**
-     * Mostrar mensaje de error para tokens inválidos
-     * 
-     * @return void
-     */
-    private function mostrarErrorToken() {
-        $pageTitle = "Enlace Inválido";
-        $error = "El enlace de recuperación es inválido o ha expirado. Solicita uno nuevo.";
-        
-        include __DIR__ . '/../views/auth/error_token.php';
+    private function mostrarError($mensaje) {
+        $_SESSION['mensaje'] = $mensaje;
+        $_SESSION['tipo_mensaje'] = 'error';
+        header('Location: /index.php?view=recuperar-password');
+        exit();
     }
 }

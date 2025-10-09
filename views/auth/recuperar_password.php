@@ -26,7 +26,7 @@ require __DIR__ . '/../../partials/header.php';
                 </div>
                 <div class="card-body">
                     
-                    <?php if (!empty($mensaje)): ?>
+                    <?php if (isset($mensaje) && !empty($mensaje)): ?>
                         <div class="alert alert-<?= $tipo_mensaje === 'success' ? 'success' : ($tipo_mensaje === 'error' ? 'danger' : 'info') ?>" role="alert">
                             <?= htmlspecialchars($mensaje, ENT_QUOTES, 'UTF-8') ?>
                         </div>
@@ -40,7 +40,7 @@ require __DIR__ . '/../../partials/header.php';
                     <form method="POST" action="index.php?view=enviar-reset">
                         
                         <!-- Token CSRF (campo oculto) -->
-                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(isset($_SESSION['csrf_token']) ? $_SESSION['csrf_token'] : '', ENT_QUOTES, 'UTF-8') ?>">
                         
                         <div class="form-group mb-3">
                             <label for="email" class="form-label">
