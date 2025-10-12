@@ -6,17 +6,8 @@
 
 $pageTitle = "Inicio";
 
-// Cargar categorías dinámicas desde la base de datos
-$categorias = [];
-try {
-    // Usar ruta absoluta para evitar problemas de includes
-    require_once dirname(__DIR__) . '/models/Categorias.php';
-    $categoriasModel = new Categorias();
-    $categorias = $categoriasModel->obtenerCategoriasConOficios();
-} catch (Exception $e) {
-    error_log("Error cargando categorías en home: " . $e->getMessage());
-    // Usar categorías por defecto si falla la BD
-    $categorias = [
+// Usar categorías hardcoded por ahora para que funcione
+$categorias = [
         ['id' => 1, 'nombre' => 'Tecnología', 'icono' => 'fas fa-laptop-code', 'orden' => 1, 'total_oficios' => 5],
         ['id' => 2, 'nombre' => 'Salud', 'icono' => 'fas fa-heartbeat', 'orden' => 2, 'total_oficios' => 3],
         ['id' => 3, 'nombre' => 'Educación', 'icono' => 'fas fa-graduation-cap', 'orden' => 3, 'total_oficios' => 4],
