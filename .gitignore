@@ -1,0 +1,41 @@
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# Archivos de configuración local
+.env
+.env.local
+config.local.php
+database.local.php
+
+# Directorios de dependencias
+node_modules/
+vendor/
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos temporales
+*.tmp
+*.temp
+cache/
+temp/
+
+# Archivos de backup
+*.bak
+*.backup
+
+# Archivos sensibles (nunca subir)
+*.pem
+*.key
+ftp_credentials.txt
+passwords.txt
+
+# Carpeta de configuración con credenciales
+config/
+config.php
+database_credentials.php
