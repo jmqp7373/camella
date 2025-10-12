@@ -6,17 +6,37 @@
 
 $pageTitle = "Inicio";
 
-// Usar categorías hardcoded por ahora para que funcione
-$categorias = [
-        ['id' => 1, 'nombre' => 'Tecnología', 'icono' => 'fas fa-laptop-code', 'orden' => 1, 'total_oficios' => 5],
-        ['id' => 2, 'nombre' => 'Salud', 'icono' => 'fas fa-heartbeat', 'orden' => 2, 'total_oficios' => 3],
-        ['id' => 3, 'nombre' => 'Educación', 'icono' => 'fas fa-graduation-cap', 'orden' => 3, 'total_oficios' => 4],
-        ['id' => 4, 'nombre' => 'Ventas', 'icono' => 'fas fa-chart-line', 'orden' => 4, 'total_oficios' => 6],
-        ['id' => 5, 'nombre' => 'Construcción', 'icono' => 'fas fa-hard-hat', 'orden' => 5, 'total_oficios' => 7],
-        ['id' => 6, 'nombre' => 'Hostelería', 'icono' => 'fas fa-utensils', 'orden' => 6, 'total_oficios' => 4],
-        ['id' => 7, 'nombre' => 'Marketing', 'icono' => 'fas fa-bullhorn', 'orden' => 7, 'total_oficios' => 3],
-        ['id' => 8, 'nombre' => 'Finanzas', 'icono' => 'fas fa-coins', 'orden' => 8, 'total_oficios' => 5]
-    ];
+// Definir categorías por defecto como fallback
+$categoriasDefault = [
+    ['id' => 1, 'nombre' => 'Tecnología', 'icono' => 'fas fa-laptop-code', 'orden' => 1, 'total_oficios' => 5],
+    ['id' => 2, 'nombre' => 'Salud', 'icono' => 'fas fa-heartbeat', 'orden' => 2, 'total_oficios' => 3],
+    ['id' => 3, 'nombre' => 'Educación', 'icono' => 'fas fa-graduation-cap', 'orden' => 3, 'total_oficios' => 4],
+    ['id' => 4, 'nombre' => 'Ventas', 'icono' => 'fas fa-chart-line', 'orden' => 4, 'total_oficios' => 6],
+    ['id' => 5, 'nombre' => 'Construcción', 'icono' => 'fas fa-hard-hat', 'orden' => 5, 'total_oficios' => 7],
+    ['id' => 6, 'nombre' => 'Hostelería', 'icono' => 'fas fa-utensils', 'orden' => 6, 'total_oficios' => 4],
+    ['id' => 7, 'nombre' => 'Marketing', 'icono' => 'fas fa-bullhorn', 'orden' => 7, 'total_oficios' => 3],
+    ['id' => 8, 'nombre' => 'Finanzas', 'icono' => 'fas fa-coins', 'orden' => 8, 'total_oficios' => 5]
+];
+
+// Intentar cargar categorías desde la base de datos
+$categorias = $categoriasDefault; // Usar fallback por defecto
+
+try {
+    // Usar path absoluto para evitar problemas
+    $modelPath = $_SERVER['DOCUMENT_ROOT'] . '/models/Categorias.php';
+    if (file_exists($modelPath)) {
+        require_once $modelPath;
+        $categoriasModel = new Categorias();
+        $categoriasDB = $categoriasModel->obtenerCategoriasConOficios();
+        
+        // Si obtenemos datos de la DB, usar esos; sino mantener fallback
+        if (!empty($categoriasDB)) {
+            $categorias = $categoriasDB;
+        }
+    }
+} catch (Exception $e) {
+    // Si hay error, mantener categorías por defecto
+    error_log("Error cargando categorías dinámicas: " . $e->getMessage());
 }
 ?>
 
