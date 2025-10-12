@@ -35,7 +35,10 @@ temp/
 ftp_credentials.txt
 passwords.txt
 
-# Carpeta de configuración con credenciales
-config/
-config.php
+# Archivos de configuración con credenciales sensibles
+config/config.php
 database_credentials.php
+*.credentials.php
+
+# Permitir database.php (sin credenciales) pero no config.php
+!config/database.php
