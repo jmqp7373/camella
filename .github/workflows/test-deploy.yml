@@ -1,0 +1,58 @@
+name: Test Deployment Diagnostics
+
+on:
+  workflow_dispatch: # Solo ejecución manual
+
+jobs:
+  test-deployment:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📂 Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: 🔍 Check secrets availability
+      run: |
+        echo "Checking if secrets are configured..."
+        if [ -z "${{ secrets.FTP_SERVER }}" ]; then
+          echo "❌ FTP_SERVER secret is not configured"
+        else
+          echo "✅ FTP_SERVER secret is configured"
+        fi
+        
+        if [ -z "${{ secrets.FTP_USERNAME }}" ]; then
+          echo "❌ FTP_USERNAME secret is not configured"
+        else
+          echo "✅ FTP_USERNAME secret is configured"
+        fi
+        
+        if [ -z "${{ secrets.FTP_PASSWORD }}" ]; then
+          echo "❌ FTP_PASSWORD secret is not configured"
+        else
+          echo "✅ FTP_PASSWORD secret is configured"
+        fi
+        
+        if [ -z "${{ secrets.FTP_SERVER_DIR }}" ]; then
+          echo "❌ FTP_SERVER_DIR secret is not configured"
+        else
+          echo "✅ FTP_SERVER_DIR secret is configured"
+        fi
+        
+    - name: 📋 List files to deploy
+      run: |
+        echo "Files that would be deployed:"
+        find . -type f \( -name "*.php" -o -name "*.html" -o -name "*.css" -o -name "*.js" \) | grep -v "/.git/" | head -20
+        
+    - name: 🧪 Test simple deployment (dry run)
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        server-dir: ${{ secrets.FTP_SERVER_DIR }}
+        local-dir: ./
+        dry-run: true
+        exclude: |
+          **/.git*
+          **/.github/**
+          **/node_modules/**
