@@ -14,7 +14,17 @@ try {
     $categorias = $categoriasModel->obtenerCategoriasConOficios();
 } catch (Exception $e) {
     error_log("Error cargando categorías en home: " . $e->getMessage());
-    $categorias = [];
+    // Usar categorías por defecto si falla la BD
+    $categorias = [
+        ['id' => 1, 'nombre' => 'Tecnología', 'icono' => 'fas fa-laptop-code', 'orden' => 1, 'total_oficios' => 5],
+        ['id' => 2, 'nombre' => 'Salud', 'icono' => 'fas fa-heartbeat', 'orden' => 2, 'total_oficios' => 3],
+        ['id' => 3, 'nombre' => 'Educación', 'icono' => 'fas fa-graduation-cap', 'orden' => 3, 'total_oficios' => 4],
+        ['id' => 4, 'nombre' => 'Ventas', 'icono' => 'fas fa-chart-line', 'orden' => 4, 'total_oficios' => 6],
+        ['id' => 5, 'nombre' => 'Construcción', 'icono' => 'fas fa-hard-hat', 'orden' => 5, 'total_oficios' => 7],
+        ['id' => 6, 'nombre' => 'Hostelería', 'icono' => 'fas fa-utensils', 'orden' => 6, 'total_oficios' => 4],
+        ['id' => 7, 'nombre' => 'Marketing', 'icono' => 'fas fa-bullhorn', 'orden' => 7, 'total_oficios' => 3],
+        ['id' => 8, 'nombre' => 'Finanzas', 'icono' => 'fas fa-coins', 'orden' => 8, 'total_oficios' => 5]
+    ];
 }
 ?>
 
