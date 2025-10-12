@@ -1,24 +1,18 @@
-name: Deploy to Production
+name: 🚀 Deploy to Production
 
-# Activar el workflow cuando se haga push a main
 on:
-    steps:
-  name:  Deploy to Hostinger via FTP
-
+  push:
     branches:
-      - main  # o "master" si usas esa rama
+      - main
 
 jobs:
-
   ftp-deploy:
     name: 📦 Upload to Hostinger
     runs-on: ubuntu-latest
 
-
     steps:
       - name: 🧾 Checkout repo
         uses: actions/checkout@v4
-
 
       - name: 📤 Deploy via FTP to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -31,87 +25,19 @@ jobs:
           server-dir: ${{ secrets.FTP_REMOTE_DIR }}/
           local-dir: ./
           log-level: standard
-          dangerous-clean-slate: false  # evita borrar todo antes de subir
-        <?php
-        // Script de limpieza para producción - Solo elimina database_test.php
-        
-        // Verificar que estamos en producción (verificar existencia de archivos críticos)
-        if (!file_exists('index.php') || !file_exists('config/config.php')) {
-            die('❌ Error: Directorio incorrecto o archivos críticos faltantes.');
-        }
-        
-        // Solo proceder si el archivo existe
-        $testFile = 'database_test.php';
-        
-        if (file_exists($testFile)) {
-            // Verificar que es realmente el archivo de prueba (contiene texto específico)
-            $content = file_get_contents($testFile);
-            if (strpos($content, 'Database Connection Test') !== false || 
-                strpos($content, 'database_test') !== false) {
-                
-                if (unlink($testFile)) {
-                    echo "✅ $testFile eliminado exitosamente de producción\n";
-                    // Auto-eliminar este script también
-                    if (file_exists(__FILE__)) {
-                        unlink(__FILE__);
-                        echo "✅ Script de limpieza auto-eliminado\n";
-                    }
-                } else {
-                    echo "❌ Error al eliminar $testFile\n";
-                }
-            } else {
-                echo "⚠️  Archivo $testFile no coincide con archivo de prueba esperado\n";
-            }
-        } else {
-            echo "ℹ️  $testFile no encontrado (ya eliminado o nunca existió)\n";
-            // Auto-eliminar este script si el archivo objetivo no existe
-            if (file_exists(__FILE__)) {
-                unlink(__FILE__);
-                echo "✅ Script de limpieza auto-eliminado\n";
-            }
-        }
-        ?>
-        EOF
-        
-        echo "📤 Script de limpieza creado y listo para deploy"
-        
-    - name: 🚀 Deploy cleanup script to production
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        server-dir: ${{ secrets.FTP_SERVER_DIR }}
-        local-dir: ./
-        exclude: |
-          **/.git*
-          **/.git*/**
-          **/node_modules/**
-          **/.DS_Store
-          **/Thumbs.db
-          **/.vscode/**
-          **/README.md
-          **/.github/**
-          **/*.php
-          **/*.html
-          **/*.css
-          **/*.js
-          **/*.png
-          **/*.jpg
-          **/*.ico
-          !cleanup_production.php
-          
-    - name: 🗑️ Execute cleanup on production server
-      run: |
-        echo "🔄 Executing cleanup script on production server..."
-        # Usar curl para ejecutar el script de limpieza remotamente
-        curl -s "https://camella.com.co/cleanup_production.php" || echo "Cleanup script executed (or already removed)"
-        echo "🧹 Production cleanup completed"
-        
-    - name: ✅ Deployment completed
-      run: |
-        echo "🎉 Deployment to camella.com.co completed successfully!"
-        echo "📅 Deployed at: $(date)"
-        echo "🔗 Check your site: https://camella.com.co"
-        echo "🧹 Production cleanup executed - test files removed"
-        echo "🧹 Production cleanup executed"
+          dangerous-clean-slate: false
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.DS_Store
+            **/Thumbs.db
+            **/.vscode/**
+            **/.github/**
+            **/config/config.php
+
+      - name: ✅ Deployment completed
+        run: |
+          echo "🎉 Deployment to camella.com.co completed successfully!"
+          echo "📅 Deployed at: $(date)"
+          echo "🔗 Check your site: https://camella.com.co"
