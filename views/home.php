@@ -43,7 +43,7 @@ try {
 <div class="home-hero">
     <h1 class="page-title text-azul" style="margin-bottom: 10px;">
         <i class="fas fa-briefcase"></i> 
-        Bienvenido a Camella.com.coss
+        Bienvenido a Camella.com.cossa
     </h1>
     <p class="page-subtitle" style="margin-bottom: 6px; line-height: 1.5;">
         Camella.com.co es la bolsa de empleo que conecta a Colombia.
