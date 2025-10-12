@@ -5,13 +5,13 @@
  * Incluye migración automática y datos iniciales
  */
 
-require_once 'config/config.php';
+require_once 'config/database.php';
 
 class Categorias {
     private $conexion;
     
     public function __construct() {
-        $this->conexion = conectarBD();
+        $this->conexion = getPDO();
         $this->inicializarTablasYDatos();
     }
     
