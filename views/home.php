@@ -9,7 +9,8 @@ $pageTitle = "Inicio";
 // Cargar categorías dinámicas desde la base de datos
 $categorias = [];
 try {
-    require_once 'models/Categorias.php';
+    // Usar ruta absoluta para evitar problemas de includes
+    require_once dirname(__DIR__) . '/models/Categorias.php';
     $categoriasModel = new Categorias();
     $categorias = $categoriasModel->obtenerCategoriasConOficios();
 } catch (Exception $e) {
