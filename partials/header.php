@@ -9,6 +9,21 @@ function getCacheBuster($filepath) {
     }
     return '?v=' . time();
 }
+
+/**
+ * Verificar si el usuario está logueado
+ */
+function isUserLoggedIn() {
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+    return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
+}
+
+// Inicializar sesión si no está activa
+if (!isset($_SESSION)) {
+    session_start();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -59,8 +74,11 @@ function getCacheBuster($filepath) {
                 <img src="assets/images/logo/logo_horizontal.png" alt="Camella Logo">
             </a>
             <nav class="header-actions" aria-label="Acciones">
-                <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
-                <a href="index.php?view=login" class="btn btn-login">Login</a>
+                <?php if (isUserLoggedIn()): ?>
+                    <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
+                <?php else: ?>
+                    <a href="index.php?view=login" class="btn btn-publish">+ Publícate</a>
+                <?php endif; ?>
             </nav>
         </div>
     </header>
