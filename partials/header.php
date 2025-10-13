@@ -65,9 +65,9 @@ if (!isset($_SESSION)) {
             </a>
             <nav class="header-actions" aria-label="Acciones">
                 <?php if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])): ?>
-                    <a href="index.php?view=publicar-oferta" class="btn btn-danger">+ Publícate</a>
+                    <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
                 <?php else: ?>
-                    <a href="index.php?view=loginPhone" class="btn btn-danger">+ Publícate</a>
+                    <a href="index.php?view=loginPhone" class="btn btn-publish">+ Publícate</a>
                 <?php endif; ?>
             </nav>
         </div>
