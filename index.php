@@ -26,6 +26,7 @@ $allowed_views = [
     'registro-empresa',
     'registro-talento',
     'login',
+    'loginPhone',
     'registro',
     'recuperar-password',
     'privacidad',
