@@ -145,7 +145,7 @@ echo "<!-- DEBUG FINAL: Primera categoría a mostrar: " . (isset($categorias[0])
             <?php foreach ($categorias as $categoria): ?>
                 <div class="category-card" data-categoria-id="<?= $categoria['id'] ?>">
                     <h3 class="category-title">
-                        <span class="category-icon"><?= htmlspecialchars($categoria['icono']) ?></span>
+                        <span class="category-icon"><i class="<?= htmlspecialchars($categoria['icono']) ?>"></i></span>
                         <?= htmlspecialchars($categoria['nombre']) ?>
                     </h3>
                     
@@ -166,7 +166,7 @@ echo "<!-- DEBUG FINAL: Primera categoría a mostrar: " . (isset($categorias[0])
             <!-- Fallback: mostrar mensaje de carga o error -->
             <div class="category-card">
                 <h3 class="category-title">
-                    <span class="category-icon">⚙️</span>
+                    <span class="category-icon"><i class="fas fa-cog"></i></span>
                     Sistema inicializándose...
                 </h3>
                 <ul class="subcategories">
