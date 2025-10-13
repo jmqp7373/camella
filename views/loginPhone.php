@@ -4,6 +4,22 @@
  * Página de acceso mediante Magic Link y código de 6 dígitos
  */
 $pageTitle = "Acceso con Teléfono";
+
+// Detectar entorno y configurar URL del controlador
+$isLocalhost = (
+    $_SERVER['HTTP_HOST'] === 'localhost' ||
+    strpos($_SERVER['HTTP_HOST'], 'localhost:') === 0 ||
+    $_SERVER['HTTP_HOST'] === '127.0.0.1' ||
+    strpos($_SERVER['HTTP_HOST'], '127.0.0.1:') === 0
+);
+
+if ($isLocalhost) {
+    // Entorno local - usar ngrok
+    $magicLinkControllerUrl = 'https://nonlugubriously-subglobosely-anabel.ngrok.io/controllers/MagicLinkController.php';
+} else {
+    // Entorno de producción - usar dominio real
+    $magicLinkControllerUrl = 'https://camella.com.co/controllers/MagicLinkController.php';
+}
 ?>
 
 <div class="login-container">
@@ -13,7 +29,7 @@ $pageTitle = "Acceso con Teléfono";
             <p>Ingresa tu número para recibir un enlace mágico y código de acceso</p>
         </div>
 
-        <form class="login-form" method="POST" action="controllers/MagicLinkController.php" id="phoneLoginForm">
+        <form class="login-form" method="POST" action="<?= $magicLinkControllerUrl ?>" id="phoneLoginForm">
             <div class="form-group">
                 <label for="phone">
                     <i class="fas fa-phone"></i> Número de celular
@@ -213,6 +229,9 @@ $pageTitle = "Acceso con Teléfono";
 </style>
 
 <script>
+// URL del controlador basada en el entorno
+const magicLinkControllerUrl = '<?= $magicLinkControllerUrl ?>';
+
 let codeSent = false;
 let countdownTimer = null;
 
@@ -266,7 +285,7 @@ function sendMagicLinkAndCode(phone) {
     submitBtn.disabled = true;
     
     // Enviar código al controlador
-    fetch('controllers/MagicLinkController.php', {
+    fetch(magicLinkControllerUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -307,7 +326,7 @@ function verifyCodeAndLogin(phone, code) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
     submitBtn.disabled = true;
     
-    fetch('controllers/MagicLinkController.php', {
+    fetch(magicLinkControllerUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
