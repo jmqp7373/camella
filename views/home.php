@@ -6,44 +6,113 @@
 
 $pageTitle = "Inicio";
 
-// Definir categorías por defecto como fallback
-$categoriasDefault = [
-    ['id' => 1, 'nombre' => 'Tecnología', 'icono' => 'fas fa-laptop-code', 'orden' => 1, 'total_oficios' => 5],
-    ['id' => 2, 'nombre' => 'Salud', 'icono' => 'fas fa-heartbeat', 'orden' => 2, 'total_oficios' => 3],
-    ['id' => 3, 'nombre' => 'Educación', 'icono' => 'fas fa-graduation-cap', 'orden' => 3, 'total_oficios' => 4],
-    ['id' => 4, 'nombre' => 'Ventas', 'icono' => 'fas fa-chart-line', 'orden' => 4, 'total_oficios' => 6],
-    ['id' => 5, 'nombre' => 'Construcción', 'icono' => 'fas fa-hard-hat', 'orden' => 5, 'total_oficios' => 7],
-    ['id' => 6, 'nombre' => 'Hostelería', 'icono' => 'fas fa-utensils', 'orden' => 6, 'total_oficios' => 4],
-    ['id' => 7, 'nombre' => 'Marketing', 'icono' => 'fas fa-bullhorn', 'orden' => 7, 'total_oficios' => 3],
-    ['id' => 8, 'nombre' => 'Finanzas', 'icono' => 'fas fa-coins', 'orden' => 8, 'total_oficios' => 5]
-];
-
 // Intentar cargar categorías desde la base de datos
-$categorias = $categoriasDefault; // Usar fallback por defecto
+$categorias = []; // Inicializar vacío, se llenará desde BD
 
 try {
-    // Usar path absoluto para evitar problemas
-    $modelPath = $_SERVER['DOCUMENT_ROOT'] . '/models/Categorias.php';
+    // DEBUG: Mostrar información del directorio actual
+    echo "<!-- DEBUG INICIO -->";
+    echo "<!-- DEBUG: __DIR__ = " . __DIR__ . " -->";
+    
+    // Cargar el modelo usando ruta relativa al archivo actual
+    $projectRoot = realpath(__DIR__ . '/..');
+    $modelPath = $projectRoot . '/models/Categorias.php';
+    
+    // DEBUG: Mostrar rutas calculadas
+    echo "<!-- DEBUG: projectRoot = " . $projectRoot . " -->";
+    echo "<!-- DEBUG: modelPath = " . $modelPath . " -->";
+    echo "<!-- DEBUG: file_exists(modelPath) = " . (file_exists($modelPath) ? 'TRUE' : 'FALSE') . " -->";
+
     if (file_exists($modelPath)) {
+        echo "<!-- DEBUG: Archivo modelo encontrado, intentando cargar... -->";
+        
         require_once $modelPath;
+        
+        echo "<!-- DEBUG: Modelo cargado, creando instancia... -->";
         $categoriasModel = new Categorias();
+        
+        echo "<!-- DEBUG: Instancia creada, llamando obtenerCategoriasConOficios()... -->";
         $categoriasDB = $categoriasModel->obtenerCategoriasConOficios();
         
-        // Si obtenemos datos de la DB, usar esos; sino mantener fallback
-        if (!empty($categoriasDB)) {
+        // DEBUG: Ver qué devuelve la BD
+        echo "<!-- DEBUG: categoriasDB type = " . gettype($categoriasDB) . " -->";
+        echo "<!-- DEBUG: categoriasDB count = " . (is_array($categoriasDB) ? count($categoriasDB) : 'N/A') . " -->";
+        echo "<!-- DEBUG: categoriasDB empty = " . (empty($categoriasDB) ? 'TRUE' : 'FALSE') . " -->";
+        
+        if (is_array($categoriasDB) && count($categoriasDB) > 0) {
+            echo "<!-- DEBUG: Primera categoría: " . json_encode($categoriasDB[0]) . " -->";
+        }
+        
+        // Mapa de íconos por nombre de categoría (si la BD no trae "icono")
+        $iconMap = [
+            'Aseo y Limpieza' => 'fas fa-broom',
+            'Cocina y Preparación de Alimentos' => 'fas fa-utensils',
+            'Cuidados y Acompañamiento' => 'fas fa-heart',
+            'Mantenimiento y Reparaciones' => 'fas fa-tools',
+            'Construcción y Obras' => 'fas fa-hard-hat',
+            'Servicios Logísticos y Transporte' => 'fas fa-truck',
+            'Belleza y Cuidado Personal' => 'fas fa-spa',
+            'Ventas y Atención al Cliente' => 'fas fa-handshake',
+            'Oficios Generales / Multiservicios' => 'fas fa-briefcase',
+            'Cuidado de Animales' => 'fas fa-paw',
+            'Producción y Manufactura' => 'fas fa-industry',
+            'Eventos y Actividades Especiales' => 'fas fa-calendar-check',
+        ];
+
+        if (is_array($categoriasDB) && !empty($categoriasDB)) {
+            echo "<!-- DEBUG: Procesando categorías de BD... -->";
+            foreach ($categoriasDB as &$c) {
+                if (empty($c['icono'])) {
+                    $c['icono'] = $iconMap[$c['nombre']] ?? 'fas fa-briefcase';
+                }
+                if (!isset($c['total_oficios'])) {
+                    $c['total_oficios'] = 0; // fallback si el modelo no trae conteo
+                }
+            }
+            unset($c);
             $categorias = $categoriasDB;
+
+            // Asegurar oficios por categoría (BD real)
+            if (isset($categoriasModel) && is_array($categorias)) {
+                foreach ($categorias as &$cat) {
+                    $cat['oficios'] = $categoriasModel->obtenerOficiosPorCategoria((int)$cat['id']);
+                }
+                unset($cat);
+            }
+
+            echo "<!-- DEBUG: Categorías BD asignadas exitosamente -->";
+        } else {
+            echo "<!-- DEBUG: categoriasDB vacío o inválido, usando fallback -->";
+        }
+    } else {
+        echo "<!-- DEBUG: Archivo modelo NO encontrado -->";
+        echo "<!-- DEBUG: Directorio models existe? " . (is_dir($projectRoot . '/models') ? 'TRUE' : 'FALSE') . " -->";
+        if (is_dir($projectRoot . '/models')) {
+            $files = scandir($projectRoot . '/models');
+            echo "<!-- DEBUG: Archivos en /models: " . implode(', ', $files) . " -->";
         }
     }
+    
+    echo "<!-- DEBUG FIN -->";
+    
 } catch (Exception $e) {
-    // Si hay error, mantener categorías por defecto
+    // Si hay error, dejar categorías vacías (BD real)
+    echo "<!-- DEBUG: EXCEPCION CAPTURADA: " . $e->getMessage() . " -->";
+    echo "<!-- DEBUG: Archivo: " . $e->getFile() . " -->";
+    echo "<!-- DEBUG: Línea: " . $e->getLine() . " -->";
     error_log("Error cargando categorías dinámicas: " . $e->getMessage());
+    $categorias = []; // Asegurar que esté vacío si hay error
 }
+
+// DEBUG FINAL: Mostrar qué categorías se van a usar
+echo "<!-- DEBUG FINAL: Usando " . count($categorias) . " categorías -->";
+echo "<!-- DEBUG FINAL: Primera categoría a mostrar: " . (isset($categorias[0]) ? $categorias[0]['nombre'] : 'NINGUNA') . " -->";
 ?>
 
 <div class="home-hero">
     <h1 class="page-title text-azul" style="margin-bottom: 10px;">
         <i class="fas fa-briefcase"></i> 
-        Bienvenido a Camella.com.cossa
+        Bienvenido a Camella.com.co
     </h1>
     <p class="page-subtitle" style="margin-bottom: 6px; line-height: 1.5;">
         Camella.com.co es la bolsa de empleo que conecta a Colombia.
@@ -83,7 +152,7 @@ try {
                     <?php if (!empty($categoria['oficios'])): ?>
                         <ul class="subcategories">
                             <?php foreach ($categoria['oficios'] as $oficio): ?>
-                                <li class="oficio-item" data-oficio-id="<?= $oficio['id'] ?>"><?= htmlspecialchars($oficio['nombre']) ?></li>
+                                <li class="oficio-item" data-oficio-id="<?= $oficio['id'] ?>"><?= htmlspecialchars($oficio['titulo']) ?></li>
                             <?php endforeach; ?>
                         </ul>
                     <?php else: ?>

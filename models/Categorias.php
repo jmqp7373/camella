@@ -1,78 +1,84 @@
 <?php
-/**
- * Modelo de Categorias - Versión PDO Compatible
- * Versión simplificada sin inicialización automática para evitar errores
- */
+require_once __DIR__ . '/BaseModel.php';
 
-require_once 'config/database.php';
-
-class Categorias {
-    private $conexion;
+class Categorias extends BaseModel
+{
+    protected $pdo;
     
     public function __construct() {
+        parent::__construct();
         try {
-            $this->conexion = getPDO();
+            // Load database configuration
+            require_once __DIR__ . '/../config/database.php';
+            $this->pdo = getPDO();
         } catch (Exception $e) {
             error_log("Error conectando BD en Categorias: " . $e->getMessage());
-            $this->conexion = null;
+            $this->pdo = null;
         }
     }
-    
+
     /**
-     * Obtener categorías con oficios (versión segura)
+     * Devuelve categorías activas con conteo de oficios activos por categoría.
+     * Campos: id, nombre, descripcion, activo, total_oficios
      */
-    public function obtenerCategoriasConOficios() {
-        // Si no hay conexión, retornar categorías por defecto
-        if (!$this->conexion) {
-            return $this->getCategoriasDefault();
+    public function obtenerCategoriasConOficios(): array
+    {
+        if (!$this->pdo) {
+            return [];
         }
-        
+
+        $sql = "
+            SELECT 
+                c.id,
+                c.nombre,
+                c.descripcion,
+                c.activo,
+                COALESCE(COUNT(o.id), 0) AS total_oficios
+            FROM categorias c
+            LEFT JOIN oficios o 
+                ON o.categoria_id = c.id 
+               AND o.activo = 1
+            WHERE c.activo = 1
+            GROUP BY c.id, c.nombre, c.descripcion, c.activo
+            ORDER BY c.id ASC
+        ";
+
         try {
-            $stmt = $this->conexion->query("
-                SELECT c.id, c.nombre, c.icono, c.orden,
-                       COUNT(o.id) as total_oficios
-                FROM categorias c
-                LEFT JOIN oficios o ON c.id = o.categoria_id AND o.activo = 1
-                WHERE c.activo = 1
-                GROUP BY c.id, c.nombre, c.icono, c.orden
-                ORDER BY c.orden ASC, c.nombre ASC
-            ");
-            
-            $categorias = [];
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                $categorias[] = $row;
-            }
-            
-            // Si no hay categorías en BD, usar las por defecto
-            return !empty($categorias) ? $categorias : $this->getCategoriasDefault();
-            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
         } catch (Exception $e) {
             error_log("Error obteniendo categorías: " . $e->getMessage());
-            return $this->getCategoriasDefault();
+            return [];
         }
     }
-    
+
     /**
-     * Obtener categorías simples (para compatibilidad)
+     * Devuelve los oficios activos para una categoría dada.
+     * Campos: id, titulo
      */
-    public function obtenerCategoriasSimples() {
-        return $this->obtenerCategoriasConOficios();
-    }
-    
-    /**
-     * Categorías por defecto (fallback)
-     */
-    private function getCategoriasDefault() {
-        return [
-            ['id' => 1, 'nombre' => 'Tecnología', 'icono' => 'fas fa-laptop-code', 'orden' => 1, 'total_oficios' => 5],
-            ['id' => 2, 'nombre' => 'Salud', 'icono' => 'fas fa-heartbeat', 'orden' => 2, 'total_oficios' => 3],
-            ['id' => 3, 'nombre' => 'Educación', 'icono' => 'fas fa-graduation-cap', 'orden' => 3, 'total_oficios' => 4],
-            ['id' => 4, 'nombre' => 'Ventas', 'icono' => 'fas fa-chart-line', 'orden' => 4, 'total_oficios' => 6],
-            ['id' => 5, 'nombre' => 'Construcción', 'icono' => 'fas fa-hard-hat', 'orden' => 5, 'total_oficios' => 7],
-            ['id' => 6, 'nombre' => 'Hostelería', 'icono' => 'fas fa-utensils', 'orden' => 6, 'total_oficios' => 4],
-            ['id' => 7, 'nombre' => 'Marketing', 'icono' => 'fas fa-bullhorn', 'orden' => 7, 'total_oficios' => 3],
-            ['id' => 8, 'nombre' => 'Finanzas', 'icono' => 'fas fa-coins', 'orden' => 8, 'total_oficios' => 5]
-        ];
+    public function obtenerOficiosPorCategoria(int $categoriaId): array
+    {
+        if (!$this->pdo) {
+            return [];
+        }
+
+        $sql = "
+            SELECT id, titulo
+            FROM oficios
+            WHERE categoria_id = :categoria_id
+              AND activo = 1
+            ORDER BY titulo ASC
+        ";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([':categoria_id' => $categoriaId]);
+            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+        } catch (Exception $e) {
+            error_log("Error obteniendo oficios: " . $e->getMessage());
+            return [];
+        }
     }
 }
 ?>
