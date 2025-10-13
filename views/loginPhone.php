@@ -35,7 +35,7 @@ $pageTitle = "Acceso con Teléfono";
                 <small class="form-help">Ingresa tu número sin el +57 (ej: 3001234567)</small>
             </div>
 
-            <div class="form-group" id="codeGroup" style="display: none;">
+            <div class="form-group" id="codeGroup">
                 <label for="verification_code">
                     <i class="fas fa-key"></i> Código de verificación
                 </label>
@@ -53,7 +53,7 @@ $pageTitle = "Acceso con Teléfono";
             </div>
 
             <button type="submit" class="btn-login-submit" id="submitBtn">
-                <i class="fas fa-paper-plane"></i> Recibir código y enlace
+                <i class="fas fa-paper-plane"></i> Enviar código / Verificar
             </button>
 
             <div class="magic-link-info" style="display: none;" id="linkSentInfo">
@@ -222,14 +222,14 @@ document.getElementById('phoneLoginForm').addEventListener('submit', function(e)
     const phone = document.getElementById('phone').value;
     const code = document.getElementById('verification_code').value;
     
-    if (!codeSent) {
-        // Primer envío - solicitar código
+    if (!code || code.length !== 6) {
+        // Si no hay código o no es válido - solicitar código
         if (validatePhone(phone)) {
             sendMagicLinkAndCode(phone);
         }
     } else {
-        // Segundo envío - verificar código
-        if (validateCode(code)) {
+        // Si hay código - verificar código
+        if (validatePhone(phone) && validateCode(code)) {
             verifyCodeAndLogin(phone, code);
         }
     }
@@ -265,13 +265,13 @@ function sendMagicLinkAndCode(phone) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
     submitBtn.disabled = true;
     
-    // Simular envío (aquí se haría la llamada real al controlador)
+    // Enviar código al controlador
     fetch('controllers/MagicLinkController.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `action=send_code&phone=+57${phone}`
+        body: `action=enviarCodigo&phone=+57${phone}`
     })
     .then(response => response.json())
     .then(data => {
@@ -295,7 +295,6 @@ function sendMagicLinkAndCode(phone) {
 }
 
 function showCodeInterface() {
-    document.getElementById('codeGroup').style.display = 'block';
     document.getElementById('linkSentInfo').style.display = 'block';
     document.getElementById('submitBtn').innerHTML = '<i class="fas fa-sign-in-alt"></i> Verificar código e ingresar';
     document.getElementById('verification_code').focus();
@@ -313,7 +312,7 @@ function verifyCodeAndLogin(phone, code) {
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: `action=verify_code&phone=+57${phone}&code=${code}`
+        body: `action=validarCodigo&phone=+57${phone}&code=${code}`
     })
     .then(response => response.json())
     .then(data => {

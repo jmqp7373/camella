@@ -39,9 +39,11 @@ class MagicLinkController {
         
         switch ($action) {
             case 'send_code':
+            case 'enviarCodigo':
                 $this->sendCode();
                 break;
             case 'verify_code':
+            case 'validarCodigo':
                 $this->verifyCode();
                 break;
             default:
@@ -101,8 +103,9 @@ class MagicLinkController {
             $userId = $this->createOrGetUser($phone);
             
             if ($userId) {
-                // Establecer sesión
-                $_SESSION['user_id'] = $userId;
+                // Establecer sesión válida por 24 horas
+                $_SESSION['usuario'] = $userId;
+                $_SESSION['user_id'] = $userId; // Mantener compatibilidad
                 $_SESSION['phone'] = $phone;
                 $_SESSION['login_time'] = time();
                 $_SESSION['login_expires'] = time() + (24 * 60 * 60); // 24 horas
