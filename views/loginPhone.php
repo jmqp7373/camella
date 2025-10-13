@@ -69,12 +69,7 @@ $pageTitle = "Acceso con Teléfono";
         </form>
 
         <div class="login-footer">
-            <p>¿Prefieres el login tradicional? 
-                <a href="index.php?view=login" class="register-link">
-                    Usar email y contraseña
-                </a>
-            </p>
-            
+                        
             <div class="login-benefits">
                 <h4><i class="fas fa-shield-alt"></i> ¿Por qué usar acceso con celular?</h4>
                 <ul class="benefits-list">
