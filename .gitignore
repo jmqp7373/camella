@@ -11,7 +11,7 @@ database.local.php
 
 # Directorios de dependencias
 node_modules/
-vendor/
+# vendor/ - Comentado para subir Twilio SDK a Hostinger (sin composer)
 
 # Archivos de IDE
 .vscode/
