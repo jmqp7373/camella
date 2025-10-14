@@ -24,26 +24,40 @@ class PromotorStatsProvider {
     }
 
     public function getPromotorStats($period = '24h') {
-        if (!$this->pdo) return null;
+        if (!$this->pdo) {
+            return [
+                'usuarios_registrados' => 0,
+                'publicaciones_activas' => 0,
+                'promedio_por_usuario' => '0.00'
+            ];
+        }
 
+        // Definir la condición temporal según el período
+        $timeCondition = match($period) {
+            '24h' => "1 DAY",
+            '7d' => "7 DAY",
+            '30d' => "1 MONTH",
+            default => "1 DAY"
+        };
+
+        // Inicializar valores por defecto
+        $usuariosRegistrados = 0;
+        $publicacionesActivas = 0;
+
+        // Query 1: Usuarios registrados (independiente)
         try {
-            // Definir la condición temporal según el período
-            $timeCondition = match($period) {
-                '24h' => "1 DAY",
-                '7d' => "7 DAY",
-                '30d' => "1 MONTH",
-                default => "1 DAY"
-            };
-
-            // Usuarios registrados - NOTA: no usar prepare() con interpolación de variables
             $usuariosQuery = $this->pdo->query("
                 SELECT COUNT(*) AS total
                 FROM users
                 WHERE created_at >= NOW() - INTERVAL {$timeCondition}
             ");
             $usuariosRegistrados = (int) $usuariosQuery->fetchColumn();
+        } catch (Exception $e) {
+            error_log("Error contando usuarios: " . $e->getMessage());
+        }
 
-            // Publicaciones activas
+        // Query 2: Publicaciones activas (independiente, puede fallar si tabla no existe)
+        try {
             $publicacionesQuery = $this->pdo->query("
                 SELECT COUNT(*) AS total
                 FROM servicios
@@ -51,22 +65,22 @@ class PromotorStatsProvider {
                 AND status = 'activo'
             ");
             $publicacionesActivas = (int) $publicacionesQuery->fetchColumn();
-
-            // Publicaciones por usuario (evitar división por cero)
-            $porUsuario = ($usuariosRegistrados > 0) 
-                ? number_format($publicacionesActivas / $usuariosRegistrados, 2)
-                : '0.00';
-
-            return [
-                'usuarios_registrados' => $usuariosRegistrados,
-                'publicaciones_activas' => $publicacionesActivas,
-                'promedio_por_usuario' => $porUsuario
-            ];
-
         } catch (Exception $e) {
-            error_log("Error obteniendo stats de Promotor: " . $e->getMessage());
-            return null;
+            // Si la tabla servicios no existe, simplemente dejar en 0
+            error_log("Advertencia: tabla servicios no disponible - " . $e->getMessage());
+            $publicacionesActivas = 0;
         }
+
+        // Calcular promedio (evitar división por cero)
+        $porUsuario = ($usuariosRegistrados > 0) 
+            ? number_format($publicacionesActivas / $usuariosRegistrados, 2)
+            : '0.00';
+
+        return [
+            'usuarios_registrados' => $usuariosRegistrados,
+            'publicaciones_activas' => $publicacionesActivas,
+            'promedio_por_usuario' => $porUsuario
+        ];
     }
 }
 
