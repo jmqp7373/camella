@@ -169,3 +169,79 @@ body{
   outline: 2px solid var(--camella-blanco);
   outline-offset: 2px;
 }
+
+/* ========================================
+   ESTILOS PARA USUARIO AUTENTICADO
+   ======================================== */
+
+.user-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--camella-blanco);
+  font-weight: 500;
+  font-size: 14px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.user-info i {
+  font-size: 18px;
+}
+
+.btn-logout {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--camella-blanco);
+  border: 2px solid var(--camella-blanco);
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  background: var(--camella-blanco);
+  color: var(--camella-azul);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-logout i {
+  margin-right: 4px;
+}
+
+/* Responsive para usuario autenticado */
+@media (max-width: 768px) {
+  .user-info {
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+  
+  .user-info i {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-info {
+    font-size: 12px;
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  
+  /* Ocultar texto "Salir" en móviles pequeños, solo mostrar icono */
+  .btn-logout {
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  /* En pantallas muy pequeñas, comprimir más */
+  .user-info {
+    display: none; /* Ocultar info de usuario en pantallas muy pequeñas */
+  }
+  
+  .btn-logout {
+    padding: 7px 9px;
+    font-size: 13px;
+  }
+}

@@ -6,6 +6,13 @@
 
 $pageTitle = "Inicio";
 
+// Mostrar mensaje de logout exitoso si viene del logout
+if (isset($_GET['logout']) && $_GET['logout'] === 'success') {
+    echo '<div class="alert alert-success" style="max-width: 600px; margin: 20px auto; padding: 15px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 8px; text-align: center;">';
+    echo '<i class="fas fa-check-circle"></i> Sesión cerrada exitosamente. ¡Hasta pronto!';
+    echo '</div>';
+}
+
 // Intentar cargar categorías desde la base de datos
 $categorias = []; // Inicializar vacío, se llenará desde BD
 

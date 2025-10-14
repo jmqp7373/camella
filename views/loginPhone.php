@@ -6,18 +6,21 @@
 $pageTitle = "Acceso con Teléfono";
 
 // Detectar entorno y configurar URL del controlador
+$httpHost = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $isLocalhost = (
-    $_SERVER['HTTP_HOST'] === 'localhost' ||
-    strpos($_SERVER['HTTP_HOST'], 'localhost:') === 0 ||
-    $_SERVER['HTTP_HOST'] === '127.0.0.1' ||
-    strpos($_SERVER['HTTP_HOST'], '127.0.0.1:') === 0
+    $httpHost === 'localhost' ||
+    strpos($httpHost, 'localhost:') === 0 ||
+    $httpHost === '127.0.0.1' ||
+    strpos($httpHost, '127.0.0.1:') === 0 ||
+    strpos($httpHost, '.ngrok') !== false || // Detecta .ngrok.io y .ngrok-free.app
+    strpos($httpHost, 'ngrok') !== false
 );
 
 if ($isLocalhost) {
-    // Entorno local - usar ngrok
-    $magicLinkControllerUrl = 'https://nonlugubriously-subglobosely-anabel.ngrok.io/controllers/MagicLinkController.php';
+    // Entorno local/ngrok - usar ruta relativa desde index.php (raíz del proyecto)
+    $magicLinkControllerUrl = 'controllers/MagicLinkController.php';
 } else {
-    // Entorno de producción - usar dominio real
+    // Entorno de producción - usar URL absoluta
     $magicLinkControllerUrl = 'https://camella.com.co/controllers/MagicLinkController.php';
 }
 ?>
@@ -85,7 +88,6 @@ if ($isLocalhost) {
         </form>
 
         <div class="login-footer">
-                        
             <div class="login-benefits">
                 <h4><i class="fas fa-shield-alt"></i> ¿Por qué usar acceso con celular?</h4>
                 <ul class="benefits-list">
@@ -229,25 +231,72 @@ if ($isLocalhost) {
 </style>
 
 <script>
-// URL del controlador basada en el entorno
+// URL del controlador basada en el entorno (inyectada desde PHP arriba)
 const magicLinkControllerUrl = '<?= $magicLinkControllerUrl ?>';
+
+// Debug: Verificar que la URL se cargó correctamente
+console.log('🎯 URL del controlador:', magicLinkControllerUrl);
+if (!magicLinkControllerUrl || magicLinkControllerUrl === '') {
+    console.error('❌ ERROR: magicLinkControllerUrl está vacía o indefinida');
+    alert('Error de configuración: URL del controlador no definida');
+}
 
 let codeSent = false;
 let countdownTimer = null;
 
+// Helper robusto para POST x-www-form-urlencoded que espera JSON
+async function postForm(url, params) {
+    console.log('📤 Enviando request a:', url);
+    console.log('📦 Parámetros:', params);
+    
+    const resp = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': 'application/json'
+        },
+        body: new URLSearchParams(params)
+    });
+
+    console.log('📥 Respuesta recibida:', resp.status, resp.statusText);
+    
+    const contentType = resp.headers.get('content-type') || '';
+    console.log('📄 Content-Type:', contentType);
+    
+    const text = await resp.text();
+    console.log('📝 Respuesta texto:', text.slice(0, 500));
+
+    if (!resp.ok) {
+        console.error('❌ Error HTTP:', resp.status);
+        throw new Error(`HTTP ${resp.status} - ${text.slice(0, 200)}`);
+    }
+    if (!contentType.includes('application/json')) {
+        console.error('❌ Respuesta no es JSON:', text.slice(0, 200));
+        throw new Error(`Respuesta no-JSON del backend: ${text.slice(0, 200)}`);
+    }
+    try {
+        const data = JSON.parse(text);
+        console.log('✅ JSON parseado:', data);
+        return data;
+    } catch (e) {
+        console.error('❌ Error parseando JSON:', e);
+        throw new Error('JSON inválido del backend.');
+    }
+}
+
 document.getElementById('phoneLoginForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    
+
     const phone = document.getElementById('phone').value;
     const code = document.getElementById('verification_code').value;
-    
+
     if (!code || code.length !== 6) {
-        // Si no hay código o no es válido - solicitar código
+        // Solicitar código
         if (validatePhone(phone)) {
             sendMagicLinkAndCode(phone);
         }
     } else {
-        // Si hay código - verificar código
+        // Verificar código
         if (validatePhone(phone) && validateCode(code)) {
             verifyCodeAndLogin(phone, code);
         }
@@ -256,55 +305,45 @@ document.getElementById('phoneLoginForm').addEventListener('submit', function(e)
 
 function validatePhone(phone) {
     const phonePattern = /^[3][0-9]{9}$/;
-    
     if (!phonePattern.test(phone)) {
         alert('Por favor ingresa un número de celular válido (debe empezar con 3 y tener 10 dígitos)');
         return false;
     }
-    
     return true;
 }
 
 function validateCode(code) {
     const codePattern = /^[0-9]{6}$/;
-    
     if (!codePattern.test(code)) {
         alert('Por favor ingresa el código de 6 dígitos que recibiste');
         return false;
     }
-    
     return true;
 }
 
 function sendMagicLinkAndCode(phone) {
     const submitBtn = document.getElementById('submitBtn');
     const originalText = submitBtn.innerHTML;
-    
+
     // Mostrar loading
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
     submitBtn.disabled = true;
-    
-    // Enviar código al controlador
-    fetch(magicLinkControllerUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `action=enviarCodigo&phone=+57${phone}`
+
+    postForm(magicLinkControllerUrl, {
+        action: 'enviarCodigo',
+        phone: '+57' + phone
     })
-    .then(response => response.json())
-    .then(data => {
+    .then((data) => {
         if (data.success) {
-            // Mostrar interfaz de código
             showCodeInterface();
             startCountdown();
             codeSent = true;
         } else {
-            alert('Error al enviar el código: ' + data.message);
+            alert('Error al enviar el código: ' + (data.message || 'Sin detalle'));
         }
     })
-    .catch(error => {
-        console.error('Error:', error);
+    .catch((error) => {
+        console.error('Error enviarCodigo:', error);
         alert('Error de conexión. Por favor intenta nuevamente.');
     })
     .finally(() => {
@@ -322,29 +361,24 @@ function showCodeInterface() {
 function verifyCodeAndLogin(phone, code) {
     const submitBtn = document.getElementById('submitBtn');
     const originalText = submitBtn.innerHTML;
-    
+
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
     submitBtn.disabled = true;
-    
-    fetch(magicLinkControllerUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `action=validarCodigo&phone=+57${phone}&code=${code}`
+
+    postForm(magicLinkControllerUrl, {
+        action: 'validarCodigo',
+        phone: '+57' + phone,
+        code: code
     })
-    .then(response => response.json())
-    .then(data => {
+    .then((data) => {
         if (data.success) {
-            // Éxito - redirigir o mostrar mensaje
-            alert('¡Acceso exitoso! Bienvenido a Camella.com.co');
             window.location.href = 'index.php'; // o dashboard
         } else {
             alert('Código incorrecto. Por favor verifica e intenta nuevamente.');
         }
     })
-    .catch(error => {
-        console.error('Error:', error);
+    .catch((error) => {
+        console.error('Error validarCodigo:', error);
         alert('Error de conexión. Por favor intenta nuevamente.');
     })
     .finally(() => {
@@ -357,11 +391,11 @@ function startCountdown() {
     let seconds = 60;
     const countdownEl = document.getElementById('countdown');
     const resendBtn = document.getElementById('resendBtn');
-    
+
     countdownTimer = setInterval(() => {
         seconds--;
         countdownEl.textContent = seconds;
-        
+
         if (seconds <= 0) {
             clearInterval(countdownTimer);
             resendBtn.disabled = false;

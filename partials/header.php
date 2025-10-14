@@ -65,8 +65,21 @@ if (!isset($_SESSION)) {
             </a>
             <nav class="header-actions" aria-label="Acciones">
                 <?php if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])): ?>
+                    <!-- Usuario autenticado -->
+                    <span class="user-info">
+                        <i class="fas fa-user-circle"></i>
+                        <?php 
+                            $phone = $_SESSION['phone'] ?? '';
+                            $phoneDisplay = $phone ? substr($phone, -4) : '';
+                            echo $phoneDisplay ? "***{$phoneDisplay}" : "Usuario";
+                        ?>
+                    </span>
                     <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
+                    <a href="logout.php" class="btn btn-logout" title="Cerrar sesión">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </a>
                 <?php else: ?>
+                    <!-- Usuario NO autenticado -->
                     <a href="index.php?view=loginPhone" class="btn btn-publish">+ Publícate</a>
                 <?php endif; ?>
             </nav>
