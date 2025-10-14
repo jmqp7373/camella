@@ -107,6 +107,20 @@ if (!isset($promotorStats)) {
 <section class="twilio-stats-section" style="margin-top: 2rem;">
     <h2><i class="fas fa-chart-line"></i> Estadísticas Promotor</h2>
     
+    <!-- DEBUG TEMPORAL - ELIMINAR DESPUÉS DE VERIFICAR -->
+    <?php
+    echo "<pre style='background: #f4f4f4; padding: 15px; border: 2px solid #e74c3c; border-radius: 5px; margin: 1rem 0;'>";
+    echo "<strong style='color: #e74c3c;'>🐛 DEBUG - VALORES DEVUELTOS POR PromotorStatsHelper:</strong>\n\n";
+    echo "statsPromotor24h:\n";
+    print_r($statsPromotor24h);
+    echo "\nstatsPromotor7d:\n";
+    print_r($statsPromotor7d);
+    echo "\nstatsPromotor1m:\n";
+    print_r($statsPromotor1m);
+    echo "</pre>";
+    ?>
+    <!-- FIN DEBUG -->
+    
     <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
         <!-- 24 Horas -->
         <div class="stats-card" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">

@@ -35,23 +35,21 @@ class PromotorStatsProvider {
                 default => "1 DAY"
             };
 
-            // Usuarios registrados
-            $usuariosQuery = $this->pdo->prepare("
+            // Usuarios registrados - NOTA: no usar prepare() con interpolación de variables
+            $usuariosQuery = $this->pdo->query("
                 SELECT COUNT(*) AS total
                 FROM users
                 WHERE created_at >= NOW() - INTERVAL {$timeCondition}
             ");
-            $usuariosQuery->execute();
             $usuariosRegistrados = (int) $usuariosQuery->fetchColumn();
 
             // Publicaciones activas
-            $publicacionesQuery = $this->pdo->prepare("
+            $publicacionesQuery = $this->pdo->query("
                 SELECT COUNT(*) AS total
                 FROM servicios
                 WHERE created_at >= NOW() - INTERVAL {$timeCondition}
                 AND status = 'activo'
             ");
-            $publicacionesQuery->execute();
             $publicacionesActivas = (int) $publicacionesQuery->fetchColumn();
 
             // Publicaciones por usuario (evitar división por cero)
