@@ -16,138 +16,87 @@ if (!isset($twilioStats)) {
 <section class="twilio-stats-section">
     <h2><i class="fas fa-sms"></i> Estadísticas de SMS (Twilio)</h2>
     
-    <div class="stats-grid">
-        <!-- Últimas 24 horas -->
-        <div class="stats-card">
-            <div class="stats-card-header">
-                <h3><i class="fas fa-clock"></i> Últimas 24 horas</h3>
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        <!-- 24 Horas -->
+        <div class="stats-card" style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: white;">
+            <div style="text-align: center; padding: 2rem 1rem 1rem 1rem; border-bottom: 1px solid #f0f0f0;">
+                <h3 style="font-size: 2rem; font-weight: 700; color: #003366; margin: 0;">24 Horas</h3>
             </div>
-            <div class="stats-card-body">
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-paper-plane"></i> Enviados:
-                    </span>
-                    <span class="stat-value"><?= $twilioStats['24h']['total_enviados'] ?? 0 ?></span>
+            <div style="padding: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-paper-plane" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">Enviados</span>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-check-circle"></i> Entregados:
-                    </span>
-                    <span class="stat-value success"><?= $twilioStats['24h']['entregas_exitosas'] ?? 0 ?></span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-clock" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">No Convertidos</span>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-clock"></i> No convertidos:
-                    </span>
-                    <span class="stat-value warning"><?= $twilioStats['24h']['no_convertidos'] ?? 0 ?></span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-check-circle" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">Vencidos</span>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-hourglass-end"></i> Expirados:
-                    </span>
-                    <span class="stat-value error"><?= $twilioStats['24h']['expirados'] ?? 0 ?></span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-hourglass-end" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">24 Horas</span>
                 </div>
-                <div class="stat-row highlight">
-                    <span class="stat-label">
-                        <i class="fas fa-dollar-sign"></i> Costo estimado:
-                    </span>
-                    <span class="stat-value">$<?= $twilioStats['24h']['costo_estimado'] ?? '0.00' ?> USD</span>
-                </div>
-                <div class="stat-row highlight">
-                    <span class="stat-label">
-                        <i class="fas fa-percent"></i> Tasa de éxito:
-                    </span>
-                    <span class="stat-value"><?= $twilioStats['24h']['tasa_exito'] ?? 0 ?>%</span>
+                <div style="padding: 1rem 0 0.5rem 0; text-align: center;">
+                    <span style="color: #555; font-size: 0.9rem;">% Tasa de éxito: $<?= $twilioStats['24h']['costo_estimado'] ?? '0.00' ?>USD</span>
                 </div>
             </div>
         </div>
 
-        <!-- Última semana -->
-        <div class="stats-card">
-            <div class="stats-card-header">
-                <h3><i class="fas fa-calendar-week"></i> Última semana</h3>
+        <!-- 7 Días -->
+        <div class="stats-card" style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: white;">
+            <div style="text-align: center; padding: 2rem 1rem 1rem 1rem; border-bottom: 1px solid #f0f0f0;">
+                <h3 style="font-size: 2rem; font-weight: 700; color: #003366; margin: 0;">7 Días</h3>
             </div>
-            <div class="stats-card-body">
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-paper-plane"></i> Enviados:
-                    </span>
-                    <span class="stat-value"><?= $twilioStats['7d']['total_enviados'] ?? 0 ?></span>
+            <div style="padding: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-paper-plane" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">Enviados</span>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-check-circle"></i> Entregados:
-                    </span>
-                    <span class="stat-value success"><?= $twilioStats['7d']['entregas_exitosas'] ?? 0 ?></span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-clock" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">No Convertidos</span>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-clock"></i> No convertidos:
-                    </span>
-                    <span class="stat-value warning"><?= $twilioStats['7d']['no_convertidos'] ?? 0 ?></span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-check-circle" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">Vencidos</span>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-hourglass-end"></i> Expirados:
-                    </span>
-                    <span class="stat-value error"><?= $twilioStats['7d']['expirados'] ?? 0 ?></span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-hourglass-end" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">24 Horas</span>
                 </div>
-                <div class="stat-row highlight">
-                    <span class="stat-label">
-                        <i class="fas fa-dollar-sign"></i> Costo estimado:
-                    </span>
-                    <span class="stat-value">$<?= $twilioStats['7d']['costo_estimado'] ?? '0.00' ?> USD</span>
-                </div>
-                <div class="stat-row highlight">
-                    <span class="stat-label">
-                        <i class="fas fa-percent"></i> Tasa de éxito:
-                    </span>
-                    <span class="stat-value"><?= $twilioStats['7d']['tasa_exito'] ?? 0 ?>%</span>
+                <div style="padding: 1rem 0 0.5rem 0; text-align: center;">
+                    <span style="color: #555; font-size: 0.9rem;">% Tasa de éxito: $<?= $twilioStats['7d']['costo_estimado'] ?? '0.00' ?>USD</span>
                 </div>
             </div>
         </div>
 
-        <!-- Último mes -->
-        <div class="stats-card">
-            <div class="stats-card-header">
-                <h3><i class="fas fa-calendar-alt"></i> Último mes</h3>
+        <!-- 1 Mes -->
+        <div class="stats-card" style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: white;">
+            <div style="text-align: center; padding: 2rem 1rem 1rem 1rem; border-bottom: 1px solid #f0f0f0;">
+                <h3 style="font-size: 2rem; font-weight: 700; color: #003366; margin: 0;">1 Mes</h3>
             </div>
-            <div class="stats-card-body">
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-paper-plane"></i> Enviados:
-                    </span>
-                    <span class="stat-value"><?= $twilioStats['30d']['total_enviados'] ?? 0 ?></span>
+            <div style="padding: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-paper-plane" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">Enviados</span>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-check-circle"></i> Entregados:
-                    </span>
-                    <span class="stat-value success"><?= $twilioStats['30d']['entregas_exitosas'] ?? 0 ?></span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-clock" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">No Convertidos</span>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-clock"></i> No convertidos:
-                    </span>
-                    <span class="stat-value warning"><?= $twilioStats['30d']['no_convertidos'] ?? 0 ?></span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-check-circle" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">Vencidos</span>
                 </div>
-                <div class="stat-row">
-                    <span class="stat-label">
-                        <i class="fas fa-hourglass-end"></i> Expirados:
-                    </span>
-                    <span class="stat-value error"><?= $twilioStats['30d']['expirados'] ?? 0 ?></span>
+                <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 0; border-bottom: 1px solid #f0f0f0;">
+                    <i class="fas fa-hourglass-end" style="color: #003366; font-size: 1rem;"></i>
+                    <span style="color: #555; font-size: 0.95rem;">24 Horas</span>
                 </div>
-                <div class="stat-row highlight">
-                    <span class="stat-label">
-                        <i class="fas fa-dollar-sign"></i> Costo estimado:
-                    </span>
-                    <span class="stat-value">$<?= $twilioStats['30d']['costo_estimado'] ?? '0.00' ?> USD</span>
-                </div>
-                <div class="stat-row highlight">
-                    <span class="stat-label">
-                        <i class="fas fa-percent"></i> Tasa de éxito:
-                    </span>
-                    <span class="stat-value"><?= $twilioStats['30d']['tasa_exito'] ?? 0 ?>%</span>
+                <div style="padding: 1rem 0 0.5rem 0; text-align: center;">
+                    <span style="color: #555; font-size: 0.9rem;">% Tasa de éxito: $<?= $twilioStats['30d']['costo_estimado'] ?? '0.00' ?>USD</span>
                 </div>
             </div>
         </div>
