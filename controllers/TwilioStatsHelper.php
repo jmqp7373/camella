@@ -32,38 +32,40 @@ class TwilioStatsProvider {
         try {
             // Definir la condición temporal según el período
             $timeCondition = match($period) {
-                '24h' => "created_at >= NOW() - INTERVAL 1 DAY",
-                '7d' => "created_at >= NOW() - INTERVAL 7 DAY",
-                '30d' => "created_at >= NOW() - INTERVAL 30 DAY",
-                default => "created_at >= NOW() - INTERVAL 1 DAY"
+                '24h' => "1 DAY",
+                '7d' => "7 DAY",
+                '30d' => "1 MONTH",
+                default => "1 DAY"
             };
 
             // Obtener estadísticas
             $stmt = $this->pdo->prepare("
                 SELECT 
                     COUNT(*) as total_enviados,
-                    SUM(CASE WHEN status = 'used' THEN 1 ELSE 0 END) as entregas_exitosas,
-                    SUM(CASE WHEN status = 'created' THEN 1 ELSE 0 END) as no_convertidos,
-                    SUM(CASE WHEN status = 'expired' THEN 1 ELSE 0 END) as expirados
+                    SUM(CASE WHEN status = 'created' THEN 1 ELSE 0 END) as total_no_usados
                 FROM verification_codes_history 
-                WHERE $timeCondition
+                WHERE created_at >= NOW() - INTERVAL {$timeCondition}
             ");
             $stmt->execute();
             $stats = $stmt->fetch(PDO::FETCH_ASSOC);
 
+            $enviados = (int) ($stats['total_enviados'] ?? 0);
+            $noUsados = (int) ($stats['total_no_usados'] ?? 0);
+            
+            // Calcular tasa de éxito: (Enviados - No Usados) / Enviados * 100
+            $tasaExito = $enviados > 0 
+                ? round((($enviados - $noUsados) / $enviados) * 100, 2) 
+                : 0;
+
             // Calcular costo estimado (Twilio cobra aprox $0.0079 por SMS en Colombia)
             $costPerSMS = 0.0079;
-            $totalCost = ($stats['total_enviados'] ?? 0) * $costPerSMS;
+            $totalCost = $enviados * $costPerSMS;
 
             return [
-                'total_enviados' => $stats['total_enviados'] ?? 0,
-                'entregas_exitosas' => $stats['entregas_exitosas'] ?? 0,
-                'no_convertidos' => $stats['no_convertidos'] ?? 0,
-                'expirados' => $stats['expirados'] ?? 0,
+                'total_enviados' => $enviados,
+                'total_no_usados' => $noUsados,
                 'costo_estimado' => number_format($totalCost, 2),
-                'tasa_exito' => $stats['total_enviados'] > 0 
-                    ? round(($stats['entregas_exitosas'] / $stats['total_enviados']) * 100, 1) 
-                    : 0
+                'tasa_exito' => $tasaExito
             ];
 
         } catch (Exception $e) {
