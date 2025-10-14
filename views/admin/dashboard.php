@@ -4,8 +4,19 @@
  * Vista principal para gestión de categorías y oficios
  */
 
+// Verificar sesión y rol
+session_start();
+if (!isset($_SESSION['usuario']) || $_SESSION['role'] !== 'admin') {
+    header('Location: ../../index.php');
+    exit;
+}
+
+// Cargar estadísticas de Twilio
+require_once __DIR__ . '/../../controllers/TwilioStatsHelper.php';
+$twilioStats = getTwilioStatistics();
+
 if (!isset($pageTitle)) $pageTitle = "Panel de Administración";
-include 'partials/header.php';
+include __DIR__ . '/../../partials/header.php';
 ?>
 
 <div class="admin-container">
@@ -64,6 +75,148 @@ include 'partials/header.php';
                 </div>
             </div>
         <?php endif; ?>
+    </section>
+
+    <!-- Estadísticas de Twilio (Solo visible para Admin) -->
+    <section class="twilio-stats-section">
+        <h2><i class="fas fa-sms"></i> Estadísticas de SMS (Twilio)</h2>
+        
+        <div class="stats-grid">
+            <!-- Últimas 24 horas -->
+            <div class="stats-card">
+                <div class="stats-card-header">
+                    <h3><i class="fas fa-clock"></i> Últimas 24 horas</h3>
+                </div>
+                <div class="stats-card-body">
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-paper-plane"></i> Enviados:
+                        </span>
+                        <span class="stat-value"><?= $twilioStats['24h']['total_enviados'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-check-circle"></i> Entregados:
+                        </span>
+                        <span class="stat-value success"><?= $twilioStats['24h']['entregas_exitosas'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-times-circle"></i> Fallidos:
+                        </span>
+                        <span class="stat-value error"><?= $twilioStats['24h']['fallidos'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-hourglass-end"></i> Expirados:
+                        </span>
+                        <span class="stat-value warning"><?= $twilioStats['24h']['expirados'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row highlight">
+                        <span class="stat-label">
+                            <i class="fas fa-dollar-sign"></i> Costo estimado:
+                        </span>
+                        <span class="stat-value">$<?= $twilioStats['24h']['costo_estimado'] ?? '0.00' ?> USD</span>
+                    </div>
+                    <div class="stat-row highlight">
+                        <span class="stat-label">
+                            <i class="fas fa-percent"></i> Tasa de éxito:
+                        </span>
+                        <span class="stat-value"><?= $twilioStats['24h']['tasa_exito'] ?? 0 ?>%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Última semana -->
+            <div class="stats-card">
+                <div class="stats-card-header">
+                    <h3><i class="fas fa-calendar-week"></i> Última semana</h3>
+                </div>
+                <div class="stats-card-body">
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-paper-plane"></i> Enviados:
+                        </span>
+                        <span class="stat-value"><?= $twilioStats['7d']['total_enviados'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-check-circle"></i> Entregados:
+                        </span>
+                        <span class="stat-value success"><?= $twilioStats['7d']['entregas_exitosas'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-times-circle"></i> Fallidos:
+                        </span>
+                        <span class="stat-value error"><?= $twilioStats['7d']['fallidos'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-hourglass-end"></i> Expirados:
+                        </span>
+                        <span class="stat-value warning"><?= $twilioStats['7d']['expirados'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row highlight">
+                        <span class="stat-label">
+                            <i class="fas fa-dollar-sign"></i> Costo estimado:
+                        </span>
+                        <span class="stat-value">$<?= $twilioStats['7d']['costo_estimado'] ?? '0.00' ?> USD</span>
+                    </div>
+                    <div class="stat-row highlight">
+                        <span class="stat-label">
+                            <i class="fas fa-percent"></i> Tasa de éxito:
+                        </span>
+                        <span class="stat-value"><?= $twilioStats['7d']['tasa_exito'] ?? 0 ?>%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Último mes -->
+            <div class="stats-card">
+                <div class="stats-card-header">
+                    <h3><i class="fas fa-calendar-alt"></i> Último mes</h3>
+                </div>
+                <div class="stats-card-body">
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-paper-plane"></i> Enviados:
+                        </span>
+                        <span class="stat-value"><?= $twilioStats['30d']['total_enviados'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-check-circle"></i> Entregados:
+                        </span>
+                        <span class="stat-value success"><?= $twilioStats['30d']['entregas_exitosas'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-times-circle"></i> Fallidos:
+                        </span>
+                        <span class="stat-value error"><?= $twilioStats['30d']['fallidos'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">
+                            <i class="fas fa-hourglass-end"></i> Expirados:
+                        </span>
+                        <span class="stat-value warning"><?= $twilioStats['30d']['expirados'] ?? 0 ?></span>
+                    </div>
+                    <div class="stat-row highlight">
+                        <span class="stat-label">
+                            <i class="fas fa-dollar-sign"></i> Costo estimado:
+                        </span>
+                        <span class="stat-value">$<?= $twilioStats['30d']['costo_estimado'] ?? '0.00' ?> USD</span>
+                    </div>
+                    <div class="stat-row highlight">
+                        <span class="stat-label">
+                            <i class="fas fa-percent"></i> Tasa de éxito:
+                        </span>
+                        <span class="stat-value"><?= $twilioStats['30d']['tasa_exito'] ?? 0 ?>%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
     
     <!-- Gestión de Categorías -->
@@ -515,6 +668,110 @@ include 'partials/header.php';
         opacity: 0;
     }
 }
+
+/* Estilos para estadísticas de Twilio */
+.twilio-stats-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.twilio-stats-section h2 {
+    color: var(--azul-fondo);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.stats-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stats-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.stats-card-header {
+    background: linear-gradient(135deg, var(--azul-fondo), var(--color-azul-oscuro));
+    color: white;
+    padding: 1rem;
+}
+
+.stats-card-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stats-card-body {
+    padding: 1.5rem;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.stat-row:last-child {
+    border-bottom: none;
+}
+
+.stat-row.highlight {
+    background-color: rgba(var(--color-azul-rgb), 0.05);
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-top: 0.5rem;
+    font-weight: 600;
+}
+
+.stat-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-gris-oscuro);
+    font-size: 0.9rem;
+}
+
+.stat-label i {
+    width: 20px;
+    text-align: center;
+}
+
+.stat-value {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--azul-fondo);
+}
+
+.stat-value.success {
+    color: var(--color-verde);
+}
+
+.stat-value.error {
+    color: #dc3545;
+}
+
+.stat-value.warning {
+    color: var(--color-naranja);
+}
 </style>
 
 <script>
@@ -720,5 +977,5 @@ if (isset($_SESSION['mensaje_error'])) {
     unset($_SESSION['mensaje_error']);
 }
 
-include 'partials/footer.php'; 
+include __DIR__ . '/../../partials/footer.php'; 
 ?>

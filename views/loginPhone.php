@@ -372,7 +372,17 @@ function verifyCodeAndLogin(phone, code) {
     })
     .then((data) => {
         if (data.success) {
-            window.location.href = 'index.php'; // o dashboard
+            // Redirigir según el rol del usuario
+            const role = data.data?.role || 'publicante';
+            console.log('✅ Login exitoso. Rol:', role);
+            
+            if (role === 'admin') {
+                window.location.href = 'views/admin/dashboard_modular.php';
+            } else if (role === 'promotor') {
+                window.location.href = 'views/promotor/dashboard_modular.php';
+            } else {
+                window.location.href = 'views/publicante/dashboard_modular.php';
+            }
         } else {
             alert('Código incorrecto. Por favor verifica e intenta nuevamente.');
         }

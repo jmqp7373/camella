@@ -1,11 +1,17 @@
 <?php
 /**
+ * Cargar configuración de rutas de la aplicación
+ */
+require_once __DIR__ . '/../config/app_paths.php';
+
+/**
  * Función para generar cache buster para archivos CSS y JS
  * Usa la fecha de modificación del archivo si existe, o timestamp actual
  */
 function getCacheBuster($filepath) {
-    if (file_exists($filepath)) {
-        return '?v=' . filemtime($filepath);
+    $fullPath = APP_ROOT . '/' . ltrim($filepath, '/');
+    if (file_exists($fullPath)) {
+        return '?v=' . filemtime($fullPath);
     }
     return '?v=' . time();
 }
@@ -23,6 +29,9 @@ if (!isset($_SESSION)) {
     <meta name="description" content="Camella.com.co - Portal de empleo líder en Colombia. Encuentra trabajo o talento profesional.">
     <meta name="keywords" content="empleo, trabajo, colombia, ofertas laborales, talentos, empresas, camella">
     <meta name="author" content="Camella.com.co">
+    
+    <!-- Base href para rutas relativas -->
+    <base href="<?= htmlspecialchars(APP_SUBDIR) ?>/">
     
     <title><?php echo isset($pageTitle) ? $pageTitle . ' - ' : ''; ?>Camella.com.co - Portal de Empleo</title>
     
@@ -42,6 +51,9 @@ if (!isset($_SESSION)) {
     
     <!-- CSS del Header -->
     <link rel="stylesheet" href="assets/css/header.css<?= getCacheBuster('assets/css/header.css'); ?>">
+    
+    <!-- CSS de Bloques para Dashboards -->
+    <link rel="stylesheet" href="assets/css/bloques.css<?= getCacheBuster('assets/css/bloques.css'); ?>">
     
     <!-- Font Awesome para iconos (CDN externo - no necesita cache busting) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">

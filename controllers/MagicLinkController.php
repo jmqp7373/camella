@@ -109,9 +109,13 @@ class MagicLinkController {
         if ($this->checkVerificationCode($phone, $code)) {
             $userId = $this->createOrGetUser($phone);
             if ($userId) {
+                // Obtener el rol del usuario
+                $userRole = $this->getUserRole($userId);
+                
                 $_SESSION['usuario'] = $userId;
                 $_SESSION['user_id'] = $userId;
                 $_SESSION['phone'] = $phone;
+                $_SESSION['role'] = $userRole; // Guardar rol en sesión
                 $_SESSION['login_time'] = time();
                 $_SESSION['login_expires'] = time() + (24 * 60 * 60);
                 
@@ -119,7 +123,9 @@ class MagicLinkController {
                 $this->updateHistoryStatus($phone, $code, 'used', $userId);
                 
                 $this->clearUsedCode($phone, $code);
-                return $this->jsonResponse(true, 'Acceso exitoso');
+                
+                // Devolver éxito con el rol para redirigir desde el frontend
+                return $this->jsonResponse(true, 'Acceso exitoso', ['role' => $userRole]);
             } else {
                 return $this->jsonResponse(false, 'Error creando sesión de usuario');
             }
@@ -194,6 +200,21 @@ class MagicLinkController {
         } catch (Exception $e) {
             error_log("Error verificando código: " . $e->getMessage());
             return false;
+        }
+    }
+
+    private function getUserRole($userId) {
+        if (!$this->pdo) return 'publicante';
+
+        try {
+            $stmt = $this->pdo->prepare("SELECT role FROM users WHERE id = ? LIMIT 1");
+            $stmt->execute([$userId]);
+            $user = $stmt->fetch();
+
+            return $user ? $user['role'] : 'publicante';
+        } catch (Exception $e) {
+            error_log("Error obteniendo rol: " . $e->getMessage());
+            return 'publicante';
         }
     }
 
@@ -348,6 +369,57 @@ class MagicLinkController {
 
         } catch (Exception $e) {
             error_log("Error actualizando SID en historial: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Obtener estadísticas de Twilio desde la base de datos
+     * @param string $period '24h', '7d', '30d'
+     * @return array Estadísticas del período
+     */
+    public function getTwilioStats($period = '24h') {
+        if (!$this->pdo) return null;
+
+        try {
+            // Definir la condición temporal según el período
+            $timeCondition = match($period) {
+                '24h' => "created_at >= NOW() - INTERVAL 1 DAY",
+                '7d' => "created_at >= NOW() - INTERVAL 7 DAY",
+                '30d' => "created_at >= NOW() - INTERVAL 30 DAY",
+                default => "created_at >= NOW() - INTERVAL 1 DAY"
+            };
+
+            // Obtener estadísticas
+            $stmt = $this->pdo->prepare("
+                SELECT 
+                    COUNT(*) as total_enviados,
+                    SUM(CASE WHEN status = 'used' THEN 1 ELSE 0 END) as entregas_exitosas,
+                    SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as fallidos,
+                    SUM(CASE WHEN status = 'expired' THEN 1 ELSE 0 END) as expirados
+                FROM verification_codes_history 
+                WHERE $timeCondition
+            ");
+            $stmt->execute();
+            $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // Calcular costo estimado (Twilio cobra aprox $0.0079 por SMS en Colombia)
+            $costPerSMS = 0.0079;
+            $totalCost = ($stats['total_enviados'] ?? 0) * $costPerSMS;
+
+            return [
+                'total_enviados' => $stats['total_enviados'] ?? 0,
+                'entregas_exitosas' => $stats['entregas_exitosas'] ?? 0,
+                'fallidos' => $stats['fallidos'] ?? 0,
+                'expirados' => $stats['expirados'] ?? 0,
+                'costo_estimado' => number_format($totalCost, 2),
+                'tasa_exito' => $stats['total_enviados'] > 0 
+                    ? round(($stats['entregas_exitosas'] / $stats['total_enviados']) * 100, 1) 
+                    : 0
+            ];
+
+        } catch (Exception $e) {
+            error_log("Error obteniendo stats de Twilio: " . $e->getMessage());
+            return null;
         }
     }
 
