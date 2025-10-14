@@ -37,15 +37,15 @@ if (!isset($twilioStats)) {
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">
-                        <i class="fas fa-times-circle"></i> Fallidos:
+                        <i class="fas fa-clock"></i> No convertidos:
                     </span>
-                    <span class="stat-value error"><?= $twilioStats['24h']['fallidos'] ?? 0 ?></span>
+                    <span class="stat-value warning"><?= $twilioStats['24h']['no_convertidos'] ?? 0 ?></span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">
                         <i class="fas fa-hourglass-end"></i> Expirados:
                     </span>
-                    <span class="stat-value warning"><?= $twilioStats['24h']['expirados'] ?? 0 ?></span>
+                    <span class="stat-value error"><?= $twilioStats['24h']['expirados'] ?? 0 ?></span>
                 </div>
                 <div class="stat-row highlight">
                     <span class="stat-label">
@@ -82,15 +82,15 @@ if (!isset($twilioStats)) {
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">
-                        <i class="fas fa-times-circle"></i> Fallidos:
+                        <i class="fas fa-clock"></i> No convertidos:
                     </span>
-                    <span class="stat-value error"><?= $twilioStats['7d']['fallidos'] ?? 0 ?></span>
+                    <span class="stat-value warning"><?= $twilioStats['7d']['no_convertidos'] ?? 0 ?></span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">
                         <i class="fas fa-hourglass-end"></i> Expirados:
                     </span>
-                    <span class="stat-value warning"><?= $twilioStats['7d']['expirados'] ?? 0 ?></span>
+                    <span class="stat-value error"><?= $twilioStats['7d']['expirados'] ?? 0 ?></span>
                 </div>
                 <div class="stat-row highlight">
                     <span class="stat-label">
@@ -127,15 +127,15 @@ if (!isset($twilioStats)) {
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">
-                        <i class="fas fa-times-circle"></i> Fallidos:
+                        <i class="fas fa-clock"></i> No convertidos:
                     </span>
-                    <span class="stat-value error"><?= $twilioStats['30d']['fallidos'] ?? 0 ?></span>
+                    <span class="stat-value warning"><?= $twilioStats['30d']['no_convertidos'] ?? 0 ?></span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-label">
                         <i class="fas fa-hourglass-end"></i> Expirados:
                     </span>
-                    <span class="stat-value warning"><?= $twilioStats['30d']['expirados'] ?? 0 ?></span>
+                    <span class="stat-value error"><?= $twilioStats['30d']['expirados'] ?? 0 ?></span>
                 </div>
                 <div class="stat-row highlight">
                     <span class="stat-label">

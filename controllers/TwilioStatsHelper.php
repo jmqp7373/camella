@@ -43,7 +43,7 @@ class TwilioStatsProvider {
                 SELECT 
                     COUNT(*) as total_enviados,
                     SUM(CASE WHEN status = 'used' THEN 1 ELSE 0 END) as entregas_exitosas,
-                    SUM(CASE WHEN status = 'failed' THEN 1 ELSE 0 END) as fallidos,
+                    SUM(CASE WHEN status = 'created' THEN 1 ELSE 0 END) as no_convertidos,
                     SUM(CASE WHEN status = 'expired' THEN 1 ELSE 0 END) as expirados
                 FROM verification_codes_history 
                 WHERE $timeCondition
@@ -58,7 +58,7 @@ class TwilioStatsProvider {
             return [
                 'total_enviados' => $stats['total_enviados'] ?? 0,
                 'entregas_exitosas' => $stats['entregas_exitosas'] ?? 0,
-                'fallidos' => $stats['fallidos'] ?? 0,
+                'no_convertidos' => $stats['no_convertidos'] ?? 0,
                 'expirados' => $stats['expirados'] ?? 0,
                 'costo_estimado' => number_format($totalCost, 2),
                 'tasa_exito' => $stats['total_enviados'] > 0 
