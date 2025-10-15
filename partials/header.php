@@ -20,6 +20,10 @@ function getCacheBuster($filepath) {
 if (!isset($_SESSION)) {
     session_start();
 }
+
+// Detectar si estamos en un dashboard
+$archivoActual = basename($_SERVER['PHP_SELF']);
+$esDashboard = (strpos($archivoActual, 'dashboard') !== false);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -78,21 +82,31 @@ if (!isset($_SESSION)) {
             <nav class="header-actions" aria-label="Acciones">
                 <?php if (isset($_SESSION['usuario']) && !empty($_SESSION['usuario'])): ?>
                     <!-- Usuario autenticado -->
-                    <span class="user-info">
-                        <i class="fas fa-user-circle"></i>
-                        <?php 
-                            $phone = $_SESSION['phone'] ?? '';
-                            $phoneDisplay = $phone ? substr($phone, -4) : '';
-                            echo $phoneDisplay ? "***{$phoneDisplay}" : "Usuario";
-                        ?>
-                    </span>
-                    <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
-                    <a href="logout.php" class="btn btn-logout" title="Cerrar sesión">
-                        <i class="fas fa-sign-out-alt"></i> Salir
-                    </a>
+                    <?php if ($esDashboard): ?>
+                        <!-- Vista Dashboard: Solo mostrar botón Salir -->
+                        <a href="../../logout.php" class="btn btn-logout" title="Cerrar sesión">
+                            <i class="fas fa-sign-out-alt"></i> Salir
+                        </a>
+                    <?php else: ?>
+                        <!-- Vista Normal: Mostrar info de usuario y todos los botones -->
+                        <span class="user-info">
+                            <i class="fas fa-user-circle"></i>
+                            <?php 
+                                $phone = $_SESSION['phone'] ?? '';
+                                $phoneDisplay = $phone ? substr($phone, -4) : '';
+                                echo $phoneDisplay ? "***{$phoneDisplay}" : "Usuario";
+                            ?>
+                        </span>
+                        <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
+                        <a href="logout.php" class="btn btn-logout" title="Cerrar sesión">
+                            <i class="fas fa-sign-out-alt"></i> Salir
+                        </a>
+                    <?php endif; ?>
                 <?php else: ?>
                     <!-- Usuario NO autenticado -->
-                    <a href="index.php?view=loginPhone" class="btn btn-publish">+ Publícate</a>
+                    <?php if (!$esDashboard): ?>
+                        <a href="index.php?view=loginPhone" class="btn btn-publish">+ Publícate</a>
+                    <?php endif; ?>
                 <?php endif; ?>
             </nav>
         </div>
