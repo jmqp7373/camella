@@ -37,18 +37,6 @@
         </div>
     </div>
 
-    <!-- CTA Principal -->
-    <div class="cta-section">
-        <div class="cta-content">
-            <i class="fas fa-plus-circle cta-icon"></i>
-            <h3>¿Listo para publicar?</h3>
-            <p>Crea tu anuncio y comienza a recibir contactos de clientes potenciales</p>
-            <a href="#" class="btn-cta">
-                <i class="fas fa-plus"></i> Crear Anuncio
-            </a>
-        </div>
-    </div>
-
     <!-- Lista de Anuncios -->
     <div class="anuncios-list">
         <div class="list-header">
