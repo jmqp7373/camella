@@ -66,23 +66,4 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'promoto
             </div>
         </div>
     </div>
-
-    <!-- Acciones Rápidas para Promotores -->
-    <div class="quick-actions">
-        <h3><i class="fas fa-bolt"></i> Acciones Rápidas</h3>
-        <div class="actions-grid">
-            <a href="#" class="action-btn action-btn-primary">
-                <i class="fas fa-plus-circle"></i>
-                <span>Crear Anuncio Premium</span>
-            </a>
-            <a href="#" class="action-btn action-btn-secondary">
-                <i class="fas fa-chart-bar"></i>
-                <span>Ver Estadísticas</span>
-            </a>
-            <a href="#" class="action-btn action-btn-secondary">
-                <i class="fas fa-ad"></i>
-                <span>Gestionar Campañas</span>
-            </a>
-        </div>
-    </div>
 </section>

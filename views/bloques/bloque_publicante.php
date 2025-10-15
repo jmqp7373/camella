@@ -87,26 +87,4 @@
             </div>
         </div>
     </div>
-
-    <!-- Acciones Rápidas -->
-    <div class="quick-actions-basic">
-        <h3><i class="fas fa-bolt"></i> Acciones Rápidas</h3>
-        <div class="actions-grid">
-            <a href="#" class="action-card">
-                <i class="fas fa-plus-circle" style="color: var(--color-verde);"></i>
-                <h4>Crear Anuncio</h4>
-                <p>Publica un nuevo servicio</p>
-            </a>
-            <a href="#" class="action-card">
-                <i class="fas fa-user-edit" style="color: var(--color-azul);"></i>
-                <h4>Editar Perfil</h4>
-                <p>Actualiza tu información</p>
-            </a>
-            <a href="#" class="action-card">
-                <i class="fas fa-chart-line" style="color: var(--color-naranja);"></i>
-                <h4>Ver Estadísticas</h4>
-                <p>Revisa tu rendimiento</p>
-            </a>
-        </div>
-    </div>
 </section>
