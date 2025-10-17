@@ -27,18 +27,18 @@ require_once __DIR__ . '/../../partials/header.php';
         <?php include __DIR__ . '/../bloques/bloque_promotor.php'; ?>
     </div>
 
-    <!-- BLOQUE PUBLICANTE: Mis Anuncios (visible para promotores también) -->
-    <div class="dashboard-section">
-        <?php include __DIR__ . '/../bloques/bloque_publicante.php'; ?>
-    </div>
+    <!-- CTA: Publicar Anuncio -->
+    <?php include __DIR__ . '/../bloques/bloque_publicar_anuncio.php'; ?>
 
     <!-- BLOQUE ANUNCIOS: Tus Anuncios Publicados (visible para todos) -->
     <div class="dashboard-section">
         <?php include __DIR__ . '/../bloques/bloque_anuncios.php'; ?>
     </div>
 
-    <!-- CTA: Publicar Anuncio -->
-    <?php include __DIR__ . '/../bloques/bloque_publicar_anuncio.php'; ?>
+    <!-- BLOQUE PUBLICANTE: Mis Anuncios (visible para promotores también) -->
+    <div class="dashboard-section">
+        <?php include __DIR__ . '/../bloques/bloque_publicante.php'; ?>
+    </div>
 
 </div>
 
