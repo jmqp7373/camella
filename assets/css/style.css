@@ -948,6 +948,7 @@ body {
     color: var(--color-blanco);
 }
 
+
 /* Responsive para títulos de sección */
 @media (max-width: 768px) {
     .section-title {
@@ -960,3 +961,71 @@ body {
         font-size: 1.3rem;
     }
 }
+
+/* ========================================
+   ESTILOS ADICIONALES - DASHBOARDS
+   Agregados para mejorar consistencia visual
+   ======================================== */
+
+/* Tarjetas de anuncios con altura uniforme */
+.card-anuncio {
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-anuncio:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Etiqueta de rol con ícono alineado */
+.role-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+}
+
+/* Espaciado uniforme entre secciones del dashboard */
+.dashboard-section {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-section-large {
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+}
+
+/* Breadcrumbs personalizados */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0.5rem 0;
+    margin-bottom: 1rem;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: #6c757d;
+}
+
+/* Animación de scroll suave para secciones */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Destaque al llegar a sección mediante anchor */
+section:target {
+    animation: highlightSection 1s ease-in-out;
+}
+
+@keyframes highlightSection {
+    0%, 100% {
+        background-color: transparent;
+    }
+    50% {
+        background-color: rgba(185, 0, 0, 0.05);
+    }
+}
+

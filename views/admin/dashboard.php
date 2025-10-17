@@ -29,15 +29,26 @@ require_once __DIR__ . '/../../partials/header.php';
     include __DIR__ . '/../bloques/bloque_titulo.php'; 
     ?>
 
+    <!-- Breadcrumbs para navegación -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="<?= app_url('views/admin/dashboard.php') ?>">Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Panel de Administración</li>
+        </ol>
+    </nav>
+
     <!-- Header del Dashboard con Role Switcher -->
-    <div class="admin-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 40px; background: linear-gradient(135deg, var(--color-azul), var(--color-azul-oscuro)); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    <div class="admin-header dashboard-section" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; background: linear-gradient(135deg, var(--color-azul), var(--color-azul-oscuro)); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
         <div style="text-align: left;">
             <h2 style="color: white; font-size: 1.8rem; margin-bottom: 0.5rem;">
                 <i class="fas fa-chart-line"></i>
                 Estadísticas y Control
             </h2>
             <p style="color: rgba(255,255,255,0.9); font-size: 1rem; margin: 0;">
-                Monitoreo del Sistema
+                <span class="role-label" style="color: rgba(255,255,255,0.9);">
+                    <i class="fas fa-user-circle me-1"></i>
+                    <?= ucfirst($_SESSION['role'] ?? 'Admin') ?>
+                </span>
             </p>
         </div>
         
@@ -46,22 +57,32 @@ require_once __DIR__ . '/../../partials/header.php';
     </div>
 
     <!-- BLOQUE ADMIN: Estadísticas de Twilio + Gestión del Sistema -->
-    <?php include __DIR__ . '/../bloques/bloque_admin.php'; ?>
+    <div class="dashboard-section">
+        <?php include __DIR__ . '/../bloques/bloque_admin.php'; ?>
+    </div>
 
     <!-- BLOQUE PROMOTOR: Herramientas de Promoción (visible para admin) -->
-    <?php include __DIR__ . '/../bloques/bloque_promotor.php'; ?>
+    <div class="dashboard-section">
+        <?php include __DIR__ . '/../bloques/bloque_promotor.php'; ?>
+    </div>
 
     <!-- BLOQUE PUBLICANTE: Mis Anuncios (visible para todos) -->
-    <?php include __DIR__ . '/../bloques/bloque_publicante.php'; ?>
+    <div class="dashboard-section">
+        <?php include __DIR__ . '/../bloques/bloque_publicante.php'; ?>
+    </div>
 
     <!-- BLOQUE ANUNCIOS: Tus Anuncios Publicados (visible para todos) -->
-    <?php include __DIR__ . '/../bloques/bloque_anuncios.php'; ?>
+    <div class="dashboard-section">
+        <?php include __DIR__ . '/../bloques/bloque_anuncios.php'; ?>
+    </div>
 
     <!-- CTA: Crear Anuncio (desde bloque reutilizable) -->
-    <?php 
-    unset($mostrarSoloTitulo);
-    include __DIR__ . '/../bloques/bloque_titulo.php'; 
-    ?>
+    <div class="dashboard-section-large">
+        <?php 
+        unset($mostrarSoloTitulo);
+        include __DIR__ . '/../bloques/bloque_titulo.php'; 
+        ?>
+    </div>
 
 </div>
 

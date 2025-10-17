@@ -19,8 +19,11 @@
     </footer>
 
     <!-- Scripts -->
+    <!-- JavaScript principal de Camella -->
+    <script src="<?= app_url('assets/js/main.js') ?>"></script>
+    
     <script>
-        // Función para highlighting del menú activo
+        // Funciones adicionales específicas del footer
         document.addEventListener('DOMContentLoaded', function() {
             // Agregar interactividad a las tarjetas de categorías
             const categoryCards = document.querySelectorAll('.category-card');
