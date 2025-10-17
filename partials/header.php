@@ -89,7 +89,17 @@ $esDashboard = (strpos($archivoActual, 'dashboard') !== false);
                         </a>
                     <?php else: ?>
                         <!-- Vista Normal: Mostrar botón Publícate y Salir -->
-                        <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
+                        <?php
+                        // Determinar URL del panel según el rol del usuario
+                        $rol = $_SESSION['role'] ?? 'publicante';
+                        $paneles = [
+                            'admin' => 'views/admin/dashboard.php',
+                            'promotor' => 'views/promotor/dashboard.php',
+                            'publicante' => 'views/publicante/dashboard.php'
+                        ];
+                        $urlPublicar = app_url($paneles[$rol] ?? 'views/publicante/dashboard.php') . '#crear-anuncio';
+                        ?>
+                        <a href="<?= $urlPublicar ?>" class="btn btn-publish">+ Publícate</a>
                         <a href="<?= app_url('logout.php') ?>" class="btn btn-logout" title="Cerrar sesión">
                             <i class="fas fa-sign-out-alt"></i> Salir
                         </a>
