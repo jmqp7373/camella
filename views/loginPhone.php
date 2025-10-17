@@ -377,11 +377,11 @@ function verifyCodeAndLogin(phone, code) {
             console.log('✅ Login exitoso. Rol:', role);
             
             if (role === 'admin') {
-                window.location.href = 'views/admin/dashboard_modular.php';
+                window.location.href = 'views/admin/dashboard.php';
             } else if (role === 'promotor') {
-                window.location.href = 'views/promotor/dashboard_modular.php';
+                window.location.href = 'views/promotor/dashboard.php';
             } else {
-                window.location.href = 'views/publicante/dashboard_modular.php';
+                window.location.href = 'views/publicante/dashboard.php';
             }
         } else {
             alert('Código incorrecto. Por favor verifica e intenta nuevamente.');
