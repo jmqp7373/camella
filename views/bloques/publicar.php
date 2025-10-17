@@ -74,8 +74,8 @@ if ($modo === 'ver_todos') {
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
                 <?php foreach ($todosAnuncios as $anuncio): ?>
                     <?php 
-                    // Usar el bloque reutilizable SIN botón eliminar
-                    $mostrarEliminar = false;
+                    // Usar el bloque reutilizable CON botón eliminar
+                    $mostrarEliminar = true;
                     include __DIR__ . '/bloque_mini_anuncio.php';
                     ?>
                 <?php endforeach; ?>
