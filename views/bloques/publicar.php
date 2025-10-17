@@ -956,9 +956,9 @@ document.getElementById('anuncioForm').addEventListener('submit', async (e) => {
                 showAlert('¡Anuncio creado! Ahora puedes agregar fotos', 'success');
                 
             } else {
-                // Si es modo EDITAR, redirigir al dashboard después de 1.5 segundos
+                // Si es modo EDITAR, redirigir al bloque de anuncios publicados después de 1.5 segundos
                 setTimeout(() => {
-                    window.location.href = '<?= $dashboardUrl ?>';
+                    window.location.href = '<?= $dashboardUrl ?>#anuncios-publicados';
                 }, 1500);
             }
             

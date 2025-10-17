@@ -41,7 +41,7 @@ if ($userId) {
 ?>
 
 <!-- Sección: Tus Anuncios Publicados -->
-<section class="anuncios-section" style="margin-top: 2rem;">
+<section id="anuncios-publicados" class="anuncios-section" style="margin-top: 2rem;">
     <h2 style="color: #003d7a; font-size: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
         <i class="fas fa-briefcase"></i> Tus Anuncios Publicados
     </h2>
