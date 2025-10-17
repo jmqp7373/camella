@@ -17,14 +17,17 @@ html, body { margin:0; padding:0; box-sizing:border-box; overflow-x:hidden; }
 }
 
 /* ========================================
-   HEADER ESTABLE SIN OVERFLOW
+   HEADER FIJO - SIEMPRE VISIBLE
    ======================================== */
 
 .site-header{ 
   background:var(--camella-azul); 
-  position:sticky; 
+  position:fixed; 
   top:0; 
-  z-index:1000; 
+  left:0;
+  width:100%;
+  z-index:1030; 
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .header-container{

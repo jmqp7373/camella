@@ -13,7 +13,7 @@ body {
     color: var(--color-azul);
     background: var(--gradiente-fondo);
     min-height: 100vh;
-    padding-top: 0; /* Sin padding - header sticky */
+    padding-top: 70px; /* Espacio para header fijo */
 }
 
 /* ========================================
@@ -241,19 +241,17 @@ body {
 }
 
 /* ========================================
-   FOOTER RESPONSIVE
+   FOOTER NORMAL - NO FIJO
    ======================================== */
 .main-footer {
-    position: relative;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    position: static;
     background: #3a8be8;
     color: var(--color-blanco);
     text-align: center;
     padding: var(--spacing-lg);
     box-shadow: var(--sombra-suave);
-    margin-top: auto;
+    margin-top: 2rem;
+    width: 100%;
 }
 
 .footer-content {
