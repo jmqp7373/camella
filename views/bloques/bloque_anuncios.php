@@ -120,7 +120,7 @@ if ($userId) {
                 <p style="color: #666; margin-bottom: 1.5rem; font-size: 0.95rem;">
                     Comienza a publicar tus servicios para llegar a más clientes
                 </p>
-                <a href="#" style="display: inline-block; padding: 0.75rem 2rem; background: #27ae60; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: background 0.2s;">
+                <a href="<?= app_url('views/publicante/publicar.php') ?>" style="display: inline-block; padding: 0.75rem 2rem; background: #27ae60; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: background 0.2s;">
                     <i class="fas fa-plus-circle"></i> Crear mi primer anuncio
                 </a>
             </div>

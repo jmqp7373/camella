@@ -218,7 +218,7 @@ include '../../partials/header.php';
         <div class="empty-state">
             <i class="fas fa-inbox"></i>
             <p>Aún no tienes anuncios publicados</p>
-            <a href="#" style="color: var(--color-verde); text-decoration: none;">
+            <a href="<?= app_url('views/publicante/publicar.php') ?>" style="color: var(--color-verde); text-decoration: none;">
                 <i class="fas fa-plus-circle"></i> Crear mi primer anuncio
             </a>
         </div>
