@@ -5,13 +5,15 @@ require_once __DIR__ . '/../../controllers/PromotorStatsHelper.php';
 $promotorStats = getPromotorStatistics();
 ?>
 
-<section class="promotor-stats-section">
+<section class="promotor-stats-section" style="margin-top: 2rem;">
     <h2 style="color: #003d7a; font-size: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
         <i class="fas fa-chart-line"></i> Estadísticas Promotor
     </h2>
     
-    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-        <!-- 24 Horas -->
+    <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 2rem; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        
+        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+            <!-- 24 Horas -->
         <div class="stats-card" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
             <div style="text-align: center; padding: 1.5rem 1rem 1rem 1rem; border-bottom: 1px solid #e8e8e8;">
                 <h3 style="font-size: 2rem; font-weight: 700; color: #003d7a; margin: 0;">24 Horas</h3>
@@ -100,5 +102,6 @@ $promotorStats = getPromotorStatistics();
                 </div>
             </div>
         </div>
+        
     </div>
 </section>
