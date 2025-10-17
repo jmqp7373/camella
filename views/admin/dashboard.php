@@ -29,14 +29,6 @@ require_once __DIR__ . '/../../partials/header.php';
     include __DIR__ . '/../bloques/bloque_titulo.php'; 
     ?>
 
-    <!-- Breadcrumbs para navegación -->
-    <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="<?= app_url('views/admin/dashboard.php') ?>">Inicio</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Panel de Administración</li>
-        </ol>
-    </nav>
-
     <!-- Header del Dashboard con Role Switcher -->
     <div class="admin-header dashboard-section" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; background: linear-gradient(135deg, var(--color-azul), var(--color-azul-oscuro)); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
         <div style="text-align: left;">

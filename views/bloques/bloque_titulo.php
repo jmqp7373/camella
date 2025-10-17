@@ -25,7 +25,7 @@ $titulo = $titulos[$rol] ?? 'Panel Principal';
 <!-- CTA: Crear Anuncio (se muestra al final del dashboard) -->
 <!-- Este bloque debe incluirse al final, después de todos los otros bloques -->
 <?php if (!isset($mostrarSoloTitulo) || !$mostrarSoloTitulo): ?>
-<section id="crear-anuncio" class="text-center my-5 p-5 border rounded-4 shadow-sm" style="background-color: #fff8f8;">
+<section id="crear-anuncio" class="text-center my-5 p-5 border rounded-4 shadow-sm mb-5" style="background-color: #fff8f8;">
     <h3 class="fw-bold text-danger mb-3">
         <i class="fas fa-bullhorn me-2"></i> ¿Tienes un servicio para ofrecer?
     </h3>
@@ -33,8 +33,8 @@ $titulo = $titulos[$rol] ?? 'Panel Principal';
         Crea tu anuncio y comienza a recibir solicitudes de clientes interesados en tus servicios profesionales.
     </p>
     <a href="<?= app_url('views/bloques/publicar.php') ?>" 
-       class="btn px-4 py-2 fw-bold text-white"
-       style="background-color: #b90000; border-radius: 25px;">
+       class="btn px-5 py-3 fw-bold text-white"
+       style="background-color: #b90000; border-radius: 30px; font-size: 1.1rem;">
         + Publicar anuncio
     </a>
 </section>
