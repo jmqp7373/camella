@@ -5,17 +5,20 @@
 -- complementarios a la versión 1.0 existente.
 -- No duplica categorías existentes.
 -- 
--- Ejecutar manualmente desde phpMyAdmin
+-- IMPORTANTE: Este script verifica si la categoría existe
+-- antes de insertar. Solo ejecutar UNA VEZ.
 -- =============================================
 
 -- 💻 SERVICIOS DIGITALES Y CONTENIDOS
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Servicios Digitales y Contenidos', 'Diseño gráfico, edición de video, fotografía, contenido digital y redes sociales', 'fas fa-photo-video', 1)
-ON DUPLICATE KEY UPDATE nombre=nombre;
+SELECT * FROM (SELECT 'Servicios Digitales y Contenidos', 'Diseño gráfico, edición de video, fotografía, contenido digital y redes sociales', 'fas fa-photo-video', 1) AS tmp
+WHERE NOT EXISTS (
+    SELECT nombre FROM categorias WHERE nombre = 'Servicios Digitales y Contenidos'
+) LIMIT 1;
 
-SET @cat_digitales = LAST_INSERT_ID();
+SET @cat_digitales = (SELECT id FROM categorias WHERE nombre = 'Servicios Digitales y Contenidos');
 
-INSERT INTO oficios (categoria_id, titulo, activo) VALUES
+INSERT IGNORE INTO oficios (categoria_id, titulo, activo) VALUES
 (@cat_digitales, 'Diseñador(a) gráfico', 1),
 (@cat_digitales, 'Community Manager', 1),
 (@cat_digitales, 'Editor(a) de video', 1),
@@ -30,12 +33,14 @@ INSERT INTO oficios (categoria_id, titulo, activo) VALUES
 
 -- 🎓 EDUCACIÓN Y FORMACIÓN
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Educación y Formación', 'Tutorías, enseñanza de idiomas, arte, música y formación académica', 'fas fa-chalkboard-teacher', 1)
-ON DUPLICATE KEY UPDATE nombre=nombre;
+SELECT * FROM (SELECT 'Educación y Formación', 'Tutorías, enseñanza de idiomas, arte, música y formación académica', 'fas fa-chalkboard-teacher', 1) AS tmp
+WHERE NOT EXISTS (
+    SELECT nombre FROM categorias WHERE nombre = 'Educación y Formación'
+) LIMIT 1;
 
-SET @cat_educacion = LAST_INSERT_ID();
+SET @cat_educacion = (SELECT id FROM categorias WHERE nombre = 'Educación y Formación');
 
-INSERT INTO oficios (categoria_id, titulo, activo) VALUES
+INSERT IGNORE INTO oficios (categoria_id, titulo, activo) VALUES
 (@cat_educacion, 'Tutor(a) particular', 1),
 (@cat_educacion, 'Profesor(a) de idiomas', 1),
 (@cat_educacion, 'Instructor(a) de oficios', 1),
@@ -44,12 +49,14 @@ INSERT INTO oficios (categoria_id, titulo, activo) VALUES
 
 -- 🧑‍💻 TECNOLOGÍA Y SOPORTE DIGITAL
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Tecnología y Soporte Digital', 'Soporte técnico, instalación de redes, programación y ciberseguridad', 'fas fa-desktop', 1)
-ON DUPLICATE KEY UPDATE nombre=nombre;
+SELECT * FROM (SELECT 'Tecnología y Soporte Digital', 'Soporte técnico, instalación de redes, programación y ciberseguridad', 'fas fa-desktop', 1) AS tmp
+WHERE NOT EXISTS (
+    SELECT nombre FROM categorias WHERE nombre = 'Tecnología y Soporte Digital'
+) LIMIT 1;
 
-SET @cat_tecnologia = LAST_INSERT_ID();
+SET @cat_tecnologia = (SELECT id FROM categorias WHERE nombre = 'Tecnología y Soporte Digital');
 
-INSERT INTO oficios (categoria_id, titulo, activo) VALUES
+INSERT IGNORE INTO oficios (categoria_id, titulo, activo) VALUES
 (@cat_tecnologia, 'Técnico de computadores', 1),
 (@cat_tecnologia, 'Instalador(a) de redes o cámaras', 1),
 (@cat_tecnologia, 'Asesor(a) en ciberseguridad', 1),
@@ -58,12 +65,14 @@ INSERT INTO oficios (categoria_id, titulo, activo) VALUES
 
 -- 🌱 AGRICULTURA Y MEDIO AMBIENTE
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Agricultura y Medio Ambiente', 'Jardinería, huertas, cosechas, técnica agropecuaria y reciclaje', 'fas fa-seedling', 1)
-ON DUPLICATE KEY UPDATE nombre=nombre;
+SELECT * FROM (SELECT 'Agricultura y Medio Ambiente', 'Jardinería, huertas, cosechas, técnica agropecuaria y reciclaje', 'fas fa-seedling', 1) AS tmp
+WHERE NOT EXISTS (
+    SELECT nombre FROM categorias WHERE nombre = 'Agricultura y Medio Ambiente'
+) LIMIT 1;
 
-SET @cat_agricultura = LAST_INSERT_ID();
+SET @cat_agricultura = (SELECT id FROM categorias WHERE nombre = 'Agricultura y Medio Ambiente');
 
-INSERT INTO oficios (categoria_id, titulo, activo) VALUES
+INSERT IGNORE INTO oficios (categoria_id, titulo, activo) VALUES
 (@cat_agricultura, 'Jardinero(a) ecológico', 1),
 (@cat_agricultura, 'Cuidador(a) de huertas o plantas', 1),
 (@cat_agricultura, 'Recolector(a) de cosecha', 1),
@@ -72,12 +81,14 @@ INSERT INTO oficios (categoria_id, titulo, activo) VALUES
 
 -- 🧾 ADMINISTRACIÓN Y SERVICIOS EMPRESARIALES
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Administración y Servicios Empresariales', 'Asistencia administrativa, contabilidad, recepción y mensajería', 'fas fa-folder-open', 1)
-ON DUPLICATE KEY UPDATE nombre=nombre;
+SELECT * FROM (SELECT 'Administración y Servicios Empresariales', 'Asistencia administrativa, contabilidad, recepción y mensajería', 'fas fa-folder-open', 1) AS tmp
+WHERE NOT EXISTS (
+    SELECT nombre FROM categorias WHERE nombre = 'Administración y Servicios Empresariales'
+) LIMIT 1;
 
-SET @cat_admin = LAST_INSERT_ID();
+SET @cat_admin = (SELECT id FROM categorias WHERE nombre = 'Administración y Servicios Empresariales');
 
-INSERT INTO oficios (categoria_id, titulo, activo) VALUES
+INSERT IGNORE INTO oficios (categoria_id, titulo, activo) VALUES
 (@cat_admin, 'Asistente administrativo', 1),
 (@cat_admin, 'Digitador(a)', 1),
 (@cat_admin, 'Contador(a) auxiliar', 1),
@@ -86,12 +97,14 @@ INSERT INTO oficios (categoria_id, titulo, activo) VALUES
 
 -- 👗 MODA Y CONFECCIÓN
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Moda y Confección', 'Modistería, diseño de modas, arreglos, bordados y zapatería', 'fas fa-cut', 1)
-ON DUPLICATE KEY UPDATE nombre=nombre;
+SELECT * FROM (SELECT 'Moda y Confección', 'Modistería, diseño de modas, arreglos, bordados y zapatería', 'fas fa-cut', 1) AS tmp
+WHERE NOT EXISTS (
+    SELECT nombre FROM categorias WHERE nombre = 'Moda y Confección'
+) LIMIT 1;
 
-SET @cat_moda = LAST_INSERT_ID();
+SET @cat_moda = (SELECT id FROM categorias WHERE nombre = 'Moda y Confección');
 
-INSERT INTO oficios (categoria_id, titulo, activo) VALUES
+INSERT IGNORE INTO oficios (categoria_id, titulo, activo) VALUES
 (@cat_moda, 'Modista o sastre', 1),
 (@cat_moda, 'Diseñador(a) de modas', 1),
 (@cat_moda, 'Arreglos de ropa', 1),
