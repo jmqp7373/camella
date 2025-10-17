@@ -10,7 +10,7 @@
 
 -- 💻 SERVICIOS DIGITALES Y CONTENIDOS
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Servicios Digitales y Contenidos', 'Diseño gráfico, edición de video, fotografía, contenido digital y redes sociales', 'fas fa-laptop-code', 1)
+VALUES ('Servicios Digitales y Contenidos', 'Diseño gráfico, edición de video, fotografía, contenido digital y redes sociales', 'fas fa-photo-video', 1)
 ON DUPLICATE KEY UPDATE nombre=nombre;
 
 SET @cat_digitales = LAST_INSERT_ID();
@@ -30,7 +30,7 @@ INSERT INTO oficios (categoria_id, titulo, activo) VALUES
 
 -- 🎓 EDUCACIÓN Y FORMACIÓN
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Educación y Formación', 'Tutorías, enseñanza de idiomas, arte, música y formación académica', 'fas fa-graduation-cap', 1)
+VALUES ('Educación y Formación', 'Tutorías, enseñanza de idiomas, arte, música y formación académica', 'fas fa-chalkboard-teacher', 1)
 ON DUPLICATE KEY UPDATE nombre=nombre;
 
 SET @cat_educacion = LAST_INSERT_ID();
@@ -44,7 +44,7 @@ INSERT INTO oficios (categoria_id, titulo, activo) VALUES
 
 -- 🧑‍💻 TECNOLOGÍA Y SOPORTE DIGITAL
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Tecnología y Soporte Digital', 'Soporte técnico, instalación de redes, programación y ciberseguridad', 'fas fa-laptop', 1)
+VALUES ('Tecnología y Soporte Digital', 'Soporte técnico, instalación de redes, programación y ciberseguridad', 'fas fa-desktop', 1)
 ON DUPLICATE KEY UPDATE nombre=nombre;
 
 SET @cat_tecnologia = LAST_INSERT_ID();
@@ -58,7 +58,7 @@ INSERT INTO oficios (categoria_id, titulo, activo) VALUES
 
 -- 🌱 AGRICULTURA Y MEDIO AMBIENTE
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Agricultura y Medio Ambiente', 'Jardinería, huertas, cosechas, técnica agropecuaria y reciclaje', 'fas fa-leaf', 1)
+VALUES ('Agricultura y Medio Ambiente', 'Jardinería, huertas, cosechas, técnica agropecuaria y reciclaje', 'fas fa-seedling', 1)
 ON DUPLICATE KEY UPDATE nombre=nombre;
 
 SET @cat_agricultura = LAST_INSERT_ID();
@@ -72,7 +72,7 @@ INSERT INTO oficios (categoria_id, titulo, activo) VALUES
 
 -- 🧾 ADMINISTRACIÓN Y SERVICIOS EMPRESARIALES
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Administración y Servicios Empresariales', 'Asistencia administrativa, contabilidad, recepción y mensajería', 'fas fa-briefcase', 1)
+VALUES ('Administración y Servicios Empresariales', 'Asistencia administrativa, contabilidad, recepción y mensajería', 'fas fa-folder-open', 1)
 ON DUPLICATE KEY UPDATE nombre=nombre;
 
 SET @cat_admin = LAST_INSERT_ID();
@@ -86,7 +86,7 @@ INSERT INTO oficios (categoria_id, titulo, activo) VALUES
 
 -- 👗 MODA Y CONFECCIÓN
 INSERT INTO categorias (nombre, descripcion, icono, activo) 
-VALUES ('Moda y Confección', 'Modistería, diseño de modas, arreglos, bordados y zapatería', 'fas fa-tshirt', 1)
+VALUES ('Moda y Confección', 'Modistería, diseño de modas, arreglos, bordados y zapatería', 'fas fa-cut', 1)
 ON DUPLICATE KEY UPDATE nombre=nombre;
 
 SET @cat_moda = LAST_INSERT_ID();
