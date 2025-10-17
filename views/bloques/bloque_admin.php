@@ -24,10 +24,8 @@ if (!isset($promotorStats)) {
         <i class="fas fa-sms"></i> Estadísticas de SMS (Twilio)
     </h2>
     
-    <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 2rem; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-        
-        <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-            <!-- 24 Horas -->
+    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+        <!-- 24 Horas -->
         <div class="stats-card" style="border: 1px solid #ddd; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
             <div style="text-align: center; padding: 1.5rem 1rem 1rem 1rem; border-bottom: 1px solid #e8e8e8;">
                 <h3 style="font-size: 2rem; font-weight: 700; color: #003d7a; margin: 0;">24 Horas</h3>
@@ -105,5 +103,4 @@ if (!isset($promotorStats)) {
             </div>
         </div>
     </div>
-    
 </section>
