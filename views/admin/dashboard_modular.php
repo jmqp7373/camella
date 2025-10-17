@@ -43,6 +43,9 @@ require_once __DIR__ . '/../../partials/header.php';
     <!-- BLOQUE PUBLICANTE: Mis Anuncios (visible para todos) -->
     <?php include __DIR__ . '/../bloques/bloque_publicante.php'; ?>
 
+    <!-- BLOQUE ANUNCIOS: Tus Anuncios Publicados (visible para todos) -->
+    <?php include __DIR__ . '/../bloques/bloque_anuncios.php'; ?>
+
 </div>
 
 <?php require_once __DIR__ . '/../../partials/footer.php'; ?>
