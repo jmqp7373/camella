@@ -286,8 +286,8 @@ body {
    RESPONSIVE
    ======================================== */
 
-/* Footer fijo solo en pantallas grandes */
-@media (min-width: 769px) {
+/* Footer normal en todas las pantallas - NO FIJO */
+/* @media (min-width: 769px) {
     .main-footer {
         position: fixed;
         bottom: 0;
@@ -295,9 +295,9 @@ body {
     }
     
     body {
-        padding-bottom: 60px; /* Espacio para footer fijo en desktop */
+        padding-bottom: 60px;
     }
-}
+} */
 
 /* Responsive para móviles y tablets - HEADER ANTIGUO COMENTADO */
 @media (max-width: 768px) {
@@ -343,7 +343,7 @@ body {
     }
     
     .main-footer {
-        position: relative; /* Footer normal en móvil */
+        /* Footer ya es static por defecto, no necesita override */
         margin-top: 2rem; /* Separación del contenido */
     }
 }
