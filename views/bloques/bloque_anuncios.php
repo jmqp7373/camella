@@ -2,6 +2,9 @@
 <?php
 // Este bloque es visible para TODOS los roles autenticados
 
+// Incluir configuración para SITE_URL
+require_once __DIR__ . '/../../config/config.php';
+
 // Obtener anuncios del usuario actual
 $userId = $_SESSION['user_id'] ?? null;
 $anuncios = [];
@@ -15,10 +18,17 @@ if ($userId) {
         $checkTable = $pdo->query("SHOW TABLES LIKE 'anuncios'");
         if ($checkTable->rowCount() > 0) {
             $stmt = $pdo->prepare("
-                SELECT id, titulo, descripcion, precio, imagen_principal, status, created_at 
-                FROM anuncios 
-                WHERE user_id = ? AND status = 'activo' 
-                ORDER BY created_at DESC 
+                SELECT 
+                    a.id, 
+                    a.titulo, 
+                    a.descripcion, 
+                    a.precio, 
+                    a.status, 
+                    a.created_at,
+                    (SELECT ai.ruta FROM anuncio_imagenes ai WHERE ai.anuncio_id = a.id ORDER BY ai.orden LIMIT 1) as imagen_principal
+                FROM anuncios a
+                WHERE a.user_id = ? AND a.status = 'activo' 
+                ORDER BY a.created_at DESC 
                 LIMIT 6
             ");
             $stmt->execute([$userId]);
@@ -45,9 +55,18 @@ if ($userId) {
                         <!-- Imagen del anuncio -->
                         <div class="anuncio-imagen" style="height: 180px; overflow: hidden; background: #f5f5f5;">
                             <?php if (!empty($anuncio['imagen_principal'])): ?>
-                                <img src="<?= htmlspecialchars(APP_SUBDIR . '/uploads/' . $anuncio['imagen_principal']) ?>" 
+                                <?php 
+                                    // Construir URL de imagen correctamente
+                                    $imagePath = $anuncio['imagen_principal'];
+                                    // Si la ruta no empieza con /, agregarla
+                                    if (strpos($imagePath, '/') !== 0) {
+                                        $imagePath = '/' . $imagePath;
+                                    }
+                                    $imageUrl = SITE_URL . $imagePath;
+                                ?>
+                                <img src="<?= htmlspecialchars($imageUrl) ?>" 
                                      alt="<?= htmlspecialchars($anuncio['titulo']) ?>"
-                                     onerror="this.src='<?= htmlspecialchars(APP_SUBDIR . '/assets/images/default-service.jpg') ?>'"
+                                     onerror="this.src='<?= SITE_URL ?>/assets/images/default-service.jpg'"
                                      style="width: 100%; height: 100%; object-fit: cover;">
                             <?php else: ?>
                                 <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #e8e8e8;">
@@ -87,14 +106,14 @@ if ($userId) {
                             
                             <!-- Botones de acción -->
                             <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                                <a href="<?= app_url('views/bloques/publicar.php?anuncio_id=' . $anuncio['id']) ?>" 
+                                <a href="<?= app_url('views/bloques/publicar.php?modo=editar&id=' . (int)$anuncio['id']) ?>" 
                                    class="btn-editar" 
                                    style="flex: 1; padding: 0.5rem; text-align: center; background: #3498db; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: background 0.2s;"
                                    onmouseover="this.style.background='#2980b9'"
                                    onmouseout="this.style.background='#3498db'">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
-                                <a href="<?= app_url('views/ver_anuncio.php?id=' . $anuncio['id']) ?>" 
+                                <a href="<?= app_url('views/bloques/publicar.php?modo=ver&id=' . (int)$anuncio['id']) ?>" 
                                    class="btn-ver" 
                                    style="flex: 1; padding: 0.5rem; text-align: center; background: #666; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: background 0.2s;"
                                    onmouseover="this.style.background='#555'"
@@ -129,7 +148,7 @@ if ($userId) {
             <!-- Estado vacío -->
             <div style="text-align: center; padding: 3rem 1rem;">
                 <div style="margin-bottom: 1.5rem;">
-                    <i class="fas fa-briefcase" style="font-size: 4rem; color: #003d7a; opacity: 0.3;"></i>
+                    <i class="fas fa-briefcase" style="font-size: 4rem; color: #3c4c78;"></i>
                 </div>
                 <h3 style="color: #003d7a; font-size: 1.25rem; margin-bottom: 0.5rem; font-weight: 600;">
                     Aún no tienes anuncios publicados
@@ -137,9 +156,6 @@ if ($userId) {
                 <p style="color: #666; margin-bottom: 1.5rem; font-size: 0.95rem;">
                     Comienza a publicar tus servicios para llegar a más clientes
                 </p>
-                <a href="<?= app_url('views/bloques/publicar.php') ?>" style="display: inline-block; padding: 0.75rem 2rem; background: #27ae60; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: background 0.2s;">
-                    <i class="fas fa-plus-circle"></i> Crear mi primer anuncio
-                </a>
             </div>
         <?php endif; ?>
     </div>
