@@ -433,20 +433,13 @@ require_once __DIR__ . '/../../partials/header.php';
         </div>
         
         <!-- Sección: Fotos -->
-        <div class="form-section">
+        <div class="form-section" id="fotosSection">
             <div class="upload-section">
                 <span class="section-title">Fotos:</span>
                 <span class="section-subtitle">Los anuncios con fotos obtienen más vistas y contactos.</span>
                 
-                <?php if ($modo === 'nuevo'): ?>
-                    <!-- Mensaje para modo nuevo -->
-                    <div class="upload-area" style="border-style: solid; opacity: 0.6; cursor: not-allowed;">
-                        <i class="fas fa-camera"></i>
-                        <p>Puedes añadir hasta 5 fotos</p>
-                        <small style="color: #65676b;">Primero debes publicar el anuncio para poder subir fotos</small>
-                    </div>
-                <?php elseif (!$soloLectura): ?>
-                    <!-- Upload activo para modo editar -->
+                <?php if (!$soloLectura): ?>
+                    <!-- Upload activo para modo nuevo y editar -->
                     <input 
                         type="file" 
                         id="imageInput" 
@@ -454,21 +447,25 @@ require_once __DIR__ . '/../../partials/header.php';
                         multiple 
                         style="display: none;">
                     
-                    <div class="upload-area" id="uploadArea">
+                    <div class="upload-area" id="uploadArea" style="<?= $modo === 'nuevo' ? 'opacity: 0.6; cursor: not-allowed;' : '' ?>">
                         <i class="fas fa-camera"></i>
                         <p>Puedes añadir hasta 5 fotos</p>
-                        <small>JPG, PNG, GIF, WEBP - Máximo 5MB cada una</small>
+                        <small id="uploadHelp">
+                            <?php if ($modo === 'nuevo'): ?>
+                                Primero publica el anuncio para poder subir fotos
+                            <?php else: ?>
+                                JPG, PNG, GIF, WEBP - Máximo 5MB cada una
+                            <?php endif; ?>
+                        </small>
                     </div>
                 <?php endif; ?>
                 
-                <?php if ($isEdit): ?>
-                <div class="images-preview" id="imagesPreview"></div>
+                <div class="images-preview" id="imagesPreview" style="<?= $modo === 'nuevo' ? 'display: none;' : '' ?>"></div>
                 
-                <div class="image-counter" id="imageCounter">
+                <div class="image-counter" id="imageCounter" style="<?= $modo === 'nuevo' ? 'display: none;' : '' ?>">
                     <i class="fas fa-info-circle"></i> 
                     <span id="currentCount">0</span> de 5 fotos subidas
                 </div>
-                <?php endif; ?>
             </div>
         </div>
         
@@ -490,7 +487,8 @@ require_once __DIR__ . '/../../partials/header.php';
 </div>
 
 <script>
-const anuncioId = <?= $id ?? 'null' ?>;
+// Variables globales - usar window.anuncioId para poder actualizarlo después de crear anuncio
+window.anuncioId = <?= $id ?? 'null' ?>;
 const maxImages = 5;
 const soloLectura = <?= $soloLectura ? 'true' : 'false' ?>;
 const baseUrl = '<?= SITE_URL ?>'; // URL base del sitio
@@ -499,13 +497,13 @@ let currentImages = [];
 // ============================================
 // CARGAR IMÁGENES EXISTENTES
 // ============================================
-if (anuncioId) {
+if (window.anuncioId) {
     loadExistingImages();
 }
 
 async function loadExistingImages() {
     try {
-        const response = await fetch(`<?= app_url('api.php') ?>?action=getImages&anuncio_id=${anuncioId}`);
+        const response = await fetch(`<?= app_url('api.php') ?>?action=getImages&anuncio_id=${window.anuncioId}`);
         const data = await response.json();
         
         if (data.success) {
@@ -524,7 +522,14 @@ const uploadArea = document.getElementById('uploadArea');
 const imageInput = document.getElementById('imageInput');
 
 if (!soloLectura) {
-    uploadArea?.addEventListener('click', () => imageInput.click());
+    uploadArea?.addEventListener('click', () => {
+        // Solo permitir clic si hay anuncio_id
+        if (window.anuncioId) {
+            imageInput.click();
+        } else {
+            showAlert('Primero debes publicar el anuncio para poder subir fotos', 'warning');
+        }
+    });
 
     imageInput?.addEventListener('change', async (e) => {
         await handleFiles(e.target.files);
@@ -549,6 +554,12 @@ if (!soloLectura) {
 }
 
 async function handleFiles(files) {
+    // Verificar que existe anuncio_id
+    if (!window.anuncioId) {
+        showAlert('Error: No se puede subir imágenes sin un anuncio válido', 'error');
+        return;
+    }
+    
     const remainingSlots = maxImages - currentImages.length;
     
     if (files.length > remainingSlots) {
@@ -557,7 +568,7 @@ async function handleFiles(files) {
     }
     
     const formData = new FormData();
-    formData.append('anuncio_id', anuncioId);
+    formData.append('anuncio_id', window.anuncioId);
     
     for (let file of files) {
         formData.append('images[]', file);
@@ -723,8 +734,8 @@ document.getElementById('anuncioForm').addEventListener('submit', async (e) => {
     }
     
     // Agregar datos al FormData
-    if (anuncioId) {
-        formData.append('anuncio_id', anuncioId);
+    if (window.anuncioId) {
+        formData.append('anuncio_id', window.anuncioId);
     }
     formData.append('titulo', titulo);
     formData.append('descripcion', descripcion);
@@ -749,10 +760,54 @@ document.getElementById('anuncioForm').addEventListener('submit', async (e) => {
         if (data.success) {
             showAlert(data.message, 'success');
             
-            // Redirigir después de 1.5 segundos
-            setTimeout(() => {
-                window.location.href = '<?= $dashboardUrl ?>';
-            }, 1500);
+            // Si es modo CREAR (nuevo), actualizar a modo EDITAR para permitir subir fotos
+            if (data.mode === 'create' && data.anuncio_id) {
+                // Actualizar anuncioId global
+                window.anuncioId = data.anuncio_id;
+                
+                // Actualizar campo hidden del formulario
+                document.querySelector('input[name="anuncio_id"]').value = data.anuncio_id;
+                
+                // Activar sección de fotos
+                const uploadArea = document.getElementById('uploadArea');
+                const uploadHelp = document.getElementById('uploadHelp');
+                const imagesPreview = document.getElementById('imagesPreview');
+                const imageCounter = document.getElementById('imageCounter');
+                
+                if (uploadArea) {
+                    uploadArea.style.opacity = '1';
+                    uploadArea.style.cursor = 'pointer';
+                }
+                if (uploadHelp) {
+                    uploadHelp.textContent = 'JPG, PNG, GIF, WEBP - Máximo 5MB cada una';
+                }
+                if (imagesPreview) {
+                    imagesPreview.style.display = 'grid';
+                }
+                if (imageCounter) {
+                    imageCounter.style.display = 'flex';
+                }
+                
+                // Cambiar título del formulario
+                document.querySelector('.page-header h1').innerHTML = '<i class="fas fa-edit"></i> Editar Anuncio';
+                
+                // Cambiar botón de submit
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> Guardar cambios';
+                
+                // Actualizar URL sin recargar página
+                const newUrl = window.location.pathname + '?modo=editar&id=' + data.anuncio_id;
+                window.history.pushState({path: newUrl}, '', newUrl);
+                
+                // Mostrar mensaje adicional
+                showAlert('¡Anuncio creado! Ahora puedes agregar fotos', 'success');
+                
+            } else {
+                // Si es modo EDITAR, redirigir al dashboard después de 1.5 segundos
+                setTimeout(() => {
+                    window.location.href = '<?= $dashboardUrl ?>';
+                }, 1500);
+            }
+            
         } else {
             showAlert(data.message || 'Error al guardar el anuncio', 'error');
             submitBtn.disabled = false;
