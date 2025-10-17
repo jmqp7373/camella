@@ -239,7 +239,7 @@ if ($isEdit) {
 </head>
 <body>
 
-<div class="publicar-container">
+<div id="crear-anuncio" class="publicar-container">
     <h1>
         <i class="fas fa-<?= $isEdit ? 'edit' : 'plus-circle' ?>"></i>
         <?= $isEdit ? 'Editar' : 'Publicar' ?> Anuncio
