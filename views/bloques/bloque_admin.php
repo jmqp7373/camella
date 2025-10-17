@@ -199,34 +199,3 @@ if (!isset($promotorStats)) {
         </div>
     </div>
 </section>
-
-<!-- Gestión del Sistema (Solo Admin) -->
-<section class="admin-only-section">
-    <h2><i class="fas fa-cogs"></i> Gestión del Sistema</h2>
-    
-    <div class="dashboard-grid">
-        <div class="stat-card">
-            <i class="fas fa-users-cog stat-icon"></i>
-            <h3>Gestión de Usuarios</h3>
-            <div class="stat-number">0</div>
-            <p>Usuarios registrados</p>
-            <a href="#" class="btn-small">Ver todos</a>
-        </div>
-
-        <div class="stat-card">
-            <i class="fas fa-shield-alt stat-icon"></i>
-            <h3>Roles y Permisos</h3>
-            <div class="stat-number">3</div>
-            <p>Roles configurados</p>
-            <a href="#" class="btn-small">Gestionar</a>
-        </div>
-
-        <div class="stat-card">
-            <i class="fas fa-database stat-icon"></i>
-            <h3>Base de Datos</h3>
-            <div class="stat-number">✓</div>
-            <p>Sistema operativo</p>
-            <a href="#" class="btn-small">Verificar</a>
-        </div>
-    </div>
-</section>
