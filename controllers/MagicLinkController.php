@@ -116,6 +116,7 @@ class MagicLinkController {
                 $_SESSION['user_id'] = $userId;
                 $_SESSION['phone'] = $phone;
                 $_SESSION['role'] = $userRole; // Guardar rol en sesión
+                $_SESSION['original_role'] = $userRole; // Guardar rol original (para cambio de rol de admin)
                 $_SESSION['login_time'] = time();
                 $_SESSION['login_expires'] = time() + (24 * 60 * 60);
                 

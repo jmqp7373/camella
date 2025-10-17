@@ -21,11 +21,29 @@ include __DIR__ . '/../../partials/header.php';
 
 <div class="admin-container">
     <div class="admin-header">
-        <h1 class="admin-title">
-            <i class="fas fa-tachometer-alt"></i>
-            Panel de Administración
-        </h1>
-        <p class="admin-subtitle">Gestión de Categorías y Oficios</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1 class="admin-title">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Panel de Administración
+                </h1>
+                <p class="admin-subtitle">Gestión de Categorías y Oficios</p>
+            </div>
+            
+            <!-- Selector de Rol (Solo para Admin) -->
+            <?php if (isset($_SESSION['original_role']) && $_SESSION['original_role'] === 'admin'): ?>
+            <div class="role-switcher" style="background: rgba(255,255,255,0.1); padding: 0.75rem 1.5rem; border-radius: 50px; backdrop-filter: blur(10px);">
+                <label style="color: white; font-size: 0.85rem; margin-right: 0.5rem; opacity: 0.9;">
+                    <i class="fas fa-user-shield"></i> Ver como:
+                </label>
+                <select id="roleSwitcher" style="padding: 0.5rem 1rem; border: 2px solid rgba(255,255,255,0.3); border-radius: 25px; background: white; color: #003d7a; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                    <option value="admin" <?= $_SESSION['role'] === 'admin' ? 'selected' : '' ?>>👑 Administrador</option>
+                    <option value="promotor" <?= $_SESSION['role'] === 'promotor' ? 'selected' : '' ?>>📢 Promotor</option>
+                    <option value="publicante" <?= $_SESSION['role'] === 'publicante' ? 'selected' : '' ?>>💼 Publicante</option>
+                </select>
+            </div>
+            <?php endif; ?>
+        </div>
     </div>
     
     <!-- Estado del Sistema -->
@@ -1000,6 +1018,88 @@ if (isset($_SESSION['mensaje_error'])) {
         </div>
     </div>
 </section>
+
+<!-- Script: Cambio de Rol -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const roleSwitcher = document.getElementById('roleSwitcher');
+    
+    if (roleSwitcher) {
+        roleSwitcher.addEventListener('change', async function() {
+            const nuevoRol = this.value;
+            const rolActual = '<?= $_SESSION['role'] ?>';
+            
+            // Si es el mismo rol, no hacer nada
+            if (nuevoRol === rolActual) {
+                return;
+            }
+            
+            // Mostrar indicador de carga
+            this.disabled = true;
+            this.style.opacity = '0.6';
+            
+            try {
+                const response = await fetch('<?= app_url('controllers/cambiar_rol.php') ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'role=' + encodeURIComponent(nuevoRol)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Mostrar mensaje de éxito
+                    const mensaje = document.createElement('div');
+                    mensaje.style.cssText = 'position: fixed; top: 20px; right: 20px; background: #27ae60; color: white; padding: 1rem 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 9999; animation: slideIn 0.3s ease;';
+                    mensaje.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+                    document.body.appendChild(mensaje);
+                    
+                    // Redirigir al dashboard correspondiente
+                    setTimeout(() => {
+                        window.location.href = data.redirectUrl;
+                    }, 800);
+                } else {
+                    alert('Error: ' + data.message);
+                    this.disabled = false;
+                    this.style.opacity = '1';
+                }
+                
+            } catch (error) {
+                console.error('Error al cambiar de rol:', error);
+                alert('Error al cambiar de rol. Por favor intenta de nuevo.');
+                this.disabled = false;
+                this.style.opacity = '1';
+            }
+        });
+    }
+});
+</script>
+
+<style>
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+#roleSwitcher:hover {
+    border-color: rgba(255,255,255,0.5);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#roleSwitcher:focus {
+    outline: none;
+    border-color: #27ae60;
+    box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.2);
+}
+</style>
 
 <?php
 include __DIR__ . '/../../partials/footer.php'; 
