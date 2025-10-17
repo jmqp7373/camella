@@ -21,11 +21,11 @@ $subtitulos = [
 ];
 $subtitulo = $subtitulos[$rol] ?? 'Gestión completa del sistema';
 
-// Iconos por rol
+// Iconos por rol (coherentes con role_switcher.php)
 $iconos = [
-    'admin' => 'fa-chart-line',
-    'promotor' => 'fa-bullhorn',
-    'publicante' => 'fa-user-circle'
+    'admin' => 'fa-crown',           // 👑 Corona (Admin)
+    'promotor' => 'fa-bullhorn',     // 📢 Megáfono (Promotor)
+    'publicante' => 'fa-briefcase'   // 💼 Maletín (Publicante)
 ];
 $icono = $iconos[$rol] ?? 'fa-tachometer-alt';
 ?>
