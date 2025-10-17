@@ -10,7 +10,7 @@ require_once __DIR__ . '/../config/app_paths.php';
  * VERSIÓN MANUAL: Incrementar para forzar recarga inmediata en todos los usuarios
  */
 function getCacheBuster($filepath) {
-    $manualVersion = '2.0'; // Incrementar este número para forzar recarga global
+    $manualVersion = '2.1'; // Incrementar este número para forzar recarga global
     $fullPath = APP_ROOT . '/' . ltrim($filepath, '/');
     if (file_exists($fullPath)) {
         return '?v=' . $manualVersion . '.' . filemtime($fullPath);
