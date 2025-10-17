@@ -87,10 +87,18 @@ if ($userId) {
                             
                             <!-- Botones de acción -->
                             <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                                <a href="#" class="btn-editar" style="flex: 1; padding: 0.5rem; text-align: center; background: #3498db; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: background 0.2s;">
+                                <a href="<?= app_url('views/bloques/publicar.php?anuncio_id=' . $anuncio['id']) ?>" 
+                                   class="btn-editar" 
+                                   style="flex: 1; padding: 0.5rem; text-align: center; background: #3498db; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: background 0.2s;"
+                                   onmouseover="this.style.background='#2980b9'"
+                                   onmouseout="this.style.background='#3498db'">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
-                                <a href="#" class="btn-ver" style="flex: 1; padding: 0.5rem; text-align: center; background: #666; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: background 0.2s;">
+                                <a href="<?= app_url('views/ver_anuncio.php?id=' . $anuncio['id']) ?>" 
+                                   class="btn-ver" 
+                                   style="flex: 1; padding: 0.5rem; text-align: center; background: #666; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: background 0.2s;"
+                                   onmouseover="this.style.background='#555'"
+                                   onmouseout="this.style.background='#666'">
                                     <i class="fas fa-eye"></i> Ver
                                 </a>
                                 <button 
