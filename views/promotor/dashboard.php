@@ -200,4 +200,27 @@ include '../../partials/header.php';
     </div>
 </div>
 
+<!-- Bloque: Crear Anuncio -->
+<section class="crear-anuncio-section" style="margin: 2rem auto; padding: 0 1rem; max-width: 1200px;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 16px; padding: 3rem; text-align: center; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <div style="font-size: 4rem; margin-bottom: 1.5rem;">
+                <i class="fas fa-bullhorn" style="color: white; opacity: 0.9;"></i>
+            </div>
+            <h2 style="color: white; font-size: 2rem; margin-bottom: 1rem; font-weight: 700;">
+                ¿Tienes un servicio para ofrecer?
+            </h2>
+            <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem; margin-bottom: 2rem; line-height: 1.6;">
+                Crea tu anuncio y comienza a recibir solicitudes de clientes interesados en tus servicios profesionales.
+            </p>
+            <a href="<?= app_url('views/bloques/publicar.php') ?>" 
+               style="display: inline-block; padding: 1rem 3rem; background: white; color: #667eea; text-decoration: none; border-radius: 50px; font-weight: 600; font-size: 1.1rem; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2);"
+               onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.3)';"
+               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(0,0,0,0.2)';">
+                <i class="fas fa-plus-circle"></i> Crear mi anuncio ahora
+            </a>
+        </div>
+    </div>
+</section>
+
 <?php include '../../partials/footer.php'; ?>
