@@ -19,7 +19,7 @@ class Categorias extends BaseModel
 
     /**
      * Devuelve categorías activas con conteo de oficios activos por categoría.
-     * Campos: id, nombre, descripcion, activo, total_oficios
+     * Campos: id, nombre, descripcion, icono, activo, total_oficios
      */
     public function obtenerCategoriasConOficios(): array
     {
@@ -32,6 +32,7 @@ class Categorias extends BaseModel
                 c.id,
                 c.nombre,
                 c.descripcion,
+                c.icono,
                 c.activo,
                 COALESCE(COUNT(o.id), 0) AS total_oficios
             FROM categorias c
@@ -39,7 +40,7 @@ class Categorias extends BaseModel
                 ON o.categoria_id = c.id 
                AND o.activo = 1
             WHERE c.activo = 1
-            GROUP BY c.id, c.nombre, c.descripcion, c.activo
+            GROUP BY c.id, c.nombre, c.descripcion, c.icono, c.activo
             ORDER BY c.id ASC
         ";
 

@@ -64,6 +64,13 @@ try {
             'Cuidado de Animales' => 'fas fa-paw',
             'Producción y Manufactura' => 'fas fa-industry',
             'Eventos y Actividades Especiales' => 'fas fa-calendar-check',
+            // Categorías v1.1
+            'Servicios Digitales y Contenidos' => 'fas fa-photo-video',
+            'Educación y Formación' => 'fas fa-chalkboard-teacher',
+            'Tecnología y Soporte Digital' => 'fas fa-desktop',
+            'Agricultura y Medio Ambiente' => 'fas fa-seedling',
+            'Administración y Servicios Empresariales' => 'fas fa-folder-open',
+            'Moda y Confección' => 'fas fa-cut',
         ];
 
         if (is_array($categoriasDB) && !empty($categoriasDB)) {
