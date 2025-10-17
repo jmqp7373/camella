@@ -19,30 +19,8 @@ require_once __DIR__ . '/../../partials/header.php';
 ?>
 
 <div class="dashboard-container">
-    <!-- Título Principal del Panel (solo título, sin CTA) -->
-    <?php 
-    $mostrarSoloTitulo = true;
-    include __DIR__ . '/../bloques/bloque_titulo.php'; 
-    ?>
-
-    <!-- Header del Dashboard con Role Switcher -->
-    <div class="publicante-header dashboard-section" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; background: linear-gradient(135deg, var(--color-verde), #27ae60); color: white; padding: 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-card);">
-        <div style="text-align: left;">
-            <h2 style="margin: 0 0 10px 0; font-size: 24px; font-weight: 600;">
-                <i class="fas fa-user-circle"></i>
-                Mis Anuncios
-            </h2>
-            <p style="margin: 0; opacity: 0.9; font-size: 16px;">
-                <span class="role-label" style="color: rgba(255,255,255,0.9);">
-                    <i class="fas fa-user-circle me-1"></i>
-                    <?= ucfirst($_SESSION['role'] ?? 'Publicante') ?>
-                </span>
-            </p>
-        </div>
-        
-        <!-- Role Switcher (Solo Admin) -->
-        <?php include __DIR__ . '/../bloques/role_switcher.php'; ?>
-    </div>
+    <!-- Header del Dashboard con Título y Role Switcher -->
+    <?php include __DIR__ . '/../bloques/bloque_titulo.php'; ?>
 
     <!-- BLOQUE PUBLICANTE: Mis Anuncios -->
     <div class="dashboard-section">

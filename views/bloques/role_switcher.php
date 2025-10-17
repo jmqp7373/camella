@@ -16,7 +16,7 @@ if (!$isRealAdmin) {
 $currentRole = $_SESSION['impersonate_role'] ?? $_SESSION['role'] ?? 'admin';
 ?>
 
-<!-- Role Switcher (Solo Admin) -->
+<!-- Role Switcher Content (sin wrapper) -->
 <div class="role-switcher" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 25px; backdrop-filter: blur(10px);">
     <label for="roleSwitcher" style="color: white; font-size: 0.85rem; margin: 0; opacity: 0.9; display: flex; align-items: center; gap: 0.3rem;">
         <i class="fas fa-user-shield"></i> 
