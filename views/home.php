@@ -119,7 +119,7 @@ echo "<!-- DEBUG FINAL: Primera categoría a mostrar: " . (isset($categorias[0])
 <div class="home-hero">
     <h1 class="page-title text-azul" style="margin-bottom: 10px;">
         <i class="fas fa-briefcase"></i> 
-        Bienvenido a Camella.com.co
+        Te damos la bienvenida a Camella.com.co
     </h1>
     <p class="page-subtitle" style="margin-bottom: 6px; line-height: 1.5;">
         Camella.com.co es la bolsa de empleo que conecta a Colombia.
