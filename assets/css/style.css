@@ -1028,15 +1028,18 @@ html {
 
 /* Destaque al llegar a sección mediante anchor */
 section:target {
-    animation: highlightSection 1s ease-in-out;
+    animation: highlightSection 1.5s ease-in-out;
 }
 
 @keyframes highlightSection {
     0%, 100% {
         background-color: transparent;
     }
-    50% {
+    16.66%, 50%, 83.33% {
         background-color: rgba(185, 0, 0, 0.05);
+    }
+    33.33%, 66.66% {
+        background-color: transparent;
     }
 }
 
