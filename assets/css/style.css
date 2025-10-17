@@ -240,6 +240,19 @@ body {
     font-weight: bold;
 }
 
+/* Ícono de oficio popular 🔥 */
+.fuego {
+    margin-left: 4px;
+    font-size: 1.1em;
+    display: inline-block;
+    animation: flicker 2s infinite;
+}
+
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
 /* ========================================
    FOOTER NORMAL - NO FIJO
    ======================================== */

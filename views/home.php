@@ -166,7 +166,12 @@ echo "<!-- DEBUG FINAL: Primera categoría a mostrar: " . (isset($categorias[0])
                     <?php if (!empty($categoria['oficios'])): ?>
                         <ul class="subcategories">
                             <?php foreach ($categoria['oficios'] as $oficio): ?>
-                                <li class="oficio-item" data-oficio-id="<?= $oficio['id'] ?>"><?= htmlspecialchars($oficio['titulo']) ?></li>
+                                <li class="oficio-item" data-oficio-id="<?= $oficio['id'] ?>">
+                                    <?= htmlspecialchars($oficio['titulo']) ?>
+                                    <?php if (!empty($oficio['popular']) && $oficio['popular'] == 1): ?>
+                                        <span class="fuego" title="Oficio popular">🔥</span>
+                                    <?php endif; ?>
+                                </li>
                             <?php endforeach; ?>
                         </ul>
                     <?php else: ?>

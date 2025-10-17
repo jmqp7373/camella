@@ -56,7 +56,7 @@ class Categorias extends BaseModel
 
     /**
      * Devuelve los oficios activos para una categoría dada.
-     * Campos: id, titulo
+     * Campos: id, titulo, popular
      */
     public function obtenerOficiosPorCategoria(int $categoriaId): array
     {
@@ -65,11 +65,11 @@ class Categorias extends BaseModel
         }
 
         $sql = "
-            SELECT id, titulo
+            SELECT id, titulo, popular
             FROM oficios
             WHERE categoria_id = :categoria_id
               AND activo = 1
-            ORDER BY titulo ASC
+            ORDER BY popular DESC, titulo ASC
         ";
 
         try {
