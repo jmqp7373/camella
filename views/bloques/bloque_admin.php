@@ -19,7 +19,7 @@ if (!isset($promotorStats)) {
 ?>
 
 <!-- Estadísticas de Twilio (Solo Admin) -->
-<section class="twilio-stats-section" style="margin-top: 2rem;">
+<section class="twilio-stats-section">
     <h2 style="color: #003d7a; font-size: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
         <i class="fas fa-sms"></i> Estadísticas de SMS (Twilio)
     </h2>
