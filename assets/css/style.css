@@ -250,7 +250,7 @@ body {
     text-align: center;
     padding: var(--spacing-lg);
     box-shadow: var(--sombra-suave);
-    margin-top: 2rem;
+    margin: 3rem 0rem 2rem 0rem;
     width: 100%;
 }
 
