@@ -22,11 +22,6 @@ require_once __DIR__ . '/../../partials/header.php';
     <!-- Header del Dashboard con Título y Role Switcher -->
     <?php include __DIR__ . '/../bloques/bloque_titulo.php'; ?>
 
-    <!-- BLOQUE PUBLICANTE: Mis Anuncios -->
-    <div class="dashboard-section">
-        <?php include __DIR__ . '/../bloques/bloque_publicante.php'; ?>
-    </div>
-
     <!-- BLOQUE ANUNCIOS: Tus Anuncios Publicados (visible para todos) -->
     <div class="dashboard-section">
         <?php include __DIR__ . '/../bloques/bloque_anuncios.php'; ?>
@@ -34,6 +29,11 @@ require_once __DIR__ . '/../../partials/header.php';
 
     <!-- CTA: Publicar Anuncio -->
     <?php include __DIR__ . '/../bloques/bloque_publicar_anuncio.php'; ?>
+
+    <!-- BLOQUE PUBLICANTE: Mis Anuncios -->
+    <div class="dashboard-section">
+        <?php include __DIR__ . '/../bloques/bloque_publicante.php'; ?>
+    </div>
 
 </div>
 
