@@ -5,7 +5,7 @@
  */
 
 echo "================================================\n";
-echo "  CREACIÓN DE TABLA SERVICIOS\n";
+echo "  CREACIÓN DE TABLA ANUNCIOS\n";
 echo "================================================\n\n";
 
 // Conexión a la base de datos
@@ -19,7 +19,7 @@ if ($mysqli->connect_error) {
 echo "✅ Conectado a la base de datos: camella_db\n\n";
 
 // Leer archivo SQL
-$sqlFile = __DIR__ . '/create_servicios_table.sql';
+$sqlFile = __DIR__ . '/create_anuncios_table.sql';
 if (!file_exists($sqlFile)) {
     die("❌ No se encuentra el archivo: $sqlFile\n");
 }
@@ -29,7 +29,7 @@ echo "📄 Leyendo archivo SQL...\n\n";
 
 // Ejecutar queries
 if ($mysqli->multi_query($sql)) {
-    echo "✅ Tabla 'servicios' creada exitosamente\n";
+    echo "✅ Tabla 'anuncios' creada exitosamente\n";
     echo "✅ Datos de ejemplo insertados\n\n";
     
     // Limpiar resultados pendientes
@@ -45,16 +45,16 @@ if ($mysqli->multi_query($sql)) {
     echo "================================================\n\n";
     
     // Contar registros
-    $result = $mysqli->query("SELECT COUNT(*) as total FROM servicios");
+    $result = $mysqli->query("SELECT COUNT(*) as total FROM anuncios");
     if ($result) {
         $row = $result->fetch_assoc();
-        echo "📊 Total de registros en servicios: " . $row['total'] . "\n\n";
+        echo "📊 Total de registros en anuncios: " . $row['total'] . "\n\n";
     }
     
     // Mostrar algunos registros
     echo "📋 Anuncios insertados:\n";
     echo "------------------------------------------------\n";
-    $result = $mysqli->query("SELECT id, titulo, precio, status, created_at FROM servicios LIMIT 5");
+    $result = $mysqli->query("SELECT id, titulo, precio, status, created_at FROM anuncios LIMIT 5");
     if ($result) {
         while ($row = $result->fetch_assoc()) {
             echo "  ID: {$row['id']}\n";

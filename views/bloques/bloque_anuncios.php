@@ -12,11 +12,11 @@ if ($userId) {
         $pdo = getPDO();
         
         // Consultar anuncios del usuario (solo si la tabla existe)
-        $checkTable = $pdo->query("SHOW TABLES LIKE 'servicios'");
+        $checkTable = $pdo->query("SHOW TABLES LIKE 'anuncios'");
         if ($checkTable->rowCount() > 0) {
             $stmt = $pdo->prepare("
                 SELECT id, titulo, descripcion, precio, imagen_principal, status, created_at 
-                FROM servicios 
+                FROM anuncios 
                 WHERE user_id = ? AND status = 'activo' 
                 ORDER BY created_at DESC 
                 LIMIT 6

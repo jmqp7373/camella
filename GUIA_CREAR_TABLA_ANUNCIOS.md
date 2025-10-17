@@ -1,4 +1,4 @@
-# 📋 Guía para Crear la Tabla Servicios
+# 📋 Guía para Crear la Tabla Anuncios
 
 ## ✅ Opción 1: Usando phpMyAdmin (Recomendado)
 
@@ -13,13 +13,13 @@
 
 3. **Importar el archivo SQL**
    - Click en la pestaña "SQL" en la parte superior
-   - Copia y pega el contenido del archivo `tests/create_servicios_table.sql`
+   - Copia y pega el contenido del archivo `tests/create_anuncios_table.sql`
    - O usa el botón "Importar" y selecciona el archivo
    - Click en "Continuar" o "Go"
 
 4. **Verificar creación**
    - Verás el mensaje: "MySQL ha devuelto un resultado vacío"
-   - En el menú izquierdo aparecerá la tabla `servicios`
+   - En el menú izquierdo aparecerá la tabla `anuncios`
    - Click en ella para ver los 3 registros de ejemplo
 
 ---
@@ -30,17 +30,17 @@
 
 ```powershell
 # Opción A: Usando mysql directamente
-C:\xampp\mysql\bin\mysql.exe -u camella_user -pReylondres7373 camella_db < tests\create_servicios_table.sql
+C:\xampp\mysql\bin\mysql.exe -u camella_user -pReylondres7373 camella_db < tests\create_anuncios_table.sql
 
 # Opción B: Si no funciona, prueba sin contraseña
-C:\xampp\mysql\bin\mysql.exe -u root camella_db < tests\create_servicios_table.sql
+C:\xampp\mysql\bin\mysql.exe -u root camella_db < tests\create_anuncios_table.sql
 ```
 
 ### Desde CMD:
 
 ```cmd
 cd C:\xampp\htdocs\camella.com.co
-C:\xampp\mysql\bin\mysql.exe -u camella_user -pReylondres7373 camella_db < tests\create_servicios_table.sql
+C:\xampp\mysql\bin\mysql.exe -u camella_user -pReylondres7373 camella_db < tests\create_anuncios_table.sql
 ```
 
 ---
@@ -59,16 +59,16 @@ if ($mysqli->connect_error) {
     die("Error de conexión: " . $mysqli->connect_error);
 }
 
-$sql = file_get_contents(__DIR__ . '/create_servicios_table.sql');
+$sql = file_get_contents(__DIR__ . '/create_anuncios_table.sql');
 
 if ($mysqli->multi_query($sql)) {
-    echo "✅ Tabla 'servicios' creada exitosamente con datos de ejemplo.\n";
+    echo "✅ Tabla 'anuncios' creada exitosamente con datos de ejemplo.\n";
     
     // Limpiar resultados
     while ($mysqli->next_result()) {;}
     
     // Verificar
-    $result = $mysqli->query("SELECT COUNT(*) as total FROM servicios");
+    $result = $mysqli->query("SELECT COUNT(*) as total FROM anuncios");
     $row = $result->fetch_assoc();
     echo "✅ Total de anuncios insertados: " . $row['total'] . "\n";
 } else {
@@ -91,7 +91,7 @@ php tests\ejecutar_sql.php
 ### Desde PowerShell:
 
 ```powershell
-php -r "$pdo = new PDO('mysql:host=localhost;dbname=camella_db', 'camella_user', 'Reylondres7373'); $result = $pdo->query('SELECT * FROM servicios'); while($row = $result->fetch(PDO::FETCH_ASSOC)) { print_r($row); }"
+php -r "$pdo = new PDO('mysql:host=localhost;dbname=camella_db', 'camella_user', 'Reylondres7373'); $result = $pdo->query('SELECT * FROM anuncios'); while($row = $result->fetch(PDO::FETCH_ASSOC)) { print_r($row); }"
 ```
 
 ### O usar el script de verificación:
@@ -104,7 +104,7 @@ php tests\check_tables.php
 
 ## 📊 Qué hace el script SQL
 
-1. **Crea la tabla `servicios`** con los siguientes campos:
+1. **Crea la tabla `anuncios`** con los siguientes campos:
    - id (PRIMARY KEY)
    - user_id (FK al usuario propietario)
    - titulo
@@ -127,7 +127,7 @@ php tests\check_tables.php
 Después de ejecutar el SQL, deberías ver:
 
 ```
-✅ Tabla creada: servicios
+✅ Tabla creada: anuncios
 ✅ Registros insertados: 3
 ✅ El bloque "Tus Anuncios Publicados" mostrará las 3 tarjetas
 ```
@@ -139,7 +139,7 @@ Después de ejecutar el SQL, deberías ver:
 ### Error: "Table already exists"
 ```sql
 -- Primero eliminar la tabla si existe
-DROP TABLE IF EXISTS servicios;
+DROP TABLE IF EXISTS anuncios;
 -- Luego ejecutar el script completo
 ```
 
@@ -163,27 +163,27 @@ CREATE DATABASE IF NOT EXISTS camella_db DEFAULT CHARACTER SET utf8mb4;
 
 ### Ver estructura de la tabla:
 ```sql
-DESCRIBE servicios;
+DESCRIBE anuncios;
 ```
 
 ### Ver datos insertados:
 ```sql
-SELECT * FROM servicios;
+SELECT * FROM anuncios;
 ```
 
 ### Contar registros:
 ```sql
-SELECT COUNT(*) FROM servicios WHERE user_id = 1;
+SELECT COUNT(*) FROM anuncios WHERE user_id = 1;
 ```
 
 ### Eliminar todos los datos (mantener estructura):
 ```sql
-TRUNCATE TABLE servicios;
+TRUNCATE TABLE anuncios;
 ```
 
 ### Eliminar la tabla completamente:
 ```sql
-DROP TABLE servicios;
+DROP TABLE anuncios;
 ```
 
 ---

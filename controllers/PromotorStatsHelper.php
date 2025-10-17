@@ -60,14 +60,14 @@ class PromotorStatsProvider {
         try {
             $publicacionesQuery = $this->pdo->query("
                 SELECT COUNT(*) AS total
-                FROM servicios
+                FROM anuncios
                 WHERE created_at >= NOW() - INTERVAL {$timeCondition}
                 AND status = 'activo'
             ");
             $publicacionesActivas = (int) $publicacionesQuery->fetchColumn();
         } catch (Exception $e) {
-            // Si la tabla servicios no existe, simplemente dejar en 0
-            error_log("Advertencia: tabla servicios no disponible - " . $e->getMessage());
+            // Si la tabla anuncios no existe, simplemente dejar en 0
+            error_log("Advertencia: tabla anuncios no disponible - " . $e->getMessage());
             $publicacionesActivas = 0;
         }
 
