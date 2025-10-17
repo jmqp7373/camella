@@ -2,18 +2,28 @@
 /**
  * Vista: Publicar Anuncio
  * Formulario para crear/editar anuncios con subida de imágenes
+ * Disponible para: admin, promotor, publicante
  */
 
 // Verificar sesión
 session_start();
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
     header('Location: ' . app_url('login.php'));
     exit;
 }
 
 $userId = $_SESSION['user_id'];
+$userRole = $_SESSION['role'];
 $anuncioId = isset($_GET['anuncio_id']) ? (int)$_GET['anuncio_id'] : null;
 $isEdit = $anuncioId !== null;
+
+// Determinar dashboard de retorno según el rol
+$dashboardUrl = match($userRole) {
+    'admin' => app_url('views/admin/dashboard.php'),
+    'promotor' => app_url('views/promotor/dashboard.php'),
+    'publicante' => app_url('views/publicante/dashboard.php'),
+    default => app_url('index.php')
+};
 
 // Si es edición, cargar datos del anuncio
 if ($isEdit) {
@@ -28,7 +38,7 @@ if ($isEdit) {
     $anuncio = $stmt->fetch();
     
     if (!$anuncio) {
-        header('Location: ' . app_url('views/publicante/dashboard.php'));
+        header('Location: ' . $dashboardUrl);
         exit;
     }
 }
@@ -313,7 +323,7 @@ if ($isEdit) {
                 <?= $isEdit ? 'Guardar cambios' : 'Publicar anuncio' ?>
             </button>
             
-            <a href="<?= app_url('views/publicante/dashboard.php') ?>" class="btn-secondary">
+            <a href="<?= $dashboardUrl ?>" class="btn-secondary">
                 <i class="fas fa-times"></i> Cancelar
             </a>
         </div>
@@ -509,7 +519,7 @@ document.getElementById('anuncioForm').addEventListener('submit', async (e) => {
     showAlert('Anuncio guardado exitosamente', 'success');
     
     setTimeout(() => {
-        window.location.href = '<?= app_url('views/publicante/dashboard.php') ?>';
+        window.location.href = '<?= $dashboardUrl ?>';
     }, 1500);
 });
 </script>
