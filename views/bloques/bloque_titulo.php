@@ -31,7 +31,7 @@ $icono = $iconos[$rol] ?? 'fa-tachometer-alt';
 ?>
 
 <!-- Header del Dashboard con Título y Role Switcher -->
-<div class="dashboard-header dashboard-section" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; background: linear-gradient(135deg, var(--color-azul), var(--color-azul-oscuro)); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 1.5rem;">
+<div class="dashboard-header dashboard-section" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; background: linear-gradient(135deg, #003d7a, #002850); padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 1.5rem;">
     <div style="text-align: left;">
         <h1 class="fw-bold mb-2" style="color: white; font-size: 1.8rem; margin-bottom: 0.5rem;">
             <i class="fas <?= $icono ?> me-2"></i>
