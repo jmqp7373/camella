@@ -1027,7 +1027,7 @@ html {
 }
 
 /* Destaque al llegar a sección mediante anchor */
-section:target {
+section:target, div:target {
     animation: highlightSection 1.5s ease-in-out;
 }
 

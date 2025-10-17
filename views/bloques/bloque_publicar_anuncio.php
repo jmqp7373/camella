@@ -7,8 +7,8 @@
 ?>
 
 <!-- CTA: Crear Anuncio -->
-<section id="crear-anuncio" class="text-center" style="margin-top: 2rem;">
-    <div class="bloque-wrapper" style="background-color: #f8ecec;">
+<section class="text-center" style="margin-top: 2rem;">
+    <div id="crear-anuncio" class="bloque-wrapper" style="background-color: #f8ecec;">
         <h3 class="fw-bold text-danger mb-4" style="font-size: 1.6rem;">
             <i class="fas fa-bullhorn me-2"></i> ¿Tienes un servicio para ofrecer?
         </h3>
