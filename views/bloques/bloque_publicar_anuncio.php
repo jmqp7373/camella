@@ -8,11 +8,10 @@
 
 <!-- CTA: Crear Anuncio -->
 <section id="crear-anuncio" class="text-center" style="margin-top: 2rem;">
-    <h2 style="color: #003d7a; font-size: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
-        <i class="fas fa-bullhorn"></i> ¿Tienes un servicio para ofrecer?
-    </h2>
-    
     <div class="bloque-wrapper" style="background-color: #f8ecec;">
+        <h3 class="fw-bold text-danger mb-4" style="font-size: 1.6rem;">
+            <i class="fas fa-bullhorn me-2"></i> ¿Tienes un servicio para ofrecer?
+        </h3>
         <p class="text-muted mb-4 fs-5" style="max-width: 700px; margin: 0 auto 1.5rem auto;">
             Crea tu anuncio y comienza a recibir solicitudes de clientes interesados en tus servicios profesionales.
         </p>
