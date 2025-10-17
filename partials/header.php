@@ -88,15 +88,7 @@ $esDashboard = (strpos($archivoActual, 'dashboard') !== false);
                             <i class="fas fa-sign-out-alt"></i> Salir
                         </a>
                     <?php else: ?>
-                        <!-- Vista Normal: Mostrar info de usuario y todos los botones -->
-                        <span class="user-info">
-                            <i class="fas fa-user-circle"></i>
-                            <?php 
-                                $phone = $_SESSION['phone'] ?? '';
-                                $phoneDisplay = $phone ? substr($phone, -4) : '';
-                                echo $phoneDisplay ? "***{$phoneDisplay}" : "Usuario";
-                            ?>
-                        </span>
+                        <!-- Vista Normal: Mostrar botón Publícate y Salir -->
                         <a href="index.php?view=publicar-oferta" class="btn btn-publish">+ Publícate</a>
                         <a href="<?= app_url('logout.php') ?>" class="btn btn-logout" title="Cerrar sesión">
                             <i class="fas fa-sign-out-alt"></i> Salir
