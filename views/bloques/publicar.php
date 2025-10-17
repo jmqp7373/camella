@@ -520,20 +520,45 @@ async function loadExistingImages() {
 // ============================================
 const uploadArea = document.getElementById('uploadArea');
 const imageInput = document.getElementById('imageInput');
+let isDialogOpen = false; // Flag para evitar múltiples aperturas
 
 if (!soloLectura) {
-    uploadArea?.addEventListener('click', () => {
+    uploadArea?.addEventListener('click', (e) => {
+        // Prevenir que el clic se propague
+        e.stopPropagation();
+        
+        // Evitar abrir el diálogo si ya está abierto
+        if (isDialogOpen) {
+            return;
+        }
+        
         // Solo permitir clic si hay anuncio_id
         if (window.anuncioId) {
+            isDialogOpen = true;
             imageInput.click();
+            
+            // Reset flag después de un momento (por si el usuario cancela)
+            setTimeout(() => {
+                isDialogOpen = false;
+            }, 500);
         } else {
             showAlert('Primero debes publicar el anuncio para poder subir fotos', 'warning');
         }
     });
 
     imageInput?.addEventListener('change', async (e) => {
-        await handleFiles(e.target.files);
+        isDialogOpen = false; // Reset flag
+        
+        if (e.target.files.length > 0) {
+            await handleFiles(e.target.files);
+        }
+        
         imageInput.value = ''; // Reset input
+    });
+    
+    // Detectar cuando el usuario cancela el diálogo
+    imageInput?.addEventListener('cancel', () => {
+        isDialogOpen = false;
     });
 
     // Drag & Drop
