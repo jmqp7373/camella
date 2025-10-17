@@ -9,7 +9,7 @@
         <i class="fas fa-layer-group"></i> Gestión de Categorías y Oficios
     </h2>
     
-    <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 2rem; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <div class="bloque-wrapper">
         
         <!-- Contenido del bloque -->
         <div class="row g-3">

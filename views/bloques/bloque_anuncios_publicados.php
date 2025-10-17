@@ -46,7 +46,7 @@ if ($userId) {
         <i class="fas fa-briefcase"></i> Tus Anuncios Publicados
     </h2>
     
-    <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 2rem; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+    <div class="bloque-wrapper">
         <?php if (count($anuncios) > 0): ?>
             <!-- Grid de Anuncios -->
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
