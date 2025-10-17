@@ -7,7 +7,7 @@
 ?>
 
 <!-- CTA: Crear Anuncio -->
-<section id="crear-anuncio" class="text-center my-5 border rounded-4 shadow-sm bg-white position-relative mb-5" style="background-color: #fff8f8; padding: 20px 0px 20px 0px;">
+<section id="crear-anuncio" class="text-center my-5 border rounded-4 shadow-sm bg-white position-relative mb-5" style="background-color: #ffe4e4; padding: 20px 0px 20px 0px;">
     <div class="container">
         <h3 class="fw-bold text-danger mb-4" style="font-size: 1.6rem;">
             <i class="fas fa-bullhorn me-2"></i> ¿Tienes un servicio para ofrecer?
