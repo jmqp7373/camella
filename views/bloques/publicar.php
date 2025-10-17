@@ -63,7 +63,7 @@ if ($modo === 'ver_todos') {
             <h1 style="color: #003d7a; font-size: 2rem; margin: 0;">
                 <i class="fas fa-briefcase"></i> Todos mis anuncios
             </h1>
-            <a href="<?= $dashboardUrl ?>" style="padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; transition: background 0.2s;"
+            <a href="<?= $dashboardUrl ?>#anuncios-publicados" style="padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; transition: background 0.2s;"
                onmouseover="this.style.background='#5a6268'"
                onmouseout="this.style.background='#6c757d'">
                 <i class="fas fa-arrow-left"></i> Volver al Dashboard
