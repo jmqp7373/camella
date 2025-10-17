@@ -136,8 +136,8 @@ class ImageUploadController {
                     continue;
                 }
                 
-                // Insertar en base de datos
-                $relativePath = '/assets/images/anuncios/' . $uniqueName;
+                // Insertar en base de datos - Guardar ruta relativa sin barra inicial
+                $relativePath = 'assets/images/anuncios/' . $uniqueName;
                 $orden = $currentImages + $i + 1;
                 
                 try {
