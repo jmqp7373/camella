@@ -7,13 +7,15 @@ require_once __DIR__ . '/../config/app_paths.php';
 /**
  * Función para generar cache buster para archivos CSS y JS
  * Usa la fecha de modificación del archivo si existe, o timestamp actual
+ * VERSIÓN MANUAL: Incrementar para forzar recarga inmediata en todos los usuarios
  */
 function getCacheBuster($filepath) {
+    $manualVersion = '2.0'; // Incrementar este número para forzar recarga global
     $fullPath = APP_ROOT . '/' . ltrim($filepath, '/');
     if (file_exists($fullPath)) {
-        return '?v=' . filemtime($fullPath);
+        return '?v=' . $manualVersion . '.' . filemtime($fullPath);
     }
-    return '?v=' . time();
+    return '?v=' . $manualVersion . '.' . time();
 }
 
 // Inicializar sesión si no está activa
