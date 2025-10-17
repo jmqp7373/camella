@@ -5,6 +5,9 @@
  * Disponible para: admin, promotor, publicante
  */
 
+// Incluir configuración
+require_once __DIR__ . '/../../config/config.php';
+
 // Verificar sesión
 session_start();
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
