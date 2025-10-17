@@ -106,5 +106,4 @@ if (!isset($promotorStats)) {
         </div>
     </div>
     
-</div>
 </section>
