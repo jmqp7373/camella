@@ -27,7 +27,7 @@ require_once __DIR__ . '/../../partials/header.php';
 
     <!-- BLOQUE ANUNCIOS: Tus Anuncios Publicados (visible para todos) -->
     <div class="dashboard-section">
-        <?php include __DIR__ . '/../bloques/bloque_anuncios.php'; ?>
+        <?php include __DIR__ . '/../bloques/bloque_anuncios_publicados.php'; ?>
     </div>
 
     <!-- BLOQUE PUBLICANTE: Mis Anuncios -->
