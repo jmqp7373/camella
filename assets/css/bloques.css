@@ -6,8 +6,8 @@
 /* Contenedor general de dashboard */
 .dashboard-container {
     max-width: 1200px;
-    margin: 40px auto;
-    padding: 20px;
+    /* margin: 40px auto; */
+    /* padding: 20px; */
 }
 
 /* Grid de estadísticas */
