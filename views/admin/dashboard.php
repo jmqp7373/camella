@@ -59,7 +59,7 @@ require_once __DIR__ . '/../../partials/header.php';
                 <p class="card-text text-muted">
                     Administra las categorías, sus oficios y destaca los más populares 🔥
                 </p>
-                <a href="categoriasOficios.php" class="btn btn-primary">
+                <a href="<?= app_url('views/admin/categoriasOficios.php') ?>" class="btn btn-primary">
                     <i class="fas fa-tools me-2"></i> Ir a gestión
                 </a>
             </div>
@@ -68,7 +68,7 @@ require_once __DIR__ . '/../../partials/header.php';
 
     <!-- Botón de acceso rápido -->
     <div class="mt-4 text-center mb-5">
-        <a href="categoriasOficios.php" class="btn btn-primary btn-lg">
+        <a href="<?= app_url('views/admin/categoriasOficios.php') ?>" class="btn btn-primary btn-lg">
             <i class="fas fa-layer-group me-2"></i> Gestionar Categorías y Oficios
         </a>
     </div>
