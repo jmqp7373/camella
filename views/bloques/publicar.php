@@ -7,6 +7,7 @@
 
 // Incluir configuración
 require_once __DIR__ . '/../../config/config.php';
+require_once __DIR__ . '/../../config/app_paths.php';
 
 // Verificar sesión
 session_start();
