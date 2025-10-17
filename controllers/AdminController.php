@@ -4,7 +4,28 @@
  * Gestiona las funciones administrativas y la inicialización de datos
  */
 
-require_once 'models/Categorias.php';
+require_once __DIR__ . '/../models/Categorias.php';
+
+// Manejo de acciones AJAX
+if (isset($_GET['action'])) {
+    $controller = new AdminController();
+    
+    switch ($_GET['action']) {
+        case 'togglePopular':
+            $controller->togglePopular();
+            exit;
+        case 'apiCategorias':
+            $controller->apiCategorias();
+            exit;
+        case 'verificarSistema':
+            $controller->verificarSistema();
+            exit;
+        default:
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Acción no válida']);
+            exit;
+    }
+}
 
 class AdminController {
     private $categoriasModel;
@@ -271,6 +292,61 @@ class AdminController {
             echo json_encode([
                 'exito' => false,
                 'mensaje' => 'Error verificando sistema: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Toggle estado popular de un oficio (AJAX)
+     * Invierte el valor de la columna 'popular' (0 → 1 o 1 → 0)
+     */
+    public function togglePopular() {
+        header('Content-Type: application/json');
+        
+        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'ID de oficio no válido'
+            ]);
+            return;
+        }
+        
+        $oficioId = (int)$_GET['id'];
+        
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $pdo = getPDO();
+            
+            // Obtener valor actual
+            $stmt = $pdo->prepare("SELECT popular FROM oficios WHERE id = ?");
+            $stmt->execute([$oficioId]);
+            $oficio = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if (!$oficio) {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Oficio no encontrado'
+                ]);
+                return;
+            }
+            
+            // Invertir valor
+            $nuevoValor = $oficio['popular'] == 1 ? 0 : 1;
+            
+            // Actualizar
+            $stmt = $pdo->prepare("UPDATE oficios SET popular = ? WHERE id = ?");
+            $stmt->execute([$nuevoValor, $oficioId]);
+            
+            echo json_encode([
+                'success' => true,
+                'newState' => $nuevoValor,
+                'message' => $nuevoValor == 1 ? 'Oficio marcado como popular' : 'Oficio desmarcado'
+            ]);
+            
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al actualizar: ' . $e->getMessage()
             ]);
         }
     }
