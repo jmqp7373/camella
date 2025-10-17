@@ -49,28 +49,9 @@ require_once __DIR__ . '/../../partials/header.php';
         <?php include __DIR__ . '/../bloques/bloque_publicante.php'; ?>
     </div>
 
-    <!-- TARJETA: Gestión de Categorías y Oficios -->
+    <!-- BLOQUE GESTIÓN: Categorías y Oficios (solo admin) -->
     <div class="dashboard-section">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <h5 class="card-title mb-3">
-                    <i class="fas fa-layer-group me-2"></i>Gestión de Categorías y Oficios
-                </h5>
-                <p class="card-text text-muted">
-                    Administra las categorías, sus oficios y destaca los más populares 🔥
-                </p>
-                <a href="<?= app_url('views/admin/categoriasOficios.php') ?>" class="btn btn-primary">
-                    <i class="fas fa-tools me-2"></i> Ir a gestión
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Botón de acceso rápido -->
-    <div class="mt-4 text-center mb-5">
-        <a href="<?= app_url('views/admin/categoriasOficios.php') ?>" class="btn btn-primary btn-lg">
-            <i class="fas fa-layer-group me-2"></i> Gestionar Categorías y Oficios
-        </a>
+        <?php include __DIR__ . '/../bloques/bloque_gestion_categorias.php'; ?>
     </div>
 
 </div>
