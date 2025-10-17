@@ -138,7 +138,10 @@ if ($userId) {
             <!-- Botón Ver Todos -->
             <?php if (count($anuncios) >= 6): ?>
                 <div style="text-align: center; margin-top: 1.5rem;">
-                    <a href="#" style="display: inline-block; padding: 0.75rem 2rem; background: #003d7a; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: background 0.2s;">
+                    <a href="<?= app_url('views/bloques/publicar.php?modo=ver_todos') ?>" 
+                       style="display: inline-block; padding: 0.75rem 2rem; background: #003d7a; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: background 0.2s;"
+                       onmouseover="this.style.background='#002b5a'"
+                       onmouseout="this.style.background='#003d7a'">
                         Ver todos mis anuncios <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>

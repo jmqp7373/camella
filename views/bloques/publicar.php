@@ -19,10 +19,10 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role'])) {
 $userId = $_SESSION['user_id'];
 $userRole = $_SESSION['role'];
 
-// Determinar modo: nuevo, editar, ver
+// Determinar modo: nuevo, editar, ver, ver_todos
 $modo = $_GET['modo'] ?? 'nuevo';
 // Validar modo
-if (!in_array($modo, ['nuevo', 'editar', 'ver'])) {
+if (!in_array($modo, ['nuevo', 'editar', 'ver', 'ver_todos'])) {
     $modo = 'nuevo';
 }
 
@@ -30,6 +30,135 @@ if (!in_array($modo, ['nuevo', 'editar', 'ver'])) {
 $id = (int)($_GET['id'] ?? $_GET['anuncio_id'] ?? 0);
 if ($id > 0 && $modo === 'nuevo') {
     $modo = 'editar';
+}
+
+// Si el modo es ver_todos, redirigir a una vista de lista completa
+if ($modo === 'ver_todos') {
+    require_once __DIR__ . '/../../config/database.php';
+    $pdo = getPDO();
+    
+    // Obtener TODOS los anuncios del usuario
+    $stmt = $pdo->prepare("
+        SELECT 
+            a.id, 
+            a.titulo, 
+            a.descripcion, 
+            a.precio, 
+            a.status, 
+            a.created_at,
+            (SELECT ai.ruta FROM anuncio_imagenes ai WHERE ai.anuncio_id = a.id ORDER BY ai.orden LIMIT 1) as imagen_principal
+        FROM anuncios a
+        WHERE a.user_id = ? AND a.status = 'activo' 
+        ORDER BY a.created_at DESC
+    ");
+    $stmt->execute([$userId]);
+    $todosAnuncios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $pageTitle = "Todos mis anuncios";
+    require_once __DIR__ . '/../../partials/header.php';
+    ?>
+    
+    <div style="max-width: 1400px; margin: 2rem auto; padding: 0 1rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h1 style="color: #003d7a; font-size: 2rem; margin: 0;">
+                <i class="fas fa-briefcase"></i> Todos mis anuncios
+            </h1>
+            <a href="<?= $dashboardUrl ?>" style="padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; transition: background 0.2s;"
+               onmouseover="this.style.background='#5a6268'"
+               onmouseout="this.style.background='#6c757d'">
+                <i class="fas fa-arrow-left"></i> Volver al Dashboard
+            </a>
+        </div>
+        
+        <?php if (count($todosAnuncios) > 0): ?>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+                <?php foreach ($todosAnuncios as $anuncio): ?>
+                    <div class="card-anuncio" style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s;">
+                        <!-- Imagen del anuncio -->
+                        <div class="anuncio-imagen" style="height: 200px; overflow: hidden; background: #f5f5f5;">
+                            <?php if (!empty($anuncio['imagen_principal'])): ?>
+                                <?php 
+                                    $imagePath = $anuncio['imagen_principal'];
+                                    if (strpos($imagePath, '/') !== 0) {
+                                        $imagePath = '/' . $imagePath;
+                                    }
+                                    $imageUrl = SITE_URL . $imagePath;
+                                ?>
+                                <img src="<?= htmlspecialchars($imageUrl) ?>" 
+                                     alt="<?= htmlspecialchars($anuncio['titulo']) ?>"
+                                     onerror="this.src='<?= SITE_URL ?>/assets/images/default-service.jpg'"
+                                     style="width: 100%; height: 100%; object-fit: cover;">
+                            <?php else: ?>
+                                <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #e8e8e8;">
+                                    <i class="fas fa-image" style="font-size: 3rem; color: #999;"></i>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        
+                        <!-- Contenido del anuncio -->
+                        <div style="padding: 1.25rem;">
+                            <h3 style="margin: 0 0 0.5rem 0; font-size: 1.2rem; color: #333; font-weight: 600;">
+                                <?= htmlspecialchars($anuncio['titulo']) ?>
+                            </h3>
+                            
+                            <p style="margin: 0 0 1rem 0; font-size: 0.95rem; color: #666; line-height: 1.5; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+                                <?= htmlspecialchars($anuncio['descripcion']) ?>
+                            </p>
+                            
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
+                                <?php if (isset($anuncio['precio']) && $anuncio['precio'] > 0): ?>
+                                    <p style="margin: 0; font-size: 1.3rem; font-weight: 700; color: #27ae60;">
+                                        $<?= number_format($anuncio['precio'], 0, ',', '.') ?>
+                                    </p>
+                                <?php else: ?>
+                                    <p style="margin: 0; font-size: 1.1rem; color: #666;">
+                                        A convenir
+                                    </p>
+                                <?php endif; ?>
+                                
+                                <span style="font-size: 0.85rem; color: #999;">
+                                    <i class="far fa-calendar"></i>
+                                    <?= date('d M Y', strtotime($anuncio['created_at'])) ?>
+                                </span>
+                            </div>
+                            
+                            <!-- Botones de acción -->
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="<?= app_url('views/bloques/publicar.php?modo=editar&id=' . (int)$anuncio['id']) ?>" 
+                                   style="flex: 1; padding: 0.6rem; text-align: center; background: #3498db; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: background 0.2s;"
+                                   onmouseover="this.style.background='#2980b9'"
+                                   onmouseout="this.style.background='#3498db'">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <a href="<?= app_url('views/bloques/publicar.php?modo=ver&id=' . (int)$anuncio['id']) ?>" 
+                                   style="flex: 1; padding: 0.6rem; text-align: center; background: #666; color: white; text-decoration: none; border-radius: 4px; font-size: 0.9rem; transition: background 0.2s;"
+                                   onmouseover="this.style.background='#555'"
+                                   onmouseout="this.style.background='#666'">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div style="text-align: center; padding: 4rem 2rem; background: white; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                <i class="fas fa-inbox" style="font-size: 5rem; color: #ccc; margin-bottom: 1rem;"></i>
+                <h3 style="color: #666; margin-bottom: 0.5rem;">No tienes anuncios publicados</h3>
+                <p style="color: #999; margin-bottom: 2rem;">Comienza a publicar para llegar a más clientes</p>
+                <a href="<?= app_url('views/bloques/publicar.php?modo=nuevo') ?>" 
+                   style="display: inline-block; padding: 0.75rem 2rem; background: #28a745; color: white; text-decoration: none; border-radius: 6px; transition: background 0.2s;"
+                   onmouseover="this.style.background='#218838'"
+                   onmouseout="this.style.background='#28a745'">
+                    <i class="fas fa-plus"></i> Publicar primer anuncio
+                </a>
+            </div>
+        <?php endif; ?>
+    </div>
+    
+    <?php
+    require_once __DIR__ . '/../../partials/footer.php';
+    exit;
 }
 
 $isEdit = ($modo === 'editar' || $modo === 'ver') && $id > 0;

@@ -3,18 +3,15 @@
      Acceso rápido para administradores
      ============================================ -->
 
-<div class="bloque-card">
-    <div class="bloque-header">
-        <div class="bloque-icon">
-            <i class="fas fa-layer-group"></i>
-        </div>
-        <div class="bloque-title-group">
-            <h3 class="bloque-title">Gestión de Categorías y Oficios</h3>
-            <p class="bloque-subtitle">Administra las categorías, sus oficios y destaca los más populares 🔥</p>
-        </div>
-    </div>
-
-    <div class="bloque-content">
+<!-- Wrapper similar al bloque de anuncios -->
+<section class="gestion-categorias-section" style="margin-top: 2rem;">
+    <h2 style="color: #003d7a; font-size: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+        <i class="fas fa-layer-group"></i> Gestión de Categorías y Oficios
+    </h2>
+    
+    <div style="border: 1px solid #e0e0e0; border-radius: 8px; padding: 2rem; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+        
+        <!-- Contenido del bloque -->
         <div class="row g-3">
             <!-- Tarjeta de acceso principal -->
             <div class="col-md-12">
@@ -23,30 +20,36 @@
                         <i class="fas fa-tools"></i>
                     </div>
                     <div class="info-card-content">
-                        <h4 class="info-card-title">Panel de Gestión</h4>
+                        <h4 class="info-card-title">Panel de Gestión Completo</h4>
                         <p class="info-card-text">
-                            Accede al panel completo para editar categorías, administrar oficios 
+                            Accede al panel administrativo completo para editar categorías, administrar oficios 
                             y marcar los más demandados como populares.
                         </p>
                         <ul class="info-card-list">
-                            <li><i class="fas fa-check-circle text-success me-2"></i>Ver todas las categorías</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Ver todas las categorías organizadas</li>
                             <li><i class="fas fa-check-circle text-success me-2"></i>Gestionar oficios por categoría</li>
                             <li><i class="fas fa-check-circle text-success me-2"></i>Marcar oficios populares con 🔥</li>
-                            <li><i class="fas fa-check-circle text-success me-2"></i>Visualización en tiempo real</li>
+                            <li><i class="fas fa-check-circle text-success me-2"></i>Visualización en tiempo real de cambios</li>
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="bloque-footer text-center">
-        <a href="<?= app_url('views/admin/categoriasOficios.php') ?>" class="btn btn-camella btn-lg">
-            <i class="fas fa-layer-group me-2"></i>
-            Ir a gestión de categorías y oficios
-        </a>
+        <!-- Botón centrado -->
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="<?= app_url('views/admin/categoriasOficios.php') ?>" 
+               class="btn-camella"
+               style="display: inline-block; padding: 0.75rem 2rem; background: linear-gradient(135deg, #3a8be8 0%, #2a6bb8 100%); color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.2s; box-shadow: 0 2px 8px rgba(58, 139, 232, 0.3);"
+               onmouseover="this.style.background='linear-gradient(135deg, #2a6bb8 0%, #1a5b98 100%)'; this.style.boxShadow='0 4px 12px rgba(58, 139, 232, 0.4)'; this.style.transform='translateY(-2px)';"
+               onmouseout="this.style.background='linear-gradient(135deg, #3a8be8 0%, #2a6bb8 100%)'; this.style.boxShadow='0 2px 8px rgba(58, 139, 232, 0.3)'; this.style.transform='translateY(0)';">
+                <i class="fas fa-layer-group me-2"></i>
+                Ir a gestión de categorías y oficios
+            </a>
+        </div>
+        
     </div>
-</div>
+</section>
 
 <style>
 /* Estilos específicos para este bloque */
