@@ -424,6 +424,109 @@ class MagicLinkController {
         }
     }
 
+    /**
+     * Login automático con Magic Link Token
+     * URL: /m/{token} o index.php?view=m&token={token}
+     * 
+     * @param string $token Token único del magic link
+     */
+    public function loginConToken($token) {
+        // Sanitizar token
+        $token = preg_replace('/[^a-zA-Z0-9]/', '', $token);
+        
+        if (empty($token)) {
+            header("Location: index.php?view=loginPhone&error=" . urlencode("Token no válido"));
+            exit;
+        }
+
+        if (!$this->pdo) {
+            header("Location: index.php?view=loginPhone&error=" . urlencode("Error de conexión"));
+            exit;
+        }
+
+        try {
+            // Buscar el token en la tabla magic_links
+            $stmt = $this->pdo->prepare("SELECT * FROM magic_links WHERE token = ? LIMIT 1");
+            $stmt->execute([$token]);
+            $link = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$link) {
+                error_log("MagicLink: Token no encontrado: $token");
+                header("Location: index.php?view=loginPhone&error=" . urlencode("Token no válido"));
+                exit;
+            }
+
+            // Verificar expiración (24 horas = 86400 segundos)
+            $created = strtotime($link['created_at']);
+            $ahora = time();
+            $tiempoTranscurrido = $ahora - $created;
+
+            if ($tiempoTranscurrido > 86400) {
+                error_log("MagicLink: Token vencido. Creado: {$link['created_at']}, Transcurrido: $tiempoTranscurrido segundos");
+                header("Location: index.php?view=loginPhone&error=" . urlencode("Token vencido (válido solo 24h)"));
+                exit;
+            }
+
+            // Verificar número de usos (máximo 100)
+            if ((int)$link['usos'] >= 100) {
+                error_log("MagicLink: Token con demasiados usos: {$link['usos']}");
+                header("Location: index.php?view=loginPhone&error=" . urlencode("Este enlace ha sido usado muchas veces"));
+                exit;
+            }
+
+            // Buscar usuario por teléfono
+            $stmt2 = $this->pdo->prepare("SELECT * FROM users WHERE phone = ? LIMIT 1");
+            $stmt2->execute([$link['phone']]);
+            $user = $stmt2->fetch(PDO::FETCH_ASSOC);
+
+            if (!$user) {
+                error_log("MagicLink: Usuario no encontrado para teléfono: {$link['phone']}");
+                header("Location: index.php?view=loginPhone&error=" . urlencode("Usuario no encontrado"));
+                exit;
+            }
+
+            // Iniciar sesión
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_phone'] = $user['phone'];
+            $_SESSION['user_name'] = $user['name'] ?? '';
+            $_SESSION['user_role'] = $user['role'] ?? 'user';
+            $_SESSION['logged_in'] = true;
+            
+            // Guardar role original si existe
+            if (!empty($user['original_role'])) {
+                $_SESSION['original_role'] = $user['original_role'];
+            }
+
+            // Incrementar contador de usos
+            $stmt3 = $this->pdo->prepare("UPDATE magic_links SET usos = usos + 1 WHERE id = ?");
+            $stmt3->execute([$link['id']]);
+
+            // Log de éxito
+            error_log("MagicLink: Login exitoso para usuario {$user['id']}, teléfono: {$user['phone']}, usos: " . ($link['usos'] + 1));
+
+            // Redirigir según el rol del usuario
+            $redirectMap = [
+                'admin' => 'index.php?view=dashboard',
+                'promotor' => 'index.php?view=promotorDashboard',
+                'publicante' => 'index.php?view=publicanteDashboard'
+            ];
+            
+            $redirect = $redirectMap[$user['role']] ?? 'index.php?view=home';
+            
+            header("Location: $redirect");
+            exit;
+
+        } catch (PDOException $e) {
+            error_log("MagicLink: Error de BD: " . $e->getMessage());
+            header("Location: index.php?view=loginPhone&error=" . urlencode("Error interno del servidor"));
+            exit;
+        }
+    }
+
     private function jsonResponse($success, $message, $data = null) {
         header('Content-Type: application/json');
         echo json_encode([

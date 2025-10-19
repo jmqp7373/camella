@@ -13,6 +13,16 @@ function sanitize_input($data) {
     return htmlspecialchars(trim(stripslashes($data)));
 }
 
+// ============================================
+// RUTA ESPECIAL: Magic Link Login /m/{token}
+// ============================================
+if (isset($_GET['view']) && $_GET['view'] === 'm' && isset($_GET['token'])) {
+    require_once __DIR__ . '/controllers/MagicLinkController.php';
+    $controller = new MagicLinkController();
+    $controller->loginConToken($_GET['token']);
+    exit;
+}
+
 // Obtener la vista solicitada (default: home)
 $view = isset($_GET['view']) ? sanitize_input($_GET['view']) : 'home';
 

@@ -6,6 +6,12 @@
 RewriteEngine On
 
 # ========================================
+# MAGIC LINK - RUTA AMIGABLE /m/{token}
+# ========================================
+# Convertir /m/abc123 a index.php?view=m&token=abc123
+RewriteRule ^m/([a-zA-Z0-9]+)$ index.php?view=m&token=$1 [L,QSA]
+
+# ========================================
 # PÁGINAS DE ERROR PERSONALIZADAS
 # ========================================
 ErrorDocument 403 /403.php
