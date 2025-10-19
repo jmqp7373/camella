@@ -125,9 +125,9 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.cursor = 'wait';
 
             try {
-                // Usar ruta relativa desde la ubicación actual
-                const baseUrl = '<?= defined("SITE_URL") ? SITE_URL : "" ?>';
-                const url = `${baseUrl}/controllers/OficioController.php?action=togglePopular&id=${id}`;
+                // Ruta absoluta desde la raíz del sitio
+                const baseUrl = window.location.origin;
+                const url = `${baseUrl}/camella.com.co/controllers/OficioController.php?action=togglePopular&id=${id}`;
                 
                 console.log('📡 Enviando request a:', url);
                 
@@ -145,8 +145,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     // Actualizar imagen según nuevo estado
                     const nuevaImagen = data.newState == 1 
-                        ? `${baseUrl}/assets/images/app/candela1.png`
-                        : `${baseUrl}/assets/images/app/candela0.png`;
+                        ? `${baseUrl}/camella.com.co/assets/images/app/candela1.png`
+                        : `${baseUrl}/camella.com.co/assets/images/app/candela0.png`;
                     
                         const nuevaOpacidad = data.newState == 1 ? '1' : '0.5';
                     
