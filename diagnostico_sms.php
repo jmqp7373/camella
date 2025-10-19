@@ -154,6 +154,7 @@ header('Content-Type: text/html; charset=utf-8');
             echo '<h2><span class="icon">🗄️</span> 2. Base de Datos</h2>';
             
             try {
+                require_once __DIR__ . '/config/config.php';
                 require_once __DIR__ . '/config/database.php';
                 $pdo = getPDO();
                 echo "<div class='detail'><span class='status success'>✅ CONECTADO</span></div>";

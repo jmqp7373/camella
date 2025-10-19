@@ -142,16 +142,18 @@ Para enviar SMS a cualquier número sin restricciones:
 
 ### Solución 3: Verificar Credenciales
 
-En `config/database.php` debe estar:
+En `config/config.php` (NO en database.php) debe estar:
 
 ```php
-// Credenciales Twilio
-define('TWILIO_SID', 'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'); // 34 caracteres
+// Configuración SMS Twilio
+define('TWILIO_SID', 'ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'); // 34 caracteres, empieza con AC
 define('TWILIO_AUTH_TOKEN', 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'); // 32 caracteres
 define('TWILIO_FROM_NUMBER', '+1234567890'); // Número comprado en Twilio
 ```
 
-Para WhatsApp:
+**Verificar que estén configuradas** (las credenciales reales deben estar en el servidor).
+
+Para WhatsApp (si quieres usar WhatsApp en lugar de SMS):
 ```php
 define('TWILIO_FROM_NUMBER', 'whatsapp:+14155238886'); // Twilio Sandbox
 ```
