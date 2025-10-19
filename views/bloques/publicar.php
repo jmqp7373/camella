@@ -562,6 +562,18 @@ require_once __DIR__ . '/../../partials/header.php';
             </a>
         </div>
     </form>
+    
+    <?php if ($isEdit && !$soloLectura): ?>
+        <!-- Botón adicional para volver al dashboard después de editar -->
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <a href="<?= $dashboardUrl ?>#anuncios-publicados" 
+               style="display: inline-block; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; transition: background 0.2s; font-size: 0.95rem;"
+               onmouseover="this.style.background='#5a6268'"
+               onmouseout="this.style.background='#6c757d'">
+                <i class="fas fa-arrow-left"></i> Volver al Dashboard
+            </a>
+        </div>
+    <?php endif; ?>
 </div>
 
 <script>
