@@ -538,6 +538,9 @@ class MagicLinkController {
     }
 }
 
-// Procesar si es llamado directamente (ejecutar siempre cuando se carga el archivo)
-$controller = new MagicLinkController();
-$controller->handleRequest();
+// Procesar si es llamado directamente VÍA POST (para AJAX)
+// NO ejecutar si es llamado desde index.php para magic link
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_GET['view'])) {
+    $controller = new MagicLinkController();
+    $controller->handleRequest();
+}

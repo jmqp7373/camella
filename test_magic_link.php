@@ -48,13 +48,14 @@ if ($stmt->fetch()) {
             $edad = time() - strtotime($link['created_at']);
             $horas = floor($edad / 3600);
             $vigente = $edad < 86400 ? '✅' : '❌';
+            $usos = isset($link['usos']) ? $link['usos'] : 0;
             
             echo "<tr>";
             echo "<td>{$link['id']}</td>";
             echo "<td><code>{$link['token']}</code></td>";
             echo "<td>{$link['phone']}</td>";
             echo "<td>{$link['created_at']}<br><small>($horas horas) $vigente</small></td>";
-            echo "<td>{$link['usos']}/100</td>";
+            echo "<td>$usos/100</td>";
             echo "<td><a href='index.php?view=m&token={$link['token']}' class='btn' target='_blank'>Probar</a></td>";
             echo "</tr>";
         }
