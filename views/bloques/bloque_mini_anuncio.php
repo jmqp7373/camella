@@ -92,7 +92,7 @@ $imageUrl = !empty($imagePath) ? SITE_URL . $imagePath : '';
                 </p>
             <?php else: ?>
                 <p style="margin: 0; font-size: 1rem; color: #666;">
-                    A convenir
+                    Precio negociable
                 </p>
             <?php endif; ?>
             
