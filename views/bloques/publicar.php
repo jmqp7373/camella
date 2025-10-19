@@ -794,7 +794,7 @@ function renderImages() {
         } else {
             uploadArea.style.opacity = '1';
             uploadArea.style.cursor = 'pointer';
-            uploadArea.onclick = () => imageInput.click();
+            // No asignar uploadArea.onclick aquí - ya se maneja con addEventListener arriba
         }
     }
 }
