@@ -7,12 +7,14 @@ Cuando un usuario solicita acceso desde `https://localhost/camella.com.co/index.
 ### Mensaje SMS Recibido
 ```
 Camella.com.co
-Codigo: 604836
-Link: https://localhost/camella.com.co/m/a1b2c3d4e5f6
+Codigo: 630283
+https://camella.com.co/m/a1b2c3d4
 Valido 5 min.
 ```
 
-**Nota**: El magic link ahora usa tokens de **12 caracteres** (en lugar de 64) para URLs más cortas y clickeables en dispositivos móviles.
+**Nota**: El magic link usa tokens de **8 caracteres** para URLs ultra-cortas y clickeables. 
+- En producción: `https://camella.com.co/m/a1b2c3d4` (33 caracteres)
+- En desarrollo: `http://localhost/camella.com.co/m/a1b2c3d4` (45 caracteres)
 
 ## ✅ Opciones para el Usuario
 
@@ -33,10 +35,13 @@ Valido 5 min.
 ```php
 // En sendCode() se genera tanto el código como el magic token
 $code = $this->generateVerificationCode();      // 6 dígitos
-$magicToken = $this->generateMagicToken();      // 12 caracteres hex (6 bytes)
+$magicToken = $this->generateMagicToken();      // 8 caracteres hex (4 bytes)
 ```
 
-**Cambio importante**: El token ahora es de **12 caracteres** en lugar de 64 para URLs más cortas y mejor compatibilidad con SMS.
+**Optimización crítica**: Token de **8 caracteres** (4 bytes = 32 bits de entropía)
+- 4.3 mil millones de combinaciones posibles
+- Más que suficiente para ventana de 5 minutos
+- URLs resultantes: 33 chars (producción), 45 chars (desarrollo)
 
 ### 2. Almacenamiento Dual
 El sistema guarda el token en **DOS tablas**:
@@ -55,22 +60,23 @@ VALUES ('a1b2c3d4...', '+573001234567', NOW(), 0)
 
 ### 3. Construcción del SMS
 ```php
-// Construir URL dinámica CORTA
-$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$magicLinkUrl = "{$protocol}://{$host}/camella.com.co/m/{$magicToken}";
+// Usar SITE_URL de configuración (producción vs desarrollo)
+$baseUrl = defined('SITE_URL') ? SITE_URL : 'http://localhost/camella.com.co';
+$magicLinkUrl = "{$baseUrl}/m/{$magicToken}";
 
-// Mensaje optimizado - ULTRA compacto para clickeabilidad
+// Mensaje ULTRA compacto - URL sola en su línea para máxima clickeabilidad
 $message = "Camella.com.co\n";
 $message .= "Codigo: {$code}\n";
-$message .= "Link: {$magicLinkUrl}\n";
+$message .= "{$magicLinkUrl}\n";  // URL sin etiqueta para detección automática
 $message .= "Valido 5 min.";
 ```
 
-**Optimizaciones**:
-- Token reducido de 64 a **12 caracteres** (suficiente entropía para 5 min)
-- URL final: ~55 caracteres (clickeable en todos los dispositivos)
-- Formato sin líneas extra para mejor detección de enlaces
+**Optimizaciones para clickeabilidad**:
+- Token reducido a **8 caracteres** (32 bits de entropía)
+- URL en **línea dedicada** sin texto adicional
+- Uso de `SITE_URL` para dominio correcto según entorno
+- Formato sin saltos extra para mejor detección de enlaces
+- Producción: ~33 caracteres | Desarrollo: ~45 caracteres
 
 ### 4. Validación de Expiración Inteligente
 ```php
