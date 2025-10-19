@@ -4,28 +4,19 @@
  * Gestiona las operaciones de la tabla oficios
  */
 
-require_once __DIR__ . '/BaseModel.php';
-
-class OficioModel extends BaseModel
+class OficioModel
 {
     protected $pdo;
     
     public function __construct() {
-        parent::__construct();
         try {
-            require_once __DIR__ . '/../config/database.php';
-            // Usar la función getPDO() definida en database.php
-            $this->pdo = getPDO();
-        } catch (Exception $e) {
+            // Conexión directa sin dependencias
+            $this->pdo = new PDO('mysql:host=localhost;dbname=camella_db;charset=utf8mb4', 'root', '');
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
             error_log("Error conectando BD en OficioModel: " . $e->getMessage());
-            // Si falla, crear conexión directa
-            try {
-                $this->pdo = new PDO('mysql:host=localhost;dbname=camella_db;charset=utf8mb4', 'root', '');
-                $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch (Exception $e2) {
-                error_log("Error en conexión fallback: " . $e2->getMessage());
-                $this->pdo = null;
-            }
+            $this->pdo = null;
         }
     }
 
