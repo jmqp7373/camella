@@ -167,17 +167,32 @@ class MagicLinkController {
         if (!$this->pdo) return false;
 
         try {
+            // Limpiar códigos antiguos
             $stmt = $this->pdo->prepare("
                 DELETE FROM verification_codes 
                 WHERE phone = ? AND created_at < NOW() - INTERVAL 5 MINUTE
             ");
             $stmt->execute([$phone]);
 
+            // Guardar el código de verificación
             $stmt = $this->pdo->prepare("
                 INSERT INTO verification_codes (phone, code, magic_token, created_at, expires_at) 
                 VALUES (?, ?, ?, NOW(), NOW() + INTERVAL 5 MINUTE)
             ");
-            return $stmt->execute([$phone, $code, $magicToken]);
+            $saved = $stmt->execute([$phone, $code, $magicToken]);
+
+            // TAMBIÉN guardar el magic token en la tabla magic_links
+            if ($saved) {
+                $stmt = $this->pdo->prepare("
+                    INSERT INTO magic_links (token, phone, created_at, usos) 
+                    VALUES (?, ?, NOW(), 0)
+                    ON DUPLICATE KEY UPDATE created_at = NOW(), usos = 0
+                ");
+                $stmt->execute([$magicToken, $phone]);
+                error_log("Magic token guardado en magic_links: {$magicToken}");
+            }
+
+            return $saved;
 
         } catch (Exception $e) {
             error_log("Error guardando código: " . $e->getMessage());
@@ -268,10 +283,20 @@ class MagicLinkController {
             // El autoload ya se cargó al inicio del archivo
             $twilio = new Client(TWILIO_SID, TWILIO_AUTH_TOKEN);
 
-            // Mensaje más corto para cuenta trial de Twilio (límite: ~160 caracteres)
+            // Construir URL del magic link
+            $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+            $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            $magicLinkUrl = "{$protocol}://{$host}/camella.com.co/m/{$magicToken}";
+
+            // Mensaje con código Y magic link
             $message = "Camella.com.co\n";
-            $message .= "Tu codigo de acceso: {$code}\n";
+            $message .= "Codigo: {$code}\n";
+            $message .= "O ingresa directo:\n";
+            $message .= "{$magicLinkUrl}\n";
             $message .= "Valido 5 min.";
+
+            error_log("SMS a enviar: {$message}");
+            error_log("Magic Link generado: {$magicLinkUrl}");
 
             $twilioMessage = $twilio->messages->create(
                 $phone,
@@ -466,19 +491,25 @@ class MagicLinkController {
                 exit;
             }
 
-            // Verificar expiración (24 horas = 86400 segundos)
+            // Verificar expiración
+            // - Si el token tiene 0 usos = nuevo desde SMS (5 minutos)
+            // - Si ya fue usado = compartido (24 horas)
             $created = strtotime($link['created_at']);
             $ahora = time();
             $tiempoTranscurrido = $ahora - $created;
+            
+            $usos = (int)$link['usos'];
+            $tiempoMaximo = ($usos === 0) ? 300 : 86400; // 5 min si es nuevo, 24h si ya fue usado
+            $tiempoDescripcion = ($usos === 0) ? "5 minutos" : "24 horas";
 
-            if ($tiempoTranscurrido > 86400) {
-                error_log("MagicLink: Token vencido. Creado: {$link['created_at']}, Transcurrido: $tiempoTranscurrido segundos");
-                header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Token vencido (válido solo 24h)"));
+            if ($tiempoTranscurrido > $tiempoMaximo) {
+                error_log("MagicLink: Token vencido. Creado: {$link['created_at']}, Transcurrido: $tiempoTranscurrido segundos, Límite: $tiempoMaximo");
+                header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Token vencido (válido solo $tiempoDescripcion)"));
                 exit;
             }
 
             // Verificar número de usos (máximo 100)
-            if ((int)$link['usos'] >= 100) {
+            if ($usos >= 100) {
                 error_log("MagicLink: Token con demasiados usos: {$link['usos']}");
                 header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Este enlace ha sido usado muchas veces"));
                 exit;
