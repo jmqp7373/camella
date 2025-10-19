@@ -300,21 +300,16 @@ class MagicLinkController {
             // El autoload ya se cargó al inicio del archivo
             $twilio = new Client(TWILIO_SID, TWILIO_AUTH_TOKEN);
 
-            // Usar SITE_URL de configuración para dominio correcto
-            // En producción: https://camella.com.co
-            // En desarrollo: http://localhost/camella.com.co
-            $baseUrl = defined('SITE_URL') ? SITE_URL : 'http://localhost/camella.com.co';
-            $magicLinkUrl = "{$baseUrl}/m/{$magicToken}";
-
-            // Mensaje ULTRA compacto - URL sola en su línea para clickeabilidad
+            // MENSAJE SIMPLE SIN MAGIC LINK (para probar que SMS llegue)
+            // Cambiado temporalmente para verificar funcionamiento
             $message = "Camella.com.co\n";
-            $message .= "Codigo: {$code}\n";
-            $message .= "{$magicLinkUrl}\n";  // URL sola para que sea clickeable
+            $message .= "Tu codigo de acceso: {$code}\n";
             $message .= "Valido 5 min.";
 
             error_log("SMS a enviar: {$message}");
-            error_log("Magic Link: {$magicLinkUrl} (token: {$magicToken}, longitud token: " . strlen($magicToken) . ")");
-            error_log("Longitud total URL: " . strlen($magicLinkUrl) . " caracteres");
+            error_log("Teléfono destino: {$phone}");
+            error_log("Número FROM: " . TWILIO_FROM_NUMBER);
+            error_log("Longitud mensaje: " . strlen($message) . " caracteres");
 
             $twilioMessage = $twilio->messages->create(
                 $phone,
