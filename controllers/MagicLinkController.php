@@ -514,10 +514,11 @@ class MagicLinkController {
             error_log("MagicLink: Login exitoso para usuario {$user['id']}, teléfono: {$user['phone']}, usos: " . ($link['usos'] + 1));
 
             // Redirigir según el rol del usuario con URL absoluta
+            // Las vistas de dashboard están en subdirectorios
             $redirectMap = [
-                'admin' => "$baseUrl/index.php?view=dashboard",
-                'promotor' => "$baseUrl/index.php?view=promotorDashboard",
-                'publicante' => "$baseUrl/index.php?view=publicanteDashboard"
+                'admin' => "$baseUrl/views/admin/dashboard.php",
+                'promotor' => "$baseUrl/views/promotor/dashboard.php",
+                'publicante' => "$baseUrl/views/publicante/dashboard.php"
             ];
             
             $redirect = $redirectMap[$user['role']] ?? "$baseUrl/index.php?view=home";

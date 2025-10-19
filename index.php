@@ -4,6 +4,9 @@
  * Versión limpia enfocada en cargar vistas sin interferencias
  */
 
+// Iniciar sesión al principio
+session_start();
+
 // Configuraciones básicas
 error_reporting(E_ALL);
 ini_set('display_errors', 0); // Producción
@@ -41,7 +44,10 @@ $allowed_views = [
     'recuperar-password',
     'privacidad',
     'terminos',
-    'ayuda'
+    'ayuda',
+    'dashboard',
+    'promotorDashboard',
+    'publicanteDashboard'
 ];
 
 // Verificar que la vista sea válida
