@@ -72,33 +72,21 @@ require_once __DIR__ . '/../../partials/header.php';
                 </h3>
                 
                 <?php if (!empty($oficiosPorCategoria[$categoria['id']])): ?>
-                    <ul class="subcategories">
+                    <ul class="subcategories list-unstyled mb-0">
                         <?php foreach ($oficiosPorCategoria[$categoria['id']] as $oficio): ?>
-                            <li class="oficio-admin-item" style="margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0;">
-                                <span style="color: #333; display: flex; align-items: center; gap: 5px;">
-                                    <?= htmlspecialchars($oficio['nombre']) ?>
-                                    <?php if ($oficio['popular'] == 1): ?>
-                                        <img src="<?= SITE_URL ?>/assets/images/app/candela1.png" 
-                                             alt="Alta demanda" 
-                                             title="Oficio popular"
-                                             class="candela-icon"
-                                             style="width: 18px; height: 18px;">
-                                    <?php else: ?>
-                                        <img src="<?= SITE_URL ?>/assets/images/app/candela0.png" 
-                                             alt="No destacada" 
-                                             title="Oficio no popular"
-                                             class="candela-icon"
-                                             style="width: 18px; height: 18px; opacity: 0.4;">
-                                    <?php endif; ?>
+                            <li style="margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0;">
+                                <span style="color: #333;">
+                                    → <?= htmlspecialchars($oficio['nombre']) ?>
                                 </span>
-                                <button 
-                                    class="btn-toggle-candela" 
-                                    data-id="<?= $oficio['id'] ?>" 
-                                    data-popular="<?= $oficio['popular'] ?>"
-                                    title="Clic para cambiar popularidad"
-                                    style="background: none; border: 2px solid #ffd700; border-radius: 6px; cursor: pointer; padding: 0.25rem 0.5rem; transition: all 0.3s; font-size: 1.2rem;">
-                                    🔥
-                                </button>
+                                <img 
+                                    src="<?= SITE_URL ?>/assets/images/app/<?= $oficio['popular'] == 1 ? 'candela1.png' : 'candela0.png' ?>" 
+                                    alt="<?= $oficio['popular'] == 1 ? 'Alta demanda' : 'Baja demanda' ?>"
+                                    title="<?= $oficio['popular'] == 1 ? 'Oficio popular - Clic para desmarcar' : 'Oficio no popular - Clic para marcar' ?>"
+                                    class="candela-toggle"
+                                    data-id="<?= $oficio['id'] ?>"
+                                    style="width: 20px; height: 20px; cursor: pointer; transition: transform 0.15s ease; <?= $oficio['popular'] == 0 ? 'opacity: 0.4;' : '' ?>"
+                                    onmouseover="this.style.transform='scale(1.15)'"
+                                    onmouseout="this.style.transform='scale(1)'">
                             </li>
                         <?php endforeach; ?>
                     </ul>
@@ -114,76 +102,81 @@ require_once __DIR__ . '/../../partials/header.php';
 
 
 <script>
-// Toggle estado popular de oficio con actualización visual mejorada
-document.querySelectorAll('.btn-toggle-candela').forEach(btn => {
-    btn.addEventListener('click', function() {
-        const oficioId = this.getAttribute('data-id');
-        const listItem = this.closest('li');
-        const candelaImg = listItem.querySelector('.candela-icon');
+// Toggle estado popular de oficio - versión simplificada y funcional
+document.querySelectorAll('.candela-toggle').forEach(flama => {
+    flama.addEventListener('click', async function() {
+        const id = this.dataset.id;
+        const estadoAnterior = this.src;
         
-        // Mostrar estado de carga
-        btn.style.opacity = '0.5';
-        btn.disabled = true;
-        
-        fetch('../../controllers/AdminController.php?action=togglePopular&id=' + oficioId, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
+        // Feedback visual inmediato
+        this.style.opacity = '0.5';
+        this.style.pointerEvents = 'none';
+
+        try {
+            const response = await fetch(
+                '<?= SITE_URL ?>/controllers/OficioController.php?action=togglePopular&id=' + id
+            );
+            
+            if (!response.ok) {
+                throw new Error('Error HTTP: ' + response.status);
             }
-        })
-        .then(response => response.json())
-        .then(data => {
+            
+            const data = await response.json();
+
             if (data.success) {
-                // Actualizar atributo data-popular
-                btn.setAttribute('data-popular', data.newState);
+                // Actualizar imagen según nuevo estado
+                const nuevaImagen = data.newState == 1 
+                    ? '<?= SITE_URL ?>/assets/images/app/candela1.png'
+                    : '<?= SITE_URL ?>/assets/images/app/candela0.png';
                 
-                // Actualizar imagen de candela con animación
-                if (candelaImg) {
-                    candelaImg.style.transition = 'opacity 0.3s, transform 0.3s';
-                    candelaImg.style.opacity = '0';
+                const nuevoTitulo = data.newState == 1
+                    ? 'Oficio popular - Clic para desmarcar'
+                    : 'Oficio no popular - Clic para marcar';
+                
+                const nuevaOpacidad = data.newState == 1 ? '1' : '0.4';
+                
+                // Aplicar cambios con transición suave
+                this.style.transition = 'opacity 0.3s ease';
+                this.style.opacity = '0';
+                
+                setTimeout(() => {
+                    this.src = nuevaImagen;
+                    this.title = nuevoTitulo;
+                    this.style.opacity = nuevaOpacidad;
+                    this.style.pointerEvents = 'auto';
                     
-                    setTimeout(() => {
-                        if (data.newState == 1) {
-                            candelaImg.src = '<?= SITE_URL ?>/assets/images/app/candela1.png';
-                            candelaImg.alt = 'Alta demanda';
-                            candelaImg.title = 'Oficio popular';
-                            candelaImg.style.opacity = '1';
-                        } else {
-                            candelaImg.src = '<?= SITE_URL ?>/assets/images/app/candela0.png';
-                            candelaImg.alt = 'No destacada';
-                            candelaImg.title = 'Oficio no popular';
-                            candelaImg.style.opacity = '0.4';
-                        }
-                        
-                        // Pequeña animación de escala
-                        candelaImg.style.transform = 'scale(1.2)';
-                        setTimeout(() => {
-                            candelaImg.style.transform = 'scale(1)';
-                        }, 200);
-                    }, 150);
-                }
-                
-                // Mostrar notificación
+                    // Efecto de brillo al cambiar
+                    this.animate([
+                        { filter: 'brightness(2) drop-shadow(0 0 5px #ffd700)' }, 
+                        { filter: 'brightness(1) drop-shadow(0 0 0 transparent)' }
+                    ], { 
+                        duration: 400,
+                        easing: 'ease-out'
+                    });
+                }, 150);
+
+                // Notificación sutil
                 showNotification(
                     data.newState == 1 
                         ? '✅ Oficio marcado como popular' 
-                        : '⚪ Oficio desmarcado como popular', 
+                        : '⚪ Oficio desmarcado', 
                     'success'
                 );
             } else {
-                showNotification('❌ Error al actualizar: ' + (data.message || 'Desconocido'), 'danger');
+                // Revertir en caso de error
+                this.src = estadoAnterior;
+                this.style.opacity = '1';
+                this.style.pointerEvents = 'auto';
+                showNotification('❌ Error: ' + (data.message || 'No se pudo actualizar'), 'danger');
             }
-            
-            // Restaurar botón
-            btn.style.opacity = '1';
-            btn.disabled = false;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            showNotification('❌ Error de conexión', 'danger');
-            btn.style.opacity = '1';
-            btn.disabled = false;
-        });
+        } catch (error) {
+            console.error('Error en togglePopular:', error);
+            // Revertir cambios
+            this.src = estadoAnterior;
+            this.style.opacity = '1';
+            this.style.pointerEvents = 'auto';
+            showNotification('❌ Error de conexión: ' + error.message, 'danger');
+        }
     });
 });
 
@@ -248,37 +241,32 @@ function showNotification(message, type = 'info') {
     box-shadow: 0 8px 20px rgba(0, 43, 71, 0.15);
 }
 
-.oficio-admin-item {
+.subcategories li {
     border-bottom: 1px solid #f0f0f0;
     transition: all 0.2s;
 }
 
-.oficio-admin-item:last-child {
+.subcategories li:last-child {
     border-bottom: none;
 }
 
-.oficio-admin-item:hover {
+.subcategories li:hover {
     background-color: #f8f9fa;
     padding-left: 0.75rem !important;
     border-radius: 6px;
 }
 
-.btn-toggle-candela {
+.candela-toggle {
     transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
 }
 
-.btn-toggle-candela:hover {
-    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-    transform: scale(1.1);
-    box-shadow: 0 3px 8px rgba(255, 215, 0, 0.4);
+.candela-toggle:hover {
+    filter: drop-shadow(0 3px 8px rgba(255, 215, 0, 0.6)) brightness(1.1);
 }
 
-.btn-toggle-candela:active {
-    transform: scale(0.95);
-}
-
-.candela-icon {
-    transition: all 0.3s ease;
+.candela-toggle:active {
+    transform: scale(0.9) !important;
 }
 
 .category-title .badge {
