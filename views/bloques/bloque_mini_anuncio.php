@@ -11,17 +11,19 @@
 /**
  * Función para calcular el tiempo transcurrido desde la publicación
  */
-function tiempoTranscurrido($fecha) {
-    $ahora = new DateTime();
-    $publicado = new DateTime($fecha);
-    $diferencia = $ahora->diff($publicado);
+if (!function_exists('tiempoTranscurrido')) {
+    function tiempoTranscurrido($fecha) {
+        $ahora = new DateTime();
+        $publicado = new DateTime($fecha);
+        $diferencia = $ahora->diff($publicado);
 
-    if ($diferencia->y > 0) return "hace " . $diferencia->y . " año" . ($diferencia->y > 1 ? "s" : "");
-    if ($diferencia->m > 0) return "hace " . $diferencia->m . " mes" . ($diferencia->m > 1 ? "es" : "");
-    if ($diferencia->d > 0) return "hace " . $diferencia->d . " día" . ($diferencia->d > 1 ? "s" : "");
-    if ($diferencia->h > 0) return "hace " . $diferencia->h . " hora" . ($diferencia->h > 1 ? "s" : "");
-    if ($diferencia->i > 0) return "hace " . $diferencia->i . " minuto" . ($diferencia->i > 1 ? "s" : "");
-    return "hace unos segundos";
+        if ($diferencia->y > 0) return "hace " . $diferencia->y . " año" . ($diferencia->y > 1 ? "s" : "");
+        if ($diferencia->m > 0) return "hace " . $diferencia->m . " mes" . ($diferencia->m > 1 ? "es" : "");
+        if ($diferencia->d > 0) return "hace " . $diferencia->d . " día" . ($diferencia->d > 1 ? "s" : "");
+        if ($diferencia->h > 0) return "hace " . $diferencia->h . " hora" . ($diferencia->h > 1 ? "s" : "");
+        if ($diferencia->i > 0) return "hace " . $diferencia->i . " minuto" . ($diferencia->i > 1 ? "s" : "");
+        return "hace unos segundos";
+    }
 }
 
 // Validar que existe el array de anuncio
