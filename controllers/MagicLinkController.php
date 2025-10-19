@@ -167,7 +167,10 @@ class MagicLinkController {
     }
 
     private function saveVerificationCode($phone, $code, $magicToken) {
-        if (!$this->pdo) return false;
+        if (!$this->pdo) {
+            error_log("ERROR saveVerificationCode: No hay conexión PDO");
+            return false;
+        }
 
         try {
             // Limpiar códigos antiguos
@@ -184,8 +187,14 @@ class MagicLinkController {
             ");
             $saved = $stmt->execute([$phone, $code, $magicToken]);
 
+            if (!$saved) {
+                error_log("ERROR saveVerificationCode: Falló inserción en verification_codes");
+                return false;
+            }
+
             // TAMBIÉN guardar el magic token en la tabla magic_links
-            if ($saved) {
+            // Usar try-catch separado para no fallar si la tabla no existe
+            try {
                 $stmt = $this->pdo->prepare("
                     INSERT INTO magic_links (token, phone, created_at, usos) 
                     VALUES (?, ?, NOW(), 0)
@@ -193,12 +202,17 @@ class MagicLinkController {
                 ");
                 $stmt->execute([$magicToken, $phone]);
                 error_log("Magic token guardado en magic_links: {$magicToken}");
+            } catch (Exception $e) {
+                // No fallar si magic_links no existe (compatibilidad)
+                error_log("ADVERTENCIA: No se pudo guardar en magic_links: " . $e->getMessage());
+                error_log("El sistema funcionará solo con códigos de verificación");
             }
 
             return $saved;
 
         } catch (Exception $e) {
-            error_log("Error guardando código: " . $e->getMessage());
+            error_log("ERROR saveVerificationCode: " . $e->getMessage());
+            error_log("ERROR Stack Trace: " . $e->getTraceAsString());
             return false;
         }
     }

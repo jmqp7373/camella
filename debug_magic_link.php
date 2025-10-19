@@ -113,7 +113,9 @@ try {
     echo "Usuario: " . ($user ? "✅" : "❌") . "\n";
     echo "Rol reconocido: " . (isset($redirectMap[$role]) ? "✅" : "❌") . "\n";
     
-    echo "\n<a href='index.php?view=m&token=$token' style='background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;'>Probar Magic Link</a>\n";
+    $testUrl = "$baseUrl/index.php?view=m&token=$token";
+    echo "\n<a href='$testUrl' style='background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 10px;'>Probar Magic Link</a>\n";
+    echo "\nURL completa: <code>$testUrl</code>\n";
     
 } catch (PDOException $e) {
     echo "❌ ERROR: " . $e->getMessage() . "\n";

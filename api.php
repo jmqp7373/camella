@@ -42,6 +42,121 @@ switch ($action) {
         break;
     
     // ========================================
+    // GUARDAR/ACTUALIZAR ANUNCIO
+    // ========================================
+    case 'saveAnuncio':
+        session_start();
+        
+        // Verificar sesión activa
+        if (!isset($_SESSION['user_id'])) {
+            http_response_code(401);
+            echo json_encode([
+                'success' => false,
+                'message' => 'No estás autenticado'
+            ]);
+            exit;
+        }
+        
+        // Obtener datos del formulario
+        $anuncioId = isset($_POST['anuncio_id']) && !empty($_POST['anuncio_id']) ? (int)$_POST['anuncio_id'] : null;
+        $titulo = isset($_POST['titulo']) ? trim($_POST['titulo']) : '';
+        $descripcion = isset($_POST['descripcion']) ? trim($_POST['descripcion']) : '';
+        $precio = isset($_POST['precio']) && !empty($_POST['precio']) ? (float)$_POST['precio'] : null;
+        $userId = $_SESSION['user_id'];
+        
+        // Validaciones
+        if (empty($titulo)) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'El título es obligatorio'
+            ]);
+            exit;
+        }
+        
+        if (empty($descripcion)) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'La descripción es obligatoria'
+            ]);
+            exit;
+        }
+        
+        try {
+            require_once 'config/database.php';
+            $db = getPDO();
+            
+            if ($anuncioId) {
+                // MODO EDITAR: Actualizar anuncio existente
+                
+                // Verificar que el anuncio pertenece al usuario
+                $stmt = $db->prepare("SELECT user_id FROM anuncios WHERE id = ?");
+                $stmt->execute([$anuncioId]);
+                $anuncio = $stmt->fetch();
+                
+                if (!$anuncio) {
+                    http_response_code(404);
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Anuncio no encontrado'
+                    ]);
+                    exit;
+                }
+                
+                if ($anuncio['user_id'] != $userId && $_SESSION['role'] !== 'admin') {
+                    http_response_code(403);
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'No tienes permiso para editar este anuncio'
+                    ]);
+                    exit;
+                }
+                
+                // Actualizar el anuncio
+                $stmt = $db->prepare("
+                    UPDATE anuncios 
+                    SET titulo = ?, descripcion = ?, precio = ?, updated_at = NOW()
+                    WHERE id = ?
+                ");
+                $stmt->execute([$titulo, $descripcion, $precio, $anuncioId]);
+                
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Anuncio actualizado exitosamente',
+                    'anuncio_id' => $anuncioId,
+                    'mode' => 'edit'
+                ]);
+                
+            } else {
+                // MODO NUEVO: Crear nuevo anuncio
+                
+                $stmt = $db->prepare("
+                    INSERT INTO anuncios (user_id, titulo, descripcion, precio, status, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, 'activo', NOW(), NOW())
+                ");
+                $stmt->execute([$userId, $titulo, $descripcion, $precio]);
+                
+                $nuevoAnuncioId = $db->lastInsertId();
+                
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Anuncio creado exitosamente',
+                    'anuncio_id' => $nuevoAnuncioId,
+                    'mode' => 'create'
+                ]);
+            }
+            
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al guardar el anuncio: ' . $e->getMessage()
+            ]);
+        }
+        break;
+    
+    // ========================================
     // ELIMINAR ANUNCIO
     // ========================================
     case 'deleteAnuncio':
