@@ -31,10 +31,8 @@ class OficioModel
             return false;
         }
 
-        $sql = "SELECT id, categoria_id, titulo, popular, activo, created_at, updated_at 
-                FROM oficios 
-                WHERE id = :id 
-                LIMIT 1";
+        // Usar solo las columnas que existen en la tabla real
+        $sql = "SELECT * FROM oficios WHERE id = :id LIMIT 1";
         
         try {
             $stmt = $this->pdo->prepare($sql);
@@ -61,10 +59,8 @@ class OficioModel
         // Validar que el nuevo estado sea 0 o 1
         $nuevoEstado = ($nuevoEstado == 1) ? 1 : 0;
 
-        $sql = "UPDATE oficios 
-                SET popular = :nuevoEstado, 
-                    updated_at = NOW() 
-                WHERE id = :id";
+        // No usar updated_at si no existe en la tabla
+        $sql = "UPDATE oficios SET popular = :nuevoEstado WHERE id = :id";
         
         try {
             $stmt = $this->pdo->prepare($sql);
