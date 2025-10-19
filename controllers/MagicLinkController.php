@@ -160,7 +160,9 @@ class MagicLinkController {
     }
 
     private function generateMagicToken() {
-        return bin2hex(random_bytes(32));
+        // Generar token corto de 12 caracteres para URLs más amigables
+        // Suficiente entropía para 5 minutos de validez
+        return bin2hex(random_bytes(6)); // 6 bytes = 12 caracteres hex
     }
 
     private function saveVerificationCode($phone, $code, $magicToken) {
@@ -283,20 +285,21 @@ class MagicLinkController {
             // El autoload ya se cargó al inicio del archivo
             $twilio = new Client(TWILIO_SID, TWILIO_AUTH_TOKEN);
 
-            // Construir URL del magic link
+            // Construir URL amigable CORTA del magic link
             $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
             $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+            
+            // URL amigable corta: /m/abc123 (12 caracteres)
             $magicLinkUrl = "{$protocol}://{$host}/camella.com.co/m/{$magicToken}";
 
-            // Mensaje con código Y magic link
+            // Mensaje ULTRA optimizado para SMS clickeable
             $message = "Camella.com.co\n";
             $message .= "Codigo: {$code}\n";
-            $message .= "O ingresa directo:\n";
-            $message .= "{$magicLinkUrl}\n";
+            $message .= "Link: {$magicLinkUrl}\n";
             $message .= "Valido 5 min.";
 
             error_log("SMS a enviar: {$message}");
-            error_log("Magic Link generado: {$magicLinkUrl}");
+            error_log("Magic Link: {$magicLinkUrl} (token: {$magicToken}, longitud: " . strlen($magicToken) . ")");
 
             $twilioMessage = $twilio->messages->create(
                 $phone,
