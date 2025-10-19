@@ -434,13 +434,18 @@ class MagicLinkController {
         // Sanitizar token
         $token = preg_replace('/[^a-zA-Z0-9]/', '', $token);
         
+        // Obtener la base URL del sitio
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'];
+        $baseUrl = "$protocol://$host/camella.com.co";
+        
         if (empty($token)) {
-            header("Location: index.php?view=loginPhone&error=" . urlencode("Token no válido"));
+            header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Token no válido"));
             exit;
         }
 
         if (!$this->pdo) {
-            header("Location: index.php?view=loginPhone&error=" . urlencode("Error de conexión"));
+            header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Error de conexión"));
             exit;
         }
 
@@ -452,7 +457,7 @@ class MagicLinkController {
 
             if (!$link) {
                 error_log("MagicLink: Token no encontrado: $token");
-                header("Location: index.php?view=loginPhone&error=" . urlencode("Token no válido"));
+                header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Token no válido"));
                 exit;
             }
 
@@ -463,14 +468,14 @@ class MagicLinkController {
 
             if ($tiempoTranscurrido > 86400) {
                 error_log("MagicLink: Token vencido. Creado: {$link['created_at']}, Transcurrido: $tiempoTranscurrido segundos");
-                header("Location: index.php?view=loginPhone&error=" . urlencode("Token vencido (válido solo 24h)"));
+                header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Token vencido (válido solo 24h)"));
                 exit;
             }
 
             // Verificar número de usos (máximo 100)
             if ((int)$link['usos'] >= 100) {
                 error_log("MagicLink: Token con demasiados usos: {$link['usos']}");
-                header("Location: index.php?view=loginPhone&error=" . urlencode("Este enlace ha sido usado muchas veces"));
+                header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Este enlace ha sido usado muchas veces"));
                 exit;
             }
 
@@ -481,7 +486,7 @@ class MagicLinkController {
 
             if (!$user) {
                 error_log("MagicLink: Usuario no encontrado para teléfono: {$link['phone']}");
-                header("Location: index.php?view=loginPhone&error=" . urlencode("Usuario no encontrado"));
+                header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Usuario no encontrado"));
                 exit;
             }
 
@@ -508,21 +513,21 @@ class MagicLinkController {
             // Log de éxito
             error_log("MagicLink: Login exitoso para usuario {$user['id']}, teléfono: {$user['phone']}, usos: " . ($link['usos'] + 1));
 
-            // Redirigir según el rol del usuario
+            // Redirigir según el rol del usuario con URL absoluta
             $redirectMap = [
-                'admin' => 'index.php?view=dashboard',
-                'promotor' => 'index.php?view=promotorDashboard',
-                'publicante' => 'index.php?view=publicanteDashboard'
+                'admin' => "$baseUrl/index.php?view=dashboard",
+                'promotor' => "$baseUrl/index.php?view=promotorDashboard",
+                'publicante' => "$baseUrl/index.php?view=publicanteDashboard"
             ];
             
-            $redirect = $redirectMap[$user['role']] ?? 'index.php?view=home';
+            $redirect = $redirectMap[$user['role']] ?? "$baseUrl/index.php?view=home";
             
             header("Location: $redirect");
             exit;
 
         } catch (PDOException $e) {
             error_log("MagicLink: Error de BD: " . $e->getMessage());
-            header("Location: index.php?view=loginPhone&error=" . urlencode("Error interno del servidor"));
+            header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Error interno del servidor"));
             exit;
         }
     }
