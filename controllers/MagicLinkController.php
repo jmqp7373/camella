@@ -431,6 +431,11 @@ class MagicLinkController {
      * @param string $token Token único del magic link
      */
     public function loginConToken($token) {
+        // Asegurar que la sesión esté iniciada (puede haberse iniciado en index.php)
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         // Sanitizar token
         $token = preg_replace('/[^a-zA-Z0-9]/', '', $token);
         
@@ -490,21 +495,26 @@ class MagicLinkController {
                 exit;
             }
 
-            // Iniciar sesión
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
-            }
-            
-            $_SESSION['user_id'] = $user['id'];
+            // La sesión ya está iniciada al principio del método
+            // Configurar variables de sesión compatibles con los dashboards existentes
+            $_SESSION['usuario'] = $user['id']; // Variable que esperan los dashboards
+            $_SESSION['user_id'] = $user['id']; // Variable adicional para compatibilidad
             $_SESSION['user_phone'] = $user['phone'] ?? '';
             $_SESSION['user_email'] = $user['email'] ?? '';
-            $_SESSION['user_role'] = $user['role'] ?? 'user';
+            $_SESSION['role'] = $user['role'] ?? 'user'; // Variable que esperan los dashboards
+            $_SESSION['user_role'] = $user['role'] ?? 'user'; // Variable adicional para compatibilidad
             $_SESSION['logged_in'] = true;
             
             // Guardar role original si existe
             if (!empty($user['original_role'])) {
                 $_SESSION['original_role'] = $user['original_role'];
             }
+            
+            // Log para verificar que la sesión se configuró
+            error_log("MagicLink: Variables de sesión configuradas:");
+            error_log("  - usuario: " . $_SESSION['usuario']);
+            error_log("  - role: " . $_SESSION['role']);
+            error_log("  - logged_in: " . ($_SESSION['logged_in'] ? 'true' : 'false'));
 
             // Incrementar contador de usos
             $stmt3 = $this->pdo->prepare("UPDATE magic_links SET usos = usos + 1 WHERE id = ?");
@@ -534,6 +544,11 @@ class MagicLinkController {
                 $redirect = "$baseUrl/index.php?view=home";
                 error_log("  - Rol '$role' no reconocido, redirigiendo a home");
             }
+            
+            error_log("MagicLink: Session ID antes de redirect: " . session_id());
+            
+            // Forzar escritura de la sesión antes de redirigir
+            session_write_close();
             
             header("Location: $redirect");
             exit;
