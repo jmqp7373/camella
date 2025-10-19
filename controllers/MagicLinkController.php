@@ -510,18 +510,30 @@ class MagicLinkController {
             $stmt3 = $this->pdo->prepare("UPDATE magic_links SET usos = usos + 1 WHERE id = ?");
             $stmt3->execute([$link['id']]);
 
-            // Log de éxito
-            error_log("MagicLink: Login exitoso para usuario {$user['id']}, teléfono: {$user['phone']}, usos: " . ($link['usos'] + 1));
+            // Log de éxito con información detallada
+            error_log("MagicLink: Login exitoso");
+            error_log("  - Usuario ID: {$user['id']}");
+            error_log("  - Teléfono: {$user['phone']}");
+            error_log("  - Rol: {$user['role']}");
+            error_log("  - Usos del token: " . ($link['usos'] + 1));
 
             // Redirigir según el rol del usuario con URL absoluta
             // Las vistas de dashboard están en subdirectorios
+            $role = strtolower(trim($user['role']));
+            
             $redirectMap = [
                 'admin' => "$baseUrl/views/admin/dashboard.php",
                 'promotor' => "$baseUrl/views/promotor/dashboard.php",
                 'publicante' => "$baseUrl/views/publicante/dashboard.php"
             ];
             
-            $redirect = $redirectMap[$user['role']] ?? "$baseUrl/index.php?view=home";
+            if (isset($redirectMap[$role])) {
+                $redirect = $redirectMap[$role];
+                error_log("  - Redirigiendo a: $redirect");
+            } else {
+                $redirect = "$baseUrl/index.php?view=home";
+                error_log("  - Rol '$role' no reconocido, redirigiendo a home");
+            }
             
             header("Location: $redirect");
             exit;
