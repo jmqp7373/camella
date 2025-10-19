@@ -43,7 +43,7 @@ if ($stmt->fetch()) {
     if (count($links) > 0) {
         echo "<h3>Últimos 10 magic links:</h3>";
         echo "<table>";
-        echo "<tr><th>ID</th><th>Token</th><th>Teléfono</th><th>Código</th><th>Creado</th><th>Usos</th><th>Acción</th></tr>";
+        echo "<tr><th>ID</th><th>Token</th><th>Teléfono</th><th>Creado</th><th>Usos</th><th>Acción</th></tr>";
         foreach ($links as $link) {
             $edad = time() - strtotime($link['created_at']);
             $horas = floor($edad / 3600);
@@ -53,7 +53,6 @@ if ($stmt->fetch()) {
             echo "<td>{$link['id']}</td>";
             echo "<td><code>{$link['token']}</code></td>";
             echo "<td>{$link['phone']}</td>";
-            echo "<td>{$link['code']}</td>";
             echo "<td>{$link['created_at']}<br><small>($horas horas) $vigente</small></td>";
             echo "<td>{$link['usos']}/100</td>";
             echo "<td><a href='index.php?view=m&token={$link['token']}' class='btn' target='_blank'>Probar</a></td>";
@@ -74,16 +73,15 @@ echo "<h2>2. Crear Magic Link de Prueba</h2>";
 if (isset($_POST['crear_test'])) {
     $testPhone = $_POST['test_phone'];
     $testToken = substr(md5(uniqid(rand(), true)), 0, 12);
-    $testCode = rand(100000, 999999);
     
     try {
-        $stmt = $pdo->prepare("INSERT INTO magic_links (token, phone, code, created_at, usos) VALUES (?, ?, ?, NOW(), 0)");
-        $stmt->execute([$testToken, $testPhone, $testCode]);
+        // Crear magic link sin columna 'code' si no existe
+        $stmt = $pdo->prepare("INSERT INTO magic_links (token, phone, created_at, usos) VALUES (?, ?, NOW(), 0)");
+        $stmt->execute([$testToken, $testPhone]);
         
         echo "<p class='success'>✅ Magic Link creado exitosamente</p>";
         echo "<p><strong>Token:</strong> <code>$testToken</code></p>";
         echo "<p><strong>Teléfono:</strong> $testPhone</p>";
-        echo "<p><strong>Código:</strong> $testCode</p>";
         echo "<p><strong>Prueba estas URLs:</strong></p>";
         echo "<ul>";
         echo "<li><a href='index.php?view=m&token=$testToken' target='_blank'>Formato GET: index.php?view=m&token=$testToken</a></li>";
@@ -103,18 +101,18 @@ echo "</form>";
 
 // PASO 3: Verificar usuarios
 echo "<h2>3. Usuarios en la base de datos</h2>";
-$stmt = $pdo->query("SELECT id, phone, name, role FROM users LIMIT 5");
+$stmt = $pdo->query("SELECT * FROM users LIMIT 5");
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if (count($users) > 0) {
     echo "<table>";
-    echo "<tr><th>ID</th><th>Teléfono</th><th>Nombre</th><th>Rol</th></tr>";
+    echo "<tr><th>ID</th><th>Teléfono</th><th>Email</th><th>Rol</th></tr>";
     foreach ($users as $user) {
         echo "<tr>";
         echo "<td>{$user['id']}</td>";
-        echo "<td>{$user['phone']}</td>";
-        echo "<td>" . ($user['name'] ?? 'Sin nombre') . "</td>";
-        echo "<td>{$user['role']}</td>";
+        echo "<td>" . ($user['phone'] ?? 'Sin teléfono') . "</td>";
+        echo "<td>" . ($user['email'] ?? 'Sin email') . "</td>";
+        echo "<td>" . ($user['role'] ?? 'Sin rol') . "</td>";
         echo "</tr>";
     }
     echo "</table>";

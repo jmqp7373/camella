@@ -42,9 +42,8 @@ try {
         
         $sql = "CREATE TABLE `magic_links` (
           `id` INT(11) NOT NULL AUTO_INCREMENT,
-          `token` VARCHAR(20) NOT NULL UNIQUE,
+          `token` VARCHAR(64) NOT NULL UNIQUE,
           `phone` VARCHAR(20) NOT NULL,
-          `code` VARCHAR(6) DEFAULT NULL,
           `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           `usos` INT(11) DEFAULT 0,
           PRIMARY KEY (`id`),

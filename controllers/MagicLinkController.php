@@ -491,8 +491,8 @@ class MagicLinkController {
             }
             
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_phone'] = $user['phone'];
-            $_SESSION['user_name'] = $user['name'] ?? '';
+            $_SESSION['user_phone'] = $user['phone'] ?? '';
+            $_SESSION['user_email'] = $user['email'] ?? '';
             $_SESSION['user_role'] = $user['role'] ?? 'user';
             $_SESSION['logged_in'] = true;
             
