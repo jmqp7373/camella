@@ -100,8 +100,13 @@ $esDashboard = (strpos($archivoActual, 'dashboard') !== false);
                             'publicante' => 'views/publicante/dashboard.php'
                         ];
                         $urlPublicar = app_url($paneles[$rol] ?? 'views/publicante/dashboard.php') . '#crear-anuncio';
+                        
+                        // Detectar si estamos en la página de publicar
+                        $enPaginaPublicar = (strpos($_SERVER['PHP_SELF'], '/publicar.php') !== false);
                         ?>
-                        <a href="<?= $urlPublicar ?>" class="btn btn-publish">+ Publícate</a>
+                        <?php if (!$enPaginaPublicar): ?>
+                            <a href="<?= $urlPublicar ?>" class="btn btn-publish">+ Publícate</a>
+                        <?php endif; ?>
                         <a href="<?= app_url('logout.php') ?>" class="btn btn-logout" title="Cerrar sesión">
                             <i class="fas fa-sign-out-alt"></i> Salir
                         </a>

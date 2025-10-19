@@ -8,7 +8,7 @@
 
 <!-- CTA: Crear Anuncio -->
 <section class="text-center" style="margin-top: 2rem;">
-    <div id="crear-anuncio" class="bloque-wrapper" style="background-color: #f8ecec;">
+    <div id="crear-anuncio" class="bloque-wrapper bloque-cta-publicar">
         <h3 class="fw-bold text-danger mb-4" style="font-size: 1.6rem;">
             <i class="fas fa-bullhorn me-2"></i> ¿Tienes un servicio para ofrecer?
         </h3>

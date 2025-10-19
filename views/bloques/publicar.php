@@ -32,6 +32,14 @@ if ($id > 0 && $modo === 'nuevo') {
     $modo = 'editar';
 }
 
+// Determinar dashboard de retorno según el rol (necesario para todos los modos)
+$dashboardUrl = match($userRole) {
+    'admin' => app_url('views/admin/dashboard.php'),
+    'promotor' => app_url('views/promotor/dashboard.php'),
+    'publicante' => app_url('views/publicante/dashboard.php'),
+    default => app_url('index.php')
+};
+
 // Si el modo es ver_todos, redirigir a una vista de lista completa
 if ($modo === 'ver_todos') {
     require_once __DIR__ . '/../../config/database.php';
@@ -95,6 +103,12 @@ if ($modo === 'ver_todos') {
         <?php endif; ?>
     </div>
     
+    <!-- Modal de confirmación para eliminar anuncio -->
+    <?php include __DIR__ . '/../bloques/modal_eliminar_anuncio.php'; ?>
+    
+    <!-- Script para manejar eliminación -->
+    <?php include __DIR__ . '/../bloques/script_eliminar_anuncio.php'; ?>
+    
     <?php
     require_once __DIR__ . '/../../partials/footer.php';
     exit;
@@ -102,14 +116,6 @@ if ($modo === 'ver_todos') {
 
 $isEdit = ($modo === 'editar' || $modo === 'ver') && $id > 0;
 $soloLectura = ($modo === 'ver');
-
-// Determinar dashboard de retorno según el rol
-$dashboardUrl = match($userRole) {
-    'admin' => app_url('views/admin/dashboard.php'),
-    'promotor' => app_url('views/promotor/dashboard.php'),
-    'publicante' => app_url('views/publicante/dashboard.php'),
-    default => app_url('index.php')
-};
 
 // Si es edición o vista, cargar datos del anuncio
 if ($isEdit) {

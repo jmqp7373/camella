@@ -1033,14 +1033,61 @@ section:target, div:target {
 
 @keyframes highlightSection {
     0%, 100% {
-        background-color: transparent;
+        background-color: transparent !important;
     }
     16.66%, 50%, 83.33% {
-        background-color: rgba(185, 0, 0, 0.05);
+        background-color: rgba(185, 0, 0, 0.15) !important;
     }
     33.33%, 66.66% {
-        background-color: transparent;
+        background-color: transparent !important;
     }
+}
+
+/* Animación de 6 parpadeos para llamar atención en sección de fotos */
+@keyframes highlightPhotos {
+    0%, 100% {
+        background-color: transparent;
+        box-shadow: 0 0 0 rgba(0, 123, 255, 0);
+    }
+    8.33%, 25%, 41.66%, 58.33%, 75%, 91.66% {
+        background-color: rgba(0, 123, 255, 0.15);
+        box-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
+        transform: scale(1.01);
+    }
+    16.66%, 33.33%, 50%, 66.66%, 83.33% {
+        background-color: transparent;
+        box-shadow: 0 0 0 rgba(0, 123, 255, 0);
+        transform: scale(1);
+    }
+}
+
+/* Asegurar compatibilidad con navegadores móviles */
+@-webkit-keyframes highlightPhotos {
+    0%, 100% {
+        background-color: transparent;
+        box-shadow: 0 0 0 rgba(0, 123, 255, 0);
+    }
+    8.33%, 25%, 41.66%, 58.33%, 75%, 91.66% {
+        background-color: rgba(0, 123, 255, 0.15);
+        box-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
+        -webkit-transform: scale(1.01);
+        transform: scale(1.01);
+    }
+    16.66%, 33.33%, 50%, 66.66%, 83.33% {
+        background-color: transparent;
+        box-shadow: 0 0 0 rgba(0, 123, 255, 0);
+        -webkit-transform: scale(1);
+        transform: scale(1);
+    }
+}
+
+/* Clase para forzar animación en dispositivos móviles */
+.animating-photos {
+    will-change: transform, background-color, box-shadow;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+    perspective: 1000px;
 }
 
 /* Wrapper consistente para todos los bloques */
@@ -1050,4 +1097,14 @@ section:target, div:target {
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     margin-bottom: 2rem;
+}
+
+/* Fondo rosa para bloque CTA publicar anuncio */
+.bloque-cta-publicar {
+    background-color: #f8ecec;
+}
+
+/* Asegurar que la animación de parpadeo funcione sobre el fondo rosa */
+#crear-anuncio:target {
+    animation: highlightSection 1.5s ease-in-out !important;
 }
