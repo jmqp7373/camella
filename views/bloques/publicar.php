@@ -124,8 +124,11 @@ if ($isEdit) {
     $db = getPDO();
     
     $stmt = $db->prepare("
-        SELECT * FROM anuncios 
-        WHERE id = ?
+        SELECT 
+            a.*,
+            (SELECT COUNT(*) FROM anuncio_imagenes ai WHERE ai.anuncio_id = a.id) as total_imagenes
+        FROM anuncios a
+        WHERE a.id = ?
     ");
     $stmt->execute([$id]);
     $anuncio = $stmt->fetch();
