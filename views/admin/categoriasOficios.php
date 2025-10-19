@@ -64,10 +64,18 @@ require_once __DIR__ . '/../../partials/header.php';
                             <?php if (!empty($oficiosPorCategoria[$categoria['id']])): ?>
                                 <?php foreach ($oficiosPorCategoria[$categoria['id']] as $oficio): ?>
                                     <li class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
-                                        <span class="oficio-nombre">
+                                        <span class="oficio-nombre" style="display: inline-flex; align-items: center;">
                                             <?= htmlspecialchars($oficio['nombre']) ?>
                                             <?php if ($oficio['popular'] == 1): ?>
-                                                <span class="fuego" title="Oficio popular">🔥</span>
+                                                <img src="<?= SITE_URL ?>/assets/images/app/candela1.png" 
+                                                     alt="Alta demanda" 
+                                                     title="Oficio popular"
+                                                     style="width: 16px; height: 16px; margin-left: 5px;">
+                                            <?php else: ?>
+                                                <img src="<?= SITE_URL ?>/assets/images/app/candela0.png" 
+                                                     alt="Baja demanda" 
+                                                     title="Oficio no popular"
+                                                     style="width: 16px; height: 16px; margin-left: 5px;">
                                             <?php endif; ?>
                                         </span>
                                         <div class="btn-group btn-group-sm" role="group">

@@ -167,10 +167,15 @@ echo "<!-- DEBUG FINAL: Primera categoría a mostrar: " . (isset($categorias[0])
                         <ul class="subcategories">
                             <?php foreach ($categoria['oficios'] as $oficio): ?>
                                 <li class="oficio-item" data-oficio-id="<?= $oficio['id'] ?>">
-                                    <?= htmlspecialchars($oficio['titulo']) ?>
-                                    <?php if (!empty($oficio['popular']) && $oficio['popular'] == 1): ?>
-                                        <span class="fuego" title="Oficio popular">🔥</span>
-                                    <?php endif; ?>
+                                    <span style="display: inline-flex; align-items: center;">
+                                        <?= htmlspecialchars($oficio['titulo']) ?>
+                                        <?php if (!empty($oficio['popular']) && $oficio['popular'] == 1): ?>
+                                            <img src="<?= SITE_URL ?>/assets/images/app/candela1.png" 
+                                                 alt="Alta demanda" 
+                                                 title="Oficio popular"
+                                                 style="width: 16px; height: 16px; margin-left: 5px; vertical-align: middle;">
+                                        <?php endif; ?>
+                                    </span>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
