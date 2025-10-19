@@ -42,3 +42,28 @@ database_credentials.php
 
 # Permitir database.php (sin credenciales) pero no config.php
 !config/database.php
+# === CONFIGURACIÓN ADICIONAL PARA CAMELLA.COM.CO ===
+# Archivos sensibles
+/config/config.php
+
+# Archivos temporales o del sistema operativo
+*.log
+*.bak
+.DS_Store
+Thumbs.db
+
+# === IMÁGENES Y ARCHIVOS DE USUARIOS ===
+# Ignorar imágenes subidas por usuarios o anuncios
+/assets/images/anuncios/
+/assets/images/anuncios/*
+
+# Mantener estructura vacía en deploy
+!/assets/images/anuncios/.gitkeep
+
+# === TESTS LOCALES Y DIAGNÓSTICOS ===
+/tests/
+!/tests/check_tables.php
+!/tests/test_conexion.php
+
+# === ARCHIVOS DE DESPLIEGUE Y AUTOMATIZACIÓN ===
+.github/
