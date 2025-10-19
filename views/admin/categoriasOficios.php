@@ -74,19 +74,20 @@ require_once __DIR__ . '/../../partials/header.php';
                 <?php if (!empty($oficiosPorCategoria[$categoria['id']])): ?>
                     <ul class="subcategories list-unstyled mb-0">
                         <?php foreach ($oficiosPorCategoria[$categoria['id']] as $oficio): ?>
-                            <li style="margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0;">
-                                <span style="color: #333;">
-                                    → <?= htmlspecialchars($oficio['nombre']) ?>
+                            <li style="margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;">
+                                <span style="color: #333; font-size: 0.95rem;">
+                                    <?= htmlspecialchars($oficio['nombre']) ?>
                                 </span>
                                 <img 
-                                    src="<?= SITE_URL ?>/assets/images/app/<?= $oficio['popular'] == 1 ? 'candela1.png' : 'candela0.png' ?>" 
-                                    alt="<?= $oficio['popular'] == 1 ? 'Alta demanda' : 'Baja demanda' ?>"
-                                    title="<?= $oficio['popular'] == 1 ? 'Oficio popular - Clic para desmarcar' : 'Oficio no popular - Clic para marcar' ?>"
+                                    src="<?= defined('SITE_URL') ? SITE_URL : '' ?>/assets/images/app/<?= $oficio['popular'] == 1 ? 'candela1.png' : 'candela0.png' ?>" 
+                                    alt="<?= $oficio['popular'] == 1 ? 'Popular' : 'No popular' ?>"
+                                    title="Clic para cambiar"
                                     class="candela-toggle"
                                     data-id="<?= $oficio['id'] ?>"
-                                    style="width: 20px; height: 20px; cursor: pointer; transition: transform 0.15s ease; <?= $oficio['popular'] == 0 ? 'opacity: 0.4;' : '' ?>"
-                                    onmouseover="this.style.transform='scale(1.15)'"
-                                    onmouseout="this.style.transform='scale(1)'">
+                                    data-popular="<?= $oficio['popular'] ?>"
+                                    style="width: 22px; height: 22px; cursor: pointer; transition: all 0.2s ease; <?= $oficio['popular'] == 0 ? 'opacity: 0.5;' : 'opacity: 1;' ?>"
+                                    onmouseover="this.style.transform='scale(1.2)'; this.style.filter='drop-shadow(0 2px 4px rgba(255,215,0,0.6))';"
+                                    onmouseout="this.style.transform='scale(1)'; this.style.filter='none';">
                             </li>
                         <?php endforeach; ?>
                     </ul>
@@ -102,81 +103,102 @@ require_once __DIR__ . '/../../partials/header.php';
 
 
 <script>
-// Toggle estado popular de oficio - versión simplificada y funcional
-document.querySelectorAll('.candela-toggle').forEach(flama => {
-    flama.addEventListener('click', async function() {
-        const id = this.dataset.id;
-        const estadoAnterior = this.src;
-        
-        // Feedback visual inmediato
-        this.style.opacity = '0.5';
-        this.style.pointerEvents = 'none';
-
-        try {
-            const response = await fetch(
-                '<?= SITE_URL ?>/controllers/OficioController.php?action=togglePopular&id=' + id
-            );
+// Toggle estado popular de oficio - versión robusta con rutas relativas
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔥 Iniciando sistema de candelas...');
+    console.log('Candelas encontradas:', document.querySelectorAll('.candela-toggle').length);
+    
+    document.querySelectorAll('.candela-toggle').forEach(flama => {
+        flama.addEventListener('click', async function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             
-            if (!response.ok) {
-                throw new Error('Error HTTP: ' + response.status);
-            }
+            const id = this.dataset.id;
+            const popularActual = this.dataset.popular;
             
-            const data = await response.json();
+            console.log('🔥 Clic en oficio ID:', id, 'Estado actual:', popularActual);
+            
+            // Feedback visual inmediato
+            const opacidadOriginal = this.style.opacity;
+            this.style.opacity = '0.5';
+            this.style.pointerEvents = 'none';
+            this.style.cursor = 'wait';
 
-            if (data.success) {
-                // Actualizar imagen según nuevo estado
-                const nuevaImagen = data.newState == 1 
-                    ? '<?= SITE_URL ?>/assets/images/app/candela1.png'
-                    : '<?= SITE_URL ?>/assets/images/app/candela0.png';
+            try {
+                // Usar ruta relativa desde la ubicación actual
+                const baseUrl = '<?= defined("SITE_URL") ? SITE_URL : "" ?>';
+                const url = `${baseUrl}/controllers/OficioController.php?action=togglePopular&id=${id}`;
                 
-                const nuevoTitulo = data.newState == 1
-                    ? 'Oficio popular - Clic para desmarcar'
-                    : 'Oficio no popular - Clic para marcar';
+                console.log('📡 Enviando request a:', url);
                 
-                const nuevaOpacidad = data.newState == 1 ? '1' : '0.4';
+                const response = await fetch(url);
                 
-                // Aplicar cambios con transición suave
-                this.style.transition = 'opacity 0.3s ease';
-                this.style.opacity = '0';
+                console.log('📥 Response status:', response.status);
                 
-                setTimeout(() => {
-                    this.src = nuevaImagen;
-                    this.title = nuevoTitulo;
-                    this.style.opacity = nuevaOpacidad;
-                    this.style.pointerEvents = 'auto';
+                if (!response.ok) {
+                    throw new Error('Error HTTP: ' + response.status);
+                }
+                
+                const data = await response.json();
+                console.log('📦 Data recibida:', data);
+
+                if (data.success) {
+                    // Actualizar imagen según nuevo estado
+                    const nuevaImagen = data.newState == 1 
+                        ? `${baseUrl}/assets/images/app/candela1.png`
+                        : `${baseUrl}/assets/images/app/candela0.png`;
                     
-                    // Efecto de brillo al cambiar
-                    this.animate([
-                        { filter: 'brightness(2) drop-shadow(0 0 5px #ffd700)' }, 
-                        { filter: 'brightness(1) drop-shadow(0 0 0 transparent)' }
-                    ], { 
-                        duration: 400,
-                        easing: 'ease-out'
-                    });
-                }, 150);
+                        const nuevaOpacidad = data.newState == 1 ? '1' : '0.5';
+                    
+                    // Actualizar dataset
+                    this.dataset.popular = data.newState;
+                    
+                    console.log('✅ Actualizando imagen a:', nuevaImagen);
+                    
+                    // Aplicar cambios con transición suave
+                    this.style.transition = 'opacity 0.3s ease';
+                    this.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        this.src = nuevaImagen;
+                        this.style.opacity = nuevaOpacidad;
+                        this.style.pointerEvents = 'auto';
+                        this.style.cursor = 'pointer';
+                        
+                        // Efecto de brillo al cambiar
+                        this.animate([
+                            { filter: 'brightness(2) drop-shadow(0 0 8px #ffd700)' }, 
+                            { filter: 'brightness(1) drop-shadow(0 0 0 transparent)' }
+                        ], { 
+                            duration: 500,
+                            easing: 'ease-out'
+                        });
+                    }, 150);
 
-                // Notificación sutil
-                showNotification(
-                    data.newState == 1 
-                        ? '✅ Oficio marcado como popular' 
-                        : '⚪ Oficio desmarcado', 
-                    'success'
-                );
-            } else {
-                // Revertir en caso de error
-                this.src = estadoAnterior;
-                this.style.opacity = '1';
+                    // Notificación
+                    showNotification(
+                        data.newState == 1 
+                            ? '✅ Marcado como popular' 
+                            : '⚪ Desmarcado', 
+                        'success'
+                    );
+                } else {
+                    console.error('❌ Error en respuesta:', data.message);
+                    // Revertir
+                    this.style.opacity = opacidadOriginal;
+                    this.style.pointerEvents = 'auto';
+                    this.style.cursor = 'pointer';
+                    showNotification('❌ Error: ' + (data.message || 'No se pudo actualizar'), 'danger');
+                }
+            } catch (error) {
+                console.error('❌ Error en togglePopular:', error);
+                // Revertir cambios
+                this.style.opacity = opacidadOriginal;
                 this.style.pointerEvents = 'auto';
-                showNotification('❌ Error: ' + (data.message || 'No se pudo actualizar'), 'danger');
+                this.style.cursor = 'pointer';
+                showNotification('❌ Error de conexión', 'danger');
             }
-        } catch (error) {
-            console.error('Error en togglePopular:', error);
-            // Revertir cambios
-            this.src = estadoAnterior;
-            this.style.opacity = '1';
-            this.style.pointerEvents = 'auto';
-            showNotification('❌ Error de conexión: ' + error.message, 'danger');
-        }
+        });
     });
 });
 
