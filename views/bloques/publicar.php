@@ -54,7 +54,8 @@ if ($modo === 'ver_todos') {
             a.precio, 
             a.status, 
             a.created_at,
-            (SELECT ai.ruta FROM anuncio_imagenes ai WHERE ai.anuncio_id = a.id ORDER BY ai.orden LIMIT 1) as imagen_principal
+            (SELECT ai.ruta FROM anuncio_imagenes ai WHERE ai.anuncio_id = a.id ORDER BY ai.orden LIMIT 1) as imagen_principal,
+            (SELECT COUNT(*) FROM anuncio_imagenes ai WHERE ai.anuncio_id = a.id) as total_imagenes
         FROM anuncios a
         WHERE a.user_id = ? AND a.status = 'activo' 
         ORDER BY a.created_at DESC

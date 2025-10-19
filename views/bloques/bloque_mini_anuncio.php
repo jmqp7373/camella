@@ -4,9 +4,25 @@
  * Componente para mostrar anuncios en formato compacto
  * 
  * Parámetros requeridos:
- * @param array $anuncio - Datos del anuncio (id, titulo, descripcion, precio, imagen_principal, created_at)
+ * @param array $anuncio - Datos del anuncio (id, titulo, descripcion, precio, imagen_principal, created_at, total_imagenes)
  * @param bool $mostrarEliminar - Si se muestra el botón eliminar (default: false)
  */
+
+/**
+ * Función para calcular el tiempo transcurrido desde la publicación
+ */
+function tiempoTranscurrido($fecha) {
+    $ahora = new DateTime();
+    $publicado = new DateTime($fecha);
+    $diferencia = $ahora->diff($publicado);
+
+    if ($diferencia->y > 0) return "hace " . $diferencia->y . " año" . ($diferencia->y > 1 ? "s" : "");
+    if ($diferencia->m > 0) return "hace " . $diferencia->m . " mes" . ($diferencia->m > 1 ? "es" : "");
+    if ($diferencia->d > 0) return "hace " . $diferencia->d . " día" . ($diferencia->d > 1 ? "s" : "");
+    if ($diferencia->h > 0) return "hace " . $diferencia->h . " hora" . ($diferencia->h > 1 ? "s" : "");
+    if ($diferencia->i > 0) return "hace " . $diferencia->i . " minuto" . ($diferencia->i > 1 ? "s" : "");
+    return "hace unos segundos";
+}
 
 // Validar que existe el array de anuncio
 if (!isset($anuncio) || !is_array($anuncio)) {
@@ -26,7 +42,7 @@ $imageUrl = !empty($imagePath) ? SITE_URL . $imagePath : '';
 
 <div class="card-anuncio" style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s;">
     <!-- Imagen del anuncio -->
-    <div class="anuncio-imagen" style="height: 180px; overflow: hidden; background: #f5f5f5;">
+    <div class="anuncio-imagen" style="position: relative; height: 180px; overflow: hidden; background: #f5f5f5;">
         <?php if (!empty($imageUrl)): ?>
             <img src="<?= htmlspecialchars($imageUrl) ?>" 
                  alt="<?= htmlspecialchars($anuncio['titulo']) ?>"
@@ -37,6 +53,22 @@ $imageUrl = !empty($imagePath) ? SITE_URL . $imagePath : '';
                 <i class="fas fa-image" style="font-size: 3rem; color: #999;"></i>
             </div>
         <?php endif; ?>
+        
+        <!-- Contador de imágenes dinámico -->
+        <?php
+        $totalImagenes = $anuncio['total_imagenes'] ?? 0;
+        if ($totalImagenes == 0) {
+            $colorContador = '#999'; // gris
+        } elseif ($totalImagenes < 5) {
+            $colorContador = '#e67e22'; // naranja
+        } else {
+            $colorContador = '#27ae60'; // verde
+        }
+        ?>
+        <div style="position: absolute; top: 8px; right: 10px; background: rgba(255,255,255,0.95); padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; text-align: center; color: <?= $colorContador ?>; font-weight: 600; line-height: 1.2; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
+            <?= $totalImagenes ?>/5<br>
+            <span style="font-size: 0.7rem; color: #777;">IMÁGENES</span>
+        </div>
     </div>
     
     <!-- Contenido del anuncio -->
@@ -64,7 +96,7 @@ $imageUrl = !empty($imagePath) ? SITE_URL . $imagePath : '';
             
             <span style="font-size: 0.85rem; color: #999;">
                 <i class="far fa-calendar"></i>
-                <?= date('d M Y', strtotime($anuncio['created_at'])) ?>
+                Publicado <?= tiempoTranscurrido($anuncio['created_at']); ?>
             </span>
         </div>
         
