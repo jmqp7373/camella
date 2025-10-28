@@ -586,7 +586,7 @@ require_once __DIR__ . '/../../partials/header.php';
                                 </small>
                             </div>
                             
-                            <div class="d-flex gap-2 justify-content-end mt-4">
+                            <div class="d-flex gap-2 justify-content-end mt-3">
                                 <button type="button" class="btn btn-outline-secondary btn-sm" 
                                         onclick="document.getElementById('formCategoria').reset(); document.getElementById('catId').value = '';">
                                     <i class="fas fa-times" style="margin-right: 8px;"></i>Cancelar
@@ -641,7 +641,7 @@ require_once __DIR__ . '/../../partials/header.php';
                                 </div>
                             </div>
                             
-                            <div class="d-flex gap-2 justify-content-end mt-4">
+                            <div class="d-flex gap-2 justify-content-end mt-3">
                                 <button type="button" class="btn btn-outline-secondary btn-sm" 
                                         onclick="document.getElementById('formOficio').reset(); document.getElementById('ofId').value = ''; document.getElementById('ofActivo').checked = true;">
                                     <i class="fas fa-times" style="margin-right: 8px;"></i>Cancelar
@@ -1918,7 +1918,7 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     font-size: 1.1rem;
     font-weight: 600;
     color: #002b47;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
     padding-bottom: 0.75rem;
     border-bottom: 2px solid #dee2e6;
     display: flex;
@@ -1932,11 +1932,11 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
 
 .form-section .form-label {
     color: #495057;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
 }
 
 .form-section .mb-3 {
-    margin-bottom: 1.25rem !important;
+    margin-bottom: 1rem !important;
 }
 
 .form-section .form-control,
@@ -1944,7 +1944,7 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     border-radius: 6px;
     border: 1px solid #dee2e6;
     transition: all 0.2s ease;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.15rem;
 }
 
 /* Estilos especiales para inputs de texto (nombre, título) */
