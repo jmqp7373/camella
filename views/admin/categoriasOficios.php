@@ -1672,6 +1672,26 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     transform: translateY(-1px);
 }
 
+/* Estilos especiales para selects */
+.form-section select.form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    font-weight: 500;
+    height: 48px;
+    padding: 0.75rem 2.5rem 0.75rem 0.75rem;
+    font-size: 1rem;
+}
+
+.form-section select.form-select:focus {
+    background: white;
+    border-color: #002b47;
+    box-shadow: 0 0 0 0.2rem rgba(0, 43, 71, 0.15);
+    transform: scale(1.01);
+}
+
 .form-section .form-control:focus,
 .form-section .form-select:focus {
     border-color: #002b47;
