@@ -853,6 +853,7 @@ function wireSearchAndFilters(){
         
         let totalVisible = 0;
         let totalOficios = 0;
+        let totalOficiosVisibles = 0;
         
         cards.forEach(card => {
             // Obtener nombre de la categoría (primer hijo del h3)
@@ -887,7 +888,10 @@ function wireSearchAndFilters(){
                 const shouldShow = matchText && matchFilter;
                 oficio.style.display = shouldShow ? '' : 'none';
                 
-                if (shouldShow) visibleOficios++;
+                if (shouldShow) {
+                    visibleOficios++;
+                    totalOficiosVisibles++;
+                }
             });
             
             // Mostrar/ocultar la tarjeta completa
@@ -897,10 +901,10 @@ function wireSearchAndFilters(){
             if (shouldShowCard) totalVisible++;
         });
         
-        console.log('✅ Categorías visibles:', totalVisible, '/ Total oficios:', totalOficios);
+        console.log('✅ Categorías visibles:', totalVisible, '/ Oficios visibles:', totalOficiosVisibles, '/ Total oficios:', totalOficios);
         
         // Actualizar contador de resultados
-        updateSearchResults(text, mode, totalVisible, cards.length);
+        updateSearchResults(text, mode, totalVisible, cards.length, totalOficiosVisibles, totalOficios);
         
         // Mostrar/ocultar botón de limpiar
         const clearBtn = document.getElementById('clearSearch');
@@ -943,7 +947,7 @@ function wireSearchAndFilters(){
     console.log('✓ Búsqueda y filtros inicializados correctamente');
 }
 
-function updateSearchResults(searchText, filterMode, visible, total) {
+function updateSearchResults(searchText, filterMode, visible, total, visibleOficios = 0, totalOficios = 0) {
     const resultsDiv = document.getElementById('searchResults');
     const resultsText = document.getElementById('resultsText');
     
@@ -956,12 +960,12 @@ function updateSearchResults(searchText, filterMode, visible, total) {
         showResults = true;
         if (searchText && filterMode !== 'all') {
             const filterName = filterMode === 'popular' ? 'populares' : 'no populares';
-            message = `🔍 Buscando "${searchText}" en oficios ${filterName}: ${visible} de ${total} categorías`;
+            message = `🔍 Buscando "${searchText}" en oficios ${filterName}: ${visible} categorías y ${visibleOficios} oficios`;
         } else if (searchText) {
-            message = `🔍 Resultados para "${searchText}": ${visible} de ${total} categorías`;
+            message = `🔍 Resultados para "${searchText}": ${visible} de ${total} categorías y ${visibleOficios} oficios`;
         } else if (filterMode !== 'all') {
             const filterName = filterMode === 'popular' ? 'populares' : 'no populares';
-            message = `🔥 Mostrando solo oficios ${filterName}: ${visible} categorías`;
+            message = `🔥 Mostrando solo oficios ${filterName}: ${visible} categorías y ${visibleOficios} oficios`;
         }
     }
     
