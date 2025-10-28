@@ -2281,12 +2281,13 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     
     /* FIX: Formularios en móvil */
     .form-section {
-        padding: 0.75rem !important;
-        margin-bottom: 1rem !important;
+        padding: 1rem !important;
+        margin-bottom: 2rem !important;
     }
     
     .form-section-title {
         font-size: 1rem !important;
+        margin-bottom: 1.25rem !important;
     }
     
     /* FIX: Inputs y selects en formularios */
@@ -2298,12 +2299,17 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     }
     
     .mb-3 {
-        margin-bottom: 1.5rem !important;
+        margin-bottom: 2rem !important;
     }
     
     .form-label {
-        margin-bottom: 0.5rem !important;
+        margin-bottom: 0.75rem !important;
         display: block !important;
+    }
+    
+    .form-control,
+    .form-select {
+        margin-bottom: 0.5rem !important;
     }
     
     .row {
