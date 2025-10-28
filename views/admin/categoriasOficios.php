@@ -435,54 +435,229 @@ function toTitleCase(str) {
 let currentCategoriaIdForIcon = null;
 
 const iconosDisponibles = [
-    // Limpieza
-    { icon: 'fa-solid fa-broom', label: '🧹 Limpieza' },
-    { icon: 'fa-solid fa-spray-can', label: '🎨 Spray' },
-    { icon: 'fa-solid fa-pump-soap', label: '🧴 Jabón' },
-    { icon: 'fa-solid fa-bucket', label: '🪣 Balde' },
-    { icon: 'fa-solid fa-hand-sparkles', label: '✨ Desinfección' },
-    // Construcción
-    { icon: 'fa-solid fa-hammer', label: '🔨 Construcción' },
-    { icon: 'fa-solid fa-hard-hat', label: '⛑️ Obra' },
-    { icon: 'fa-solid fa-building', label: '🏢 Edificio' },
-    { icon: 'fa-solid fa-wrench', label: '🔧 Herramientas' },
-    { icon: 'fa-solid fa-screwdriver', label: '🪛 Reparación' },
-    // Hogar
-    { icon: 'fa-solid fa-house', label: '🏠 Hogar' },
-    { icon: 'fa-solid fa-couch', label: '🛋️ Muebles' },
-    { icon: 'fa-solid fa-bed', label: '🛏️ Dormitorio' },
-    { icon: 'fa-solid fa-kitchen-set', label: '🍳 Cocina' },
-    { icon: 'fa-solid fa-lightbulb', label: '💡 Iluminación' },
-    // Jardinería
-    { icon: 'fa-solid fa-seedling', label: '🌱 Jardinería' },
-    { icon: 'fa-solid fa-tree', label: '🌳 Árboles' },
-    { icon: 'fa-solid fa-leaf', label: '🍃 Plantas' },
-    // Servicios
-    { icon: 'fa-solid fa-briefcase', label: '💼 Negocios' },
-    { icon: 'fa-solid fa-user-tie', label: '👔 Profesional' },
-    { icon: 'fa-solid fa-truck', label: '🚚 Transporte' },
-    { icon: 'fa-solid fa-car', label: '🚗 Vehículos' },
-    { icon: 'fa-solid fa-screwdriver-wrench', label: '🔧 Mecánica' },
-    // Educación
-    { icon: 'fa-solid fa-graduation-cap', label: '🎓 Educación' },
-    { icon: 'fa-solid fa-book', label: '📚 Libros' },
-    { icon: 'fa-solid fa-chalkboard-user', label: '👨‍🏫 Enseñanza' },
-    // Salud
-    { icon: 'fa-solid fa-heart-pulse', label: '❤️ Salud' },
-    { icon: 'fa-solid fa-user-doctor', label: '👨‍⚕️ Médico' },
-    { icon: 'fa-solid fa-kit-medical', label: '🏥 Hospital' },
-    // Tecnología
-    { icon: 'fa-solid fa-laptop', label: '💻 Tecnología' },
-    { icon: 'fa-solid fa-mobile', label: '📱 Móviles' },
-    { icon: 'fa-solid fa-wifi', label: '📶 Internet' },
-    // Eventos
-    { icon: 'fa-solid fa-cake-candles', label: '🎂 Celebración' },
-    { icon: 'fa-solid fa-gifts', label: '🎁 Regalos' },
-    { icon: 'fa-solid fa-champagne-glasses', label: '🥂 Brindis' },
-    // Varios
-    { icon: 'fa-solid fa-star', label: '⭐ Destacado' },
-    { icon: 'fa-solid fa-fire', label: '🔥 Popular' },
-    { icon: 'fa-solid fa-circle-check', label: '✅ Verificado' }
+    // LIMPIEZA Y ASEO
+    { icon: 'fa-solid fa-broom', label: '🧹 Escoba - Limpieza' },
+    { icon: 'fa-solid fa-spray-can', label: '🎨 Spray - Limpieza profunda' },
+    { icon: 'fa-solid fa-pump-soap', label: '🧴 Jabón - Productos limpieza' },
+    { icon: 'fa-solid fa-bucket', label: '🪣 Balde - Limpieza' },
+    { icon: 'fa-solid fa-hand-sparkles', label: '✨ Desinfección - Higiene' },
+    { icon: 'fa-solid fa-wind', label: '💨 Ventilación - Aire limpio' },
+    { icon: 'fa-solid fa-toilet', label: '🚽 Sanitario - Limpieza sanitaria' },
+    { icon: 'fa-solid fa-dumpster', label: '🗑️ Contenedor - Recolección basuras' },
+    { icon: 'fa-solid fa-sponge', label: '🧽 Esponja - Limpieza' },
+    
+    // CONSTRUCCIÓN Y ALBAÑILERÍA
+    { icon: 'fa-solid fa-hammer', label: '🔨 Martillo - Construcción' },
+    { icon: 'fa-solid fa-hard-hat', label: '⛑️ Casco - Obra' },
+    { icon: 'fa-solid fa-building', label: '🏢 Edificio - Construcción' },
+    { icon: 'fa-solid fa-trowel', label: '🧱 Llana - Albañilería' },
+    { icon: 'fa-solid fa-ruler-combined', label: '📐 Escuadra - Medición' },
+    { icon: 'fa-solid fa-ruler', label: '� Regla - Medición' },
+    { icon: 'fa-solid fa-level', label: '📏 Nivel - Nivelación' },
+    { icon: 'fa-solid fa-person-digging', label: '⛏️ Excavación - Movimiento tierras' },
+    { icon: 'fa-solid fa-trowel-bricks', label: '🧱 Mampostería - Obra' },
+    { icon: 'fa-solid fa-warehouse', label: '🏭 Bodega - Almacén' },
+    { icon: 'fa-solid fa-industry', label: '🏭 Industrial - Planta' },
+    { icon: 'fa-solid fa-city', label: '🏙️ Urbano - Desarrollo' },
+    
+    // REPARACIONES Y MANTENIMIENTO
+    { icon: 'fa-solid fa-wrench', label: '🔧 Llave - Mecánica' },
+    { icon: 'fa-solid fa-screwdriver', label: '🪛 Destornillador - Reparaciones' },
+    { icon: 'fa-solid fa-toolbox', label: '🧰 Caja herramientas - Multiservicios' },
+    { icon: 'fa-solid fa-tools', label: '🛠️ Herramientas - Mantenimiento' },
+    { icon: 'fa-solid fa-gear', label: '⚙️ Engranaje - Mecánica' },
+    { icon: 'fa-solid fa-gears', label: '⚙️ Engranajes - Mantenimiento' },
+    { icon: 'fa-solid fa-screwdriver-wrench', label: '🔧 Herramientas - Reparación' },
+    { icon: 'fa-solid fa-oil-can', label: '🛢️ Aceite - Lubricación' },
+    { icon: 'fa-solid fa-file-contract', label: '📋 Mantenimiento - Contrato' },
+    
+    // PINTURA Y DECORACIÓN
+    { icon: 'fa-solid fa-paintbrush', label: '�️ Pincel - Pintura' },
+    { icon: 'fa-solid fa-paint-roller', label: '🎨 Rodillo - Pintura paredes' },
+    { icon: 'fa-solid fa-palette', label: '🎨 Paleta - Decoración' },
+    { icon: 'fa-solid fa-fill-drip', label: '💧 Bote pintura - Pintura' },
+    { icon: 'fa-solid fa-brush', label: '�️ Brocha - Pintura' },
+    { icon: 'fa-solid fa-tape', label: '📏 Cinta - Pintura' },
+    { icon: 'fa-solid fa-bezier-curve', label: '〰️ Diseño - Decoración' },
+    
+    // ELECTRICIDAD
+    { icon: 'fa-solid fa-plug', label: '🔌 Enchufe - Electricidad' },
+    { icon: 'fa-solid fa-bolt', label: '⚡ Rayo - Electricidad' },
+    { icon: 'fa-solid fa-lightbulb', label: '💡 Bombilla - Iluminación' },
+    { icon: 'fa-solid fa-battery-full', label: '🔋 Batería - Energía' },
+    { icon: 'fa-solid fa-plug-circle-bolt', label: '⚡ Instalación eléctrica' },
+    { icon: 'fa-solid fa-solar-panel', label: '☀️ Panel solar - Energía' },
+    { icon: 'fa-solid fa-bolt-lightning', label: '⚡ Alta tensión - Electricidad' },
+    { icon: 'fa-solid fa-tower-cell', label: '📡 Torre - Telecomunicaciones' },
+    { icon: 'fa-solid fa-cable-car', label: '🚡 Cableado - Instalaciones' },
+    
+    // PLOMERÍA
+    { icon: 'fa-solid fa-faucet', label: '🚰 Grifo - Plomería' },
+    { icon: 'fa-solid fa-shower', label: '🚿 Ducha - Instalación' },
+    { icon: 'fa-solid fa-sink', label: '🚰 Lavamanos - Instalación' },
+    { icon: 'fa-solid fa-droplet', label: '💧 Gota - Agua' },
+    { icon: 'fa-solid fa-pipe', label: '🚰 Tubería - Instalación' },
+    { icon: 'fa-solid fa-faucet-drip', label: '💧 Fugas - Reparación' },
+    { icon: 'fa-solid fa-water', label: '� Agua - Fontanería' },
+    { icon: 'fa-solid fa-toilet-paper', label: '🧻 Sanitarios - Baño' },
+    { icon: 'fa-solid fa-pump', label: '💨 Bomba - Agua' },
+    
+    // CARPINTERÍA
+    { icon: 'fa-solid fa-saw', label: '🪚 Sierra - Carpintería' },
+    { icon: 'fa-solid fa-pencil', label: '✏️ Lápiz - Carpintería' },
+    { icon: 'fa-solid fa-table', label: '🪑 Mesa - Muebles' },
+    { icon: 'fa-solid fa-door-open', label: '🚪 Puerta - Carpintería' },
+    { icon: 'fa-solid fa-stairs', label: '🪜 Escaleras - Carpintería' },
+    { icon: 'fa-solid fa-cubes', label: '� Muebles - Ensamble' },
+    
+    // MUEBLES Y HOGAR
+    { icon: 'fa-solid fa-couch', label: '🛋️ Sofá - Muebles' },
+    { icon: 'fa-solid fa-chair', label: '🪑 Silla - Muebles' },
+    { icon: 'fa-solid fa-bed', label: '🛏️ Cama - Muebles' },
+    { icon: 'fa-solid fa-window-maximize', label: '🪟 Ventana - Vidrios' },
+    { icon: 'fa-solid fa-house', label: '🏠 Casa - Hogar' },
+    { icon: 'fa-solid fa-home', label: '🏠 Hogar - Residencial' },
+    { icon: 'fa-solid fa-kitchen-set', label: '🍳 Cocina - Muebles' },
+    { icon: 'fa-solid fa-tv', label: '� TV - Entretenimiento' },
+    { icon: 'fa-solid fa-lamp', label: '💡 Lámpara - Iluminación' },
+    { icon: 'fa-solid fa-loveseat', label: '🛋️ Love seat - Muebles' },
+    
+    // TRANSPORTE Y MUDANZAS
+    { icon: 'fa-solid fa-truck', label: '🚚 Camión - Mudanzas' },
+    { icon: 'fa-solid fa-van-shuttle', label: '🚐 Van - Transporte' },
+    { icon: 'fa-solid fa-car', label: '🚗 Auto - Transporte' },
+    { icon: 'fa-solid fa-motorcycle', label: '🏍️ Moto - Mensajería' },
+    { icon: 'fa-solid fa-bicycle', label: '🚲 Bicicleta - Domicilios' },
+    { icon: 'fa-solid fa-box', label: '📦 Caja - Empaque' },
+    { icon: 'fa-solid fa-boxes-stacked', label: '📦 Cajas - Mudanzas' },
+    { icon: 'fa-solid fa-truck-moving', label: '🚚 Mudanzas - Transporte' },
+    { icon: 'fa-solid fa-truck-fast', label: '🚚 Envío rápido - Express' },
+    { icon: 'fa-solid fa-pallet', label: '� Pallet - Carga' },
+    { icon: 'fa-solid fa-shipping-fast', label: '📦 Envío - Logística' },
+    
+    // JARDINERÍA Y PAISAJISMO
+    { icon: 'fa-solid fa-tree', label: '🌳 Árbol - Jardinería' },
+    { icon: 'fa-solid fa-seedling', label: '🌱 Planta - Siembra' },
+    { icon: 'fa-solid fa-leaf', label: '🍃 Hoja - Jardinería' },
+    { icon: 'fa-solid fa-scissors', label: '✂️ Tijeras - Poda' },
+    { icon: 'fa-solid fa-flower', label: '🌸 Flor - Jardinería' },
+    { icon: 'fa-solid fa-clover', label: '🍀 Trébol - Jardín' },
+    { icon: 'fa-solid fa-sun-plant-wilt', label: '🌱 Riego - Plantas' },
+    { icon: 'fa-solid fa-mountain', label: '⛰️ Paisajismo - Terreno' },
+    { icon: 'fa-solid fa-grass', label: '🌿 Césped - Jardín' },
+    
+    // GASTRONOMÍA Y COCINA
+    { icon: 'fa-solid fa-utensils', label: '🍴 Cubiertos - Restaurante' },
+    { icon: 'fa-solid fa-pizza-slice', label: '🍕 Pizza - Comida' },
+    { icon: 'fa-solid fa-burger', label: '🍔 Hamburguesa - Fast food' },
+    { icon: 'fa-solid fa-mug-hot', label: '☕ Café - Bebidas' },
+    { icon: 'fa-solid fa-bowl-food', label: '🍲 Bowl - Comida' },
+    { icon: 'fa-solid fa-cookie', label: '🍪 Galleta - Panadería' },
+    { icon: 'fa-solid fa-cheese', label: '🧀 Queso - Gastronomía' },
+    { icon: 'fa-solid fa-bacon', label: '🥓 Bacon - Cocina' },
+    { icon: 'fa-solid fa-ice-cream', label: '� Helado - Postres' },
+    
+    // TECNOLOGÍA
+    { icon: 'fa-solid fa-computer', label: '💻 Computadora - Informática' },
+    { icon: 'fa-solid fa-laptop', label: '💻 Laptop - Reparación' },
+    { icon: 'fa-solid fa-mobile', label: '📱 Móvil - Tecnología' },
+    { icon: 'fa-solid fa-wifi', label: '� WiFi - Internet' },
+    { icon: 'fa-solid fa-network-wired', label: '🌐 Red - Redes' },
+    { icon: 'fa-solid fa-camera', label: '📷 Cámara - Fotografía' },
+    { icon: 'fa-solid fa-video', label: '📹 Video - Audiovisual' },
+    { icon: 'fa-solid fa-server', label: '🖥️ Servidor - IT' },
+    { icon: 'fa-solid fa-microchip', label: '💾 Chip - Hardware' },
+    { icon: 'fa-solid fa-keyboard', label: '⌨️ Teclado - Informática' },
+    { icon: 'fa-solid fa-mouse', label: '�️ Mouse - Periféricos' },
+    { icon: 'fa-solid fa-headset', label: '� Audífonos - Audio' },
+    
+    // BELLEZA Y CUIDADO PERSONAL
+    { icon: 'fa-solid fa-cut', label: '✂️ Corte - Estilista' },
+    { icon: 'fa-solid fa-spray-can-sparkles', label: '💅 Spray - Belleza' },
+    { icon: 'fa-solid fa-face-smile', label: '😊 Facial - Spa' },
+    { icon: 'fa-solid fa-wand-magic-sparkles', label: '✨ Maquillaje - Belleza' },
+    { icon: 'fa-solid fa-gem', label: '💎 Premium - Lujo' },
+    
+    // ROPA Y LAVANDERÍA
+    { icon: 'fa-solid fa-shirt', label: '👕 Camisa - Ropa' },
+    { icon: 'fa-solid fa-jug-detergent', label: '🧴 Detergente - Lavandería' },
+    { icon: 'fa-solid fa-sock', label: '🧦 Calcetín - Ropa' },
+    { icon: 'fa-solid fa-tshirt', label: '👕 Camiseta - Ropa' },
+    { icon: 'fa-solid fa-mitten', label: '🧤 Guante - Ropa' },
+    { icon: 'fa-solid fa-vest', label: '🦺 Chaleco - Ropa' },
+    { icon: 'fa-solid fa-iron', label: '🔥 Plancha - Lavandería' },
+    
+    // MASCOTAS
+    { icon: 'fa-solid fa-paw', label: '🐾 Huella - Mascotas' },
+    { icon: 'fa-solid fa-dog', label: '🐕 Perro - Veterinaria' },
+    { icon: 'fa-solid fa-cat', label: '🐈 Gato - Veterinaria' },
+    { icon: 'fa-solid fa-fish', label: '🐟 Pez - Acuarios' },
+    { icon: 'fa-solid fa-bone', label: '🦴 Hueso - Veterinaria' },
+    { icon: 'fa-solid fa-horse', label: '🐴 Caballo - Veterinaria' },
+    { icon: 'fa-solid fa-dove', label: '🕊️ Ave - Veterinaria' },
+    { icon: 'fa-solid fa-shield-dog', label: '🐕 Protección - Mascotas' },
+    { icon: 'fa-solid fa-bowl-rice', label: '🍚 Alimento - Mascotas' },
+    
+    // SALUD Y CUIDADO
+    { icon: 'fa-solid fa-heart-pulse', label: '❤️ Pulso - Salud' },
+    { icon: 'fa-solid fa-suitcase-medical', label: '💼 Médico - Emergencia' },
+    { icon: 'fa-solid fa-stethoscope', label: '🩺 Estetoscopio - Consulta' },
+    { icon: 'fa-solid fa-user-nurse', label: '�‍⚕️ Enfermera - Cuidado' },
+    { icon: 'fa-solid fa-wheelchair', label: '♿ Silla ruedas - Movilidad' },
+    { icon: 'fa-solid fa-hand-holding-heart', label: '💝 Cuidado - Asistencia' },
+    { icon: 'fa-solid fa-hospital', label: '🏥 Hospital - Salud' },
+    { icon: 'fa-solid fa-pills', label: '💊 Medicinas - Farmacia' },
+    { icon: 'fa-solid fa-briefcase-medical', label: '💼 Paramédico - Emergencia' },
+    
+    // EDUCACIÓN
+    { icon: 'fa-solid fa-graduation-cap', label: '🎓 Graduación - Educación' },
+    { icon: 'fa-solid fa-book', label: '📖 Libro - Enseñanza' },
+    { icon: 'fa-solid fa-chalkboard-user', label: '👨‍🏫 Profesor - Clases' },
+    { icon: 'fa-solid fa-pen', label: '�️ Pluma - Escritura' },
+    { icon: 'fa-solid fa-school', label: '🏫 Escuela - Educación' },
+    { icon: 'fa-solid fa-user-graduate', label: '🎓 Estudiante - Educación' },
+    { icon: 'fa-solid fa-book-open', label: '� Lectura - Educación' },
+    { icon: 'fa-solid fa-apple-whole', label: '🍎 Manzana - Educación' },
+    
+    // SEGURIDAD
+    { icon: 'fa-solid fa-shield', label: '🛡️ Escudo - Seguridad' },
+    { icon: 'fa-solid fa-lock', label: '🔒 Candado - Seguridad' },
+    { icon: 'fa-solid fa-key', label: '🔑 Llave - Cerrajería' },
+    { icon: 'fa-solid fa-shield-halved', label: '🛡️ Protección - Seguridad' },
+    { icon: 'fa-solid fa-user-shield', label: '👮 Guardia - Vigilancia' },
+    { icon: 'fa-solid fa-bell', label: '🔔 Alarma - Seguridad' },
+    { icon: 'fa-solid fa-fire-extinguisher', label: '🧯 Extintor - Seguridad' },
+    
+    // EVENTOS Y ENTRETENIMIENTO
+    { icon: 'fa-solid fa-music', label: '🎵 Música - Eventos' },
+    { icon: 'fa-solid fa-microphone', label: '🎤 Micrófono - Audio' },
+    { icon: 'fa-solid fa-gifts', label: '🎁 Regalos - Eventos' },
+    { icon: 'fa-solid fa-cake-candles', label: '🎂 Pastel - Celebración' },
+    { icon: 'fa-solid fa-champagne-glasses', label: '🥂 Brindis - Fiesta' },
+    { icon: 'fa-solid fa-guitar', label: '🎸 Guitarra - Música' },
+    { icon: 'fa-solid fa-drum', label: '🥁 Batería - Música' },
+    { icon: 'fa-solid fa-camera-retro', label: '📷 Fotografía - Eventos' },
+    
+    // OFICINA Y NEGOCIOS
+    { icon: 'fa-solid fa-briefcase', label: '💼 Maletín - Negocios' },
+    { icon: 'fa-solid fa-calculator', label: '🧮 Calculadora - Finanzas' },
+    { icon: 'fa-solid fa-print', label: '🖨️ Impresora - Oficina' },
+    { icon: 'fa-solid fa-chart-line', label: '📈 Gráfica - Análisis' },
+    { icon: 'fa-solid fa-money-bill', label: '💵 Dinero - Finanzas' },
+    { icon: 'fa-solid fa-clipboard', label: '📋 Clipboard - Administración' },
+    { icon: 'fa-solid fa-folder', label: '📁 Carpeta - Archivo' },
+    { icon: 'fa-solid fa-phone', label: '📞 Teléfono - Atención' },
+    
+    // VARIOS
+    { icon: 'fa-solid fa-fire', label: '🔥 Fuego - Popular' },
+    { icon: 'fa-solid fa-star', label: '⭐ Estrella - Destacado' },
+    { icon: 'fa-solid fa-circle-check', label: '✅ Check - Verificado' },
+    { icon: 'fa-solid fa-users', label: '👥 Usuarios - Comunidad' },
+    { icon: 'fa-solid fa-handshake', label: '🤝 Acuerdo - Servicios' },
+    { icon: 'fa-solid fa-medal', label: '🏅 Medalla - Excelencia' },
+    { icon: 'fa-solid fa-trophy', label: '🏆 Trofeo - Premium' },
+    { icon: 'fa-solid fa-crown', label: '👑 Corona - VIP' },
+    { icon: 'fa-solid fa-user-tie', label: '👔 Profesional' }
 ];
 
 function openIconPicker(categoriaId, currentIcon) {
