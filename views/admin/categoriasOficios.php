@@ -2187,6 +2187,11 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
 }
 
 @media (max-width: 768px) {
+    /* FIX: Prevenir overflow horizontal */
+    body {
+        overflow-x: hidden !important;
+    }
+    
     .admin-block-content .d-flex {
         flex-direction: column;
     }
@@ -2204,9 +2209,9 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     
     /* FIX: Contenedor principal en móvil */
     .container {
-        padding-left: 15px !important;
-        padding-right: 15px !important;
-        max-width: 100% !important;
+        padding-left: 10px !important;
+        padding-right: 10px !important;
+        max-width: 100vw !important;
         overflow-x: hidden !important;
     }
     
@@ -2276,12 +2281,34 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     
     /* FIX: Formularios en móvil */
     .form-section {
-        padding: 1rem !important;
+        padding: 0.75rem !important;
         margin-bottom: 1rem !important;
     }
     
     .form-section-title {
         font-size: 1rem !important;
+    }
+    
+    /* FIX: Inputs y selects en formularios */
+    .form-control,
+    .form-select {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .mb-3 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    .col-md-6 {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
     }
     
     /* FIX: Oficios en móvil */
