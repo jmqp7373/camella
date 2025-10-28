@@ -179,11 +179,42 @@ require_once __DIR__ . '/../../partials/header.php';
                             </div>
                             
                             <div class="mb-3">
-                                <label for="catIcono" class="form-label fw-semibold">Icono (FontAwesome)</label>
-                                <input type="text" class="form-control" id="catIcono" name="icono" 
-                                       placeholder="fa-solid fa-broom">
+                                <label for="catIcono" class="form-label fw-semibold">Icono</label>
+                                <select class="form-select" id="catIcono" name="icono" required>
+                                    <option value="">Seleccionar icono...</option>
+                                    <option value="fa-solid fa-broom">🧹 Escoba - Limpieza</option>
+                                    <option value="fa-solid fa-wrench">🔧 Llave inglesa - Mecánica</option>
+                                    <option value="fa-solid fa-hammer">🔨 Martillo - Construcción</option>
+                                    <option value="fa-solid fa-screwdriver">🪛 Destornillador - Reparaciones</option>
+                                    <option value="fa-solid fa-paintbrush">🖌️ Pincel - Pintura</option>
+                                    <option value="fa-solid fa-plug">🔌 Enchufe - Electricidad</option>
+                                    <option value="fa-solid fa-faucet">🚰 Grifo - Plomería</option>
+                                    <option value="fa-solid fa-couch">🛋️ Sofá - Muebles</option>
+                                    <option value="fa-solid fa-car">🚗 Auto - Transporte</option>
+                                    <option value="fa-solid fa-truck">🚚 Camión - Mudanzas</option>
+                                    <option value="fa-solid fa-tree">🌳 Árbol - Jardinería</option>
+                                    <option value="fa-solid fa-seedling">🌱 Planta - Jardinería</option>
+                                    <option value="fa-solid fa-kitchen-set">🍳 Cocina - Gastronomía</option>
+                                    <option value="fa-solid fa-utensils">🍴 Cubiertos - Gastronomía</option>
+                                    <option value="fa-solid fa-computer">💻 Computadora - Tecnología</option>
+                                    <option value="fa-solid fa-mobile">📱 Móvil - Tecnología</option>
+                                    <option value="fa-solid fa-scissors">✂️ Tijeras - Peluquería</option>
+                                    <option value="fa-solid fa-shirt">👕 Camisa - Ropa/Lavandería</option>
+                                    <option value="fa-solid fa-paw">🐾 Huella - Mascotas</option>
+                                    <option value="fa-solid fa-dog">🐕 Perro - Mascotas</option>
+                                    <option value="fa-solid fa-cat">🐈 Gato - Mascotas</option>
+                                    <option value="fa-solid fa-house">🏠 Casa - Hogar</option>
+                                    <option value="fa-solid fa-building">🏢 Edificio - Construcción</option>
+                                    <option value="fa-solid fa-warehouse">🏭 Almacén - Bodega</option>
+                                    <option value="fa-solid fa-tools">🛠️ Herramientas - General</option>
+                                    <option value="fa-solid fa-toolbox">🧰 Caja herramientas - General</option>
+                                    <option value="fa-solid fa-spray-can">🎨 Spray - Pintura</option>
+                                    <option value="fa-solid fa-ruler">📏 Regla - Medición</option>
+                                    <option value="fa-solid fa-window-maximize">🪟 Ventana - Vidrios</option>
+                                    <option value="fa-solid fa-door-open">🚪 Puerta - Carpintería</option>
+                                </select>
                                 <small class="text-muted d-block mt-1">
-                                    <i class="fas fa-info-circle"></i> Ejemplo: fa-solid fa-broom, fa-solid fa-wrench
+                                    <i class="fas fa-info-circle"></i> Selecciona un icono que represente la categoría
                                 </small>
                             </div>
                             
