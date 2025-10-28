@@ -55,28 +55,28 @@ class CategoriaController {
         }
 
         try {
-            $titulo = $_POST['titulo'] ?? '';
+            $nombre = $_POST['titulo'] ?? ''; // Frontend envía 'titulo' pero BD usa 'nombre'
             $descripcion = $_POST['descripcion'] ?? '';
             $icono = $_POST['icono'] ?? '';
             $activo = isset($_POST['activo']) ? 1 : 0;
 
-            if (empty($titulo)) {
-                echo json_encode(['success' => false, 'message' => 'El título es requerido']);
+            if (empty($nombre)) {
+                echo json_encode(['success' => false, 'message' => 'El nombre es requerido']);
                 return;
             }
 
-            // Verificar si ya existe una categoría con el mismo título
+            // Verificar si ya existe una categoría con el mismo nombre
             require_once __DIR__ . '/../config/database.php';
             $pdo = getPDO();
-            $stmt = $pdo->prepare("SELECT id FROM categorias WHERE titulo = ?");
-            $stmt->execute([$titulo]);
+            $stmt = $pdo->prepare("SELECT id FROM categorias WHERE nombre = ?");
+            $stmt->execute([$nombre]);
             if ($stmt->fetch()) {
-                echo json_encode(['success' => false, 'message' => 'Ya existe una categoría con ese título']);
+                echo json_encode(['success' => false, 'message' => 'Ya existe una categoría con ese nombre']);
                 return;
             }
 
             $resultado = $this->categoriaModel->crear([
-                'titulo' => $titulo,
+                'nombre' => $nombre,
                 'descripcion' => $descripcion,
                 'icono' => $icono,
                 'activo' => $activo
@@ -108,28 +108,28 @@ class CategoriaController {
 
         try {
             $id = (int)($_POST['id'] ?? 0);
-            $titulo = $_POST['titulo'] ?? '';
+            $nombre = $_POST['titulo'] ?? ''; // Frontend envía 'titulo' pero BD usa 'nombre'
             $descripcion = $_POST['descripcion'] ?? '';
             $icono = $_POST['icono'] ?? '';
             $activo = isset($_POST['activo']) ? 1 : 0;
 
-            if ($id <= 0 || empty($titulo)) {
-                echo json_encode(['success' => false, 'message' => 'ID y título son requeridos']);
+            if ($id <= 0 || empty($nombre)) {
+                echo json_encode(['success' => false, 'message' => 'ID y nombre son requeridos']);
                 return;
             }
 
-            // Verificar si ya existe otra categoría con el mismo título
+            // Verificar si ya existe otra categoría con el mismo nombre
             require_once __DIR__ . '/../config/database.php';
             $pdo = getPDO();
-            $stmt = $pdo->prepare("SELECT id FROM categorias WHERE titulo = ? AND id != ?");
-            $stmt->execute([$titulo, $id]);
+            $stmt = $pdo->prepare("SELECT id FROM categorias WHERE nombre = ? AND id != ?");
+            $stmt->execute([$nombre, $id]);
             if ($stmt->fetch()) {
-                echo json_encode(['success' => false, 'message' => 'Ya existe otra categoría con ese título']);
+                echo json_encode(['success' => false, 'message' => 'Ya existe otra categoría con ese nombre']);
                 return;
             }
 
             $resultado = $this->categoriaModel->actualizar($id, [
-                'titulo' => $titulo,
+                'nombre' => $nombre,
                 'descripcion' => $descripcion,
                 'icono' => $icono,
                 'activo' => $activo
