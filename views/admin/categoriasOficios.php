@@ -450,11 +450,6 @@ const iconosDisponibles = [
         { icon: 'fa-solid fa-hammer', label: 'hammer - Martillo' },
         { icon: 'fa-solid fa-hard-hat', label: 'hard-hat - Casco' },
         { icon: 'fa-solid fa-building', label: 'building - Edificio' },
-        { icon: 'fa-solid fa-trowel', label: 'trowel - Llana' },
-        { icon: 'fa-solid fa-ruler-combined', label: 'ruler-combined - Escuadra' },
-        { icon: 'fa-solid fa-ruler', label: 'ruler - Regla' },
-        { icon: 'fa-solid fa-person-digging', label: 'person-digging - Excavacion' },
-        { icon: 'fa-solid fa-trowel-bricks', label: 'trowel-bricks - Mamposteria' },
         { icon: 'fa-solid fa-warehouse', label: 'warehouse - Bodega' },
         { icon: 'fa-solid fa-industry', label: 'industry - Industrial' },
         { icon: 'fa-solid fa-city', label: 'city - Urbano' }
@@ -482,10 +477,8 @@ const iconosDisponibles = [
         { icon: 'fa-solid fa-bolt', label: 'bolt - Rayo' },
         { icon: 'fa-solid fa-lightbulb', label: 'lightbulb - Bombilla' },
         { icon: 'fa-solid fa-battery-full', label: 'battery-full - Bateria' },
-        { icon: 'fa-solid fa-plug-circle-bolt', label: 'plug-circle-bolt - Instalacion' },
         { icon: 'fa-solid fa-solar-panel', label: 'solar-panel - Panel Solar' },
-        { icon: 'fa-solid fa-bolt-lightning', label: 'bolt-lightning - Alta Tension' },
-        { icon: 'fa-solid fa-tower-cell', label: 'tower-cell - Torre' }
+        { icon: 'fa-solid fa-bolt-lightning', label: 'bolt-lightning - Alta Tension' }
     ]},
     
     { categoria: 'PLOMERIA', iconos: [
@@ -493,7 +486,6 @@ const iconosDisponibles = [
         { icon: 'fa-solid fa-shower', label: 'shower - Ducha' },
         { icon: 'fa-solid fa-sink', label: 'sink - Lavamanos' },
         { icon: 'fa-solid fa-droplet', label: 'droplet - Gota' },
-        { icon: 'fa-solid fa-faucet-drip', label: 'faucet-drip - Fugas' },
         { icon: 'fa-solid fa-water', label: 'water - Agua' },
         { icon: 'fa-solid fa-toilet-paper', label: 'toilet-paper - Sanitarios' }
     ]},
@@ -512,7 +504,6 @@ const iconosDisponibles = [
         { icon: 'fa-solid fa-chair', label: 'chair - Silla' },
         { icon: 'fa-solid fa-bed', label: 'bed - Cama' },
         { icon: 'fa-solid fa-house', label: 'house - Casa' },
-        { icon: 'fa-solid fa-kitchen-set', label: 'kitchen-set - Cocina' },
         { icon: 'fa-solid fa-tv', label: 'tv - Televisor' }
     ]},
     
@@ -541,7 +532,6 @@ const iconosDisponibles = [
         { icon: 'fa-solid fa-pizza-slice', label: 'pizza-slice - Pizza' },
         { icon: 'fa-solid fa-burger', label: 'burger - Hamburguesa' },
         { icon: 'fa-solid fa-mug-hot', label: 'mug-hot - Cafe' },
-        { icon: 'fa-solid fa-bowl-food', label: 'bowl-food - Bowl' },
         { icon: 'fa-solid fa-cookie', label: 'cookie - Galleta' },
         { icon: 'fa-solid fa-cheese', label: 'cheese - Queso' },
         { icon: 'fa-solid fa-bacon', label: 'bacon - Bacon' },
@@ -549,7 +539,6 @@ const iconosDisponibles = [
     ]},
     
     { categoria: 'TECNOLOGIA', iconos: [
-        { icon: 'fa-solid fa-computer', label: 'computer - Computadora' },
         { icon: 'fa-solid fa-laptop', label: 'laptop - Laptop' },
         { icon: 'fa-solid fa-mobile', label: 'mobile - Movil' },
         { icon: 'fa-solid fa-wifi', label: 'wifi - WiFi' },
@@ -613,7 +602,6 @@ const iconosDisponibles = [
         { icon: 'fa-solid fa-shield', label: 'shield - Escudo' },
         { icon: 'fa-solid fa-lock', label: 'lock - Candado' },
         { icon: 'fa-solid fa-key', label: 'key - Llave' },
-        { icon: 'fa-solid fa-shield-halved', label: 'shield-halved - Proteccion' },
         { icon: 'fa-solid fa-user-shield', label: 'user-shield - Guardia' },
         { icon: 'fa-solid fa-bell', label: 'bell - Alarma' },
         { icon: 'fa-solid fa-fire-extinguisher', label: 'fire-extinguisher - Extintor' }
@@ -624,10 +612,10 @@ const iconosDisponibles = [
         { icon: 'fa-solid fa-microphone', label: 'microphone - Microfono' },
         { icon: 'fa-solid fa-gifts', label: 'gifts - Regalos' },
         { icon: 'fa-solid fa-cake-candles', label: 'cake-candles - Pastel' },
-        { icon: 'fa-solid fa-champagne-glasses', label: 'champagne-glasses - Brindis' },
         { icon: 'fa-solid fa-guitar', label: 'guitar - Guitarra' },
         { icon: 'fa-solid fa-drum', label: 'drum - Bateria' },
-        { icon: 'fa-solid fa-camera-retro', label: 'camera-retro - Fotografia' }
+        { icon: 'fa-solid fa-camera-retro', label: 'camera-retro - Fotografia' },
+        { icon: 'fa-solid fa-gamepad', label: 'gamepad - Videojuegos' }
     ]},
     
     { categoria: 'OFICINA Y NEGOCIOS', iconos: [
