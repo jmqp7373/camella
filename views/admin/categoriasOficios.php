@@ -171,6 +171,7 @@ require_once __DIR__ . '/../../partials/header.php';
                         </h3>
                         <form id="formCategoria">
                             <input type="hidden" id="catId" name="id" value="">
+                            <input type="hidden" name="activo" value="1">
                             
                             <div class="mb-3">
                                 <label for="catTitulo" class="form-label fw-semibold">Nombre</label>
@@ -239,6 +240,7 @@ require_once __DIR__ . '/../../partials/header.php';
                         </h3>
                         <form id="formOficio">
                             <input type="hidden" id="ofId" name="id" value="">
+                            <input type="hidden" id="ofActivo" name="activo" value="1">
                             
                             <div class="mb-3">
                                 <label for="ofTitulo" class="form-label fw-semibold">Nombre del oficio</label>
