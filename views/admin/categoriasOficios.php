@@ -586,7 +586,7 @@ require_once __DIR__ . '/../../partials/header.php';
                                 </small>
                             </div>
                             
-                            <div class="d-flex gap-2 justify-content-end">
+                            <div class="d-flex gap-2 justify-content-end mt-4">
                                 <button type="button" class="btn btn-outline-secondary btn-sm" 
                                         onclick="document.getElementById('formCategoria').reset(); document.getElementById('catId').value = '';">
                                     <i class="fas fa-times" style="margin-right: 8px;"></i>Cancelar
@@ -641,7 +641,7 @@ require_once __DIR__ . '/../../partials/header.php';
                                 </div>
                             </div>
                             
-                            <div class="d-flex gap-2 justify-content-end">
+                            <div class="d-flex gap-2 justify-content-end mt-4">
                                 <button type="button" class="btn btn-outline-secondary btn-sm" 
                                         onclick="document.getElementById('formOficio').reset(); document.getElementById('ofId').value = ''; document.getElementById('ofActivo').checked = true;">
                                     <i class="fas fa-times" style="margin-right: 8px;"></i>Cancelar
@@ -2298,7 +2298,12 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     }
     
     .mb-3 {
-        margin-bottom: 1rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .form-label {
+        margin-bottom: 0.5rem !important;
+        display: block !important;
     }
     
     .row {
