@@ -150,11 +150,6 @@ require_once __DIR__ . '/../../partials/header.php';
                 <i class="fas fa-info-circle"></i>
                 <span id="resultsText">Mostrando todos los resultados</span>
             </div>
-            
-            <!-- Panel de debug (temporal) -->
-            <div id="debugPanel" class="mt-2" style="display: none; padding: 0.5rem; background: #f8f9fa; border-radius: 5px; font-size: 0.85rem;">
-                <strong>Debug:</strong> <span id="debugInfo">Esperando interacción...</span>
-            </div>
         </div>
     </div>
 </section>
@@ -368,8 +363,6 @@ function fixBackButton(){
 function wireSearchAndFilters(){
     const q = document.getElementById('searchInput');
     const filter = document.getElementById('filterPopular');
-    const debugPanel = document.getElementById('debugPanel');
-    const debugInfo = document.getElementById('debugInfo');
     
     if (!q || !filter) {
         console.error('Elementos de búsqueda no encontrados');
@@ -442,12 +435,6 @@ function wireSearchAndFilters(){
         const clearBtn = document.getElementById('clearSearch');
         if (clearBtn) {
             clearBtn.style.display = text ? 'block' : 'none';
-        }
-        
-        // Actualizar panel de debug
-        if (debugInfo) {
-            debugPanel.style.display = 'block';
-            debugInfo.textContent = `Búsqueda: "${text || 'ninguna'}" | Filtro: ${mode} | Visibles: ${totalVisible}/${cards.length} categorías`;
         }
         
         showNoResultsMessage(totalVisible === 0 && (text || mode !== 'all'));
