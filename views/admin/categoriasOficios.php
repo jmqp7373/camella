@@ -755,19 +755,36 @@ function openFormIconPicker() {
     const grid = document.getElementById('iconPickerGrid');
     const currentIcon = document.getElementById('catIcono').value;
     
-    // Limpiar y llenar grid
+    // Limpiar y llenar grid con categorías
     grid.innerHTML = '';
-    iconosDisponibles.forEach(item => {
-        const btn = document.createElement('button');
-        btn.className = 'icon-picker-btn';
-        btn.innerHTML = `<i class="${item.icon}"></i>`;
-        btn.title = item.label;
-        btn.onclick = () => selectFormIcon(item.icon, item.label);
-        if (item.icon === currentIcon) {
-            btn.style.background = '#002b47';
-            btn.style.color = 'white';
-        }
-        grid.appendChild(btn);
+    
+    iconosDisponibles.forEach(grupo => {
+        // Crear encabezado de categoría
+        const header = document.createElement('div');
+        header.style.gridColumn = '1 / -1';
+        header.style.marginTop = '1rem';
+        header.style.marginBottom = '0.5rem';
+        header.style.paddingBottom = '0.5rem';
+        header.style.borderBottom = '2px solid #002b47';
+        header.style.fontWeight = 'bold';
+        header.style.color = '#002b47';
+        header.style.fontSize = '0.9rem';
+        header.textContent = grupo.categoria;
+        grid.appendChild(header);
+        
+        // Agregar iconos de la categoría
+        grupo.iconos.forEach(item => {
+            const btn = document.createElement('button');
+            btn.className = 'icon-picker-btn';
+            btn.innerHTML = `<i class="${item.icon}"></i>`;
+            btn.title = item.label;
+            btn.onclick = () => selectFormIcon(item.icon, item.label);
+            if (item.icon === currentIcon) {
+                btn.style.background = '#002b47';
+                btn.style.color = 'white';
+            }
+            grid.appendChild(btn);
+        });
     });
     
     modal.style.display = 'flex';
