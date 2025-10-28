@@ -226,7 +226,7 @@ class Oficios extends BaseModel
         if (!$this->pdo) {
             return [
                 'success' => false,
-                'message' => 'Error de conexión a la base de datos',
+                'message' => 'Error de conexiï¿½n a la base de datos',
                 'newState' => null
             ];
         }
@@ -271,6 +271,71 @@ class Oficios extends BaseModel
             }
         } catch (Exception $e) {
             error_log("Error en togglePopular: " . $e->getMessage());
+            return [
+                'success' => false,
+                'message' => 'Error al procesar: ' . $e->getMessage(),
+                'newState' => null
+            ];
+        }
+    }
+
+    /**
+     * Toggle estado activo de un oficio
+     * Invierte el valor del campo 'activo' (0 a 1, o 1 a 0)
+     * 
+     * @param int $id ID del oficio
+     * @return array Resultado con success, newState y message
+     */
+    public function toggleActivo(int $id): array
+    {
+        if (!$this->pdo) {
+            return [
+                'success' => false,
+                'message' => 'Error de conexiÃ³n a la base de datos',
+                'newState' => null
+            ];
+        }
+
+        try {
+            // Obtener estado actual
+            $sql = "SELECT activo FROM oficios WHERE id = ?";
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([$id]);
+            $oficio = $stmt->fetch(\PDO::FETCH_ASSOC);
+            
+            if (!$oficio) {
+                return [
+                    'success' => false,
+                    'message' => 'Oficio no encontrado',
+                    'newState' => null
+                ];
+            }
+
+            // Invertir el valor
+            $nuevoEstado = ($oficio['activo'] == 1) ? 0 : 1;
+
+            // Actualizar
+            $sqlUpdate = "UPDATE oficios SET activo = ? WHERE id = ?";
+            $stmtUpdate = $this->pdo->prepare($sqlUpdate);
+            $exito = $stmtUpdate->execute([$nuevoEstado, $id]);
+
+            if ($exito) {
+                return [
+                    'success' => true,
+                    'newState' => $nuevoEstado,
+                    'message' => $nuevoEstado == 1 
+                        ? 'Oficio activado' 
+                        : 'Oficio desactivado'
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'message' => 'Error al actualizar el estado',
+                    'newState' => null
+                ];
+            }
+        } catch (Exception $e) {
+            error_log("Error en toggleActivo: " . $e->getMessage());
             return [
                 'success' => false,
                 'message' => 'Error al procesar: ' . $e->getMessage(),

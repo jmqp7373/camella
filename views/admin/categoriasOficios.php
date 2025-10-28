@@ -208,11 +208,14 @@ require_once __DIR__ . '/../../partials/header.php';
                                             <?= htmlspecialchars($oficio['nombre']) ?>
                                         </span>
                                         
-                                        <?php if ($oficio['activo'] == 0): ?>
-                                            <span class="badge bg-danger" style="margin-left: 8px; font-size: 0.7em;">
-                                                <i class="fas fa-ban"></i> Inactivo
-                                            </span>
-                                        <?php endif; ?>
+                                        <!-- Toggle Switch Activo/Inactivo -->
+                                        <label class="toggle-switch" style="margin-left: 12px;" title="<?= $oficio['activo'] == 1 ? 'Activo - Clic para desactivar' : 'Inactivo - Clic para activar' ?>">
+                                            <input type="checkbox" 
+                                                   class="toggle-checkbox"
+                                                   data-toggle-activo="<?= $oficio['id'] ?>"
+                                                   <?= $oficio['activo'] == 1 ? 'checked' : '' ?>>
+                                            <span class="toggle-slider"></span>
+                                        </label>
                                         
                                         <!-- Flamita con imagen candela1.png -->
                                         <?php if ($oficio['popular'] == 1): ?>
@@ -341,6 +344,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fixBackButton();
         wireSearchAndFilters();
         wirePopularToggle();
+        wireActivoToggle();
         wireCRUDButtons();
         loadStats();
         
@@ -652,6 +656,101 @@ function showToast(message) {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
     }, 2000);
+}
+
+// Toggle activo/inactivo con AJAX
+function wireActivoToggle(){
+    document.body.addEventListener('change', async (ev) => {
+        const t = ev.target;
+        if (!t.matches('[data-toggle-activo]')) return;
+        
+        const id = t.getAttribute('data-toggle-activo');
+        const nuevoEstado = t.checked ? 1 : 0;
+        
+        console.log('🔄 Toggling activo para oficio:', id, '→', nuevoEstado);
+        
+        // Deshabilitar temporalmente
+        const wasDisabled = t.disabled;
+        t.disabled = true;
+        
+        try {
+            const baseUrl = window.location.origin;
+            const url = `${baseUrl}/camella.com.co/controllers/OficioController.php?action=toggleActivo&id=${encodeURIComponent(id)}`;
+            console.log('📡 Enviando petición a:', url);
+            
+            const r = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            });
+            
+            console.log('📥 Respuesta recibida. Status:', r.status);
+            
+            if (!r.ok) {
+                const errorText = await r.text();
+                console.error('❌ Error del servidor:', errorText);
+                throw new Error('Error en la petición: ' + r.status);
+            }
+            
+            const data = await r.json();
+            console.log('📦 Data recibida:', data);
+            
+            if (!data.success) {
+                throw new Error(data.message || 'Error al cambiar estado');
+            }
+            
+            const activo = !!(data?.newState == 1);
+            
+            console.log('✅ Estado activo actualizado:', activo ? 'ACTIVO ✓' : 'INACTIVO ✕');
+            
+            // Actualizar el li con la clase oficio-inactivo
+            const li = t.closest('.oficio-item');
+            if (li) {
+                li.dataset.activo = activo ? '1' : '0';
+                
+                // Toggle clase oficio-inactivo
+                if (activo) {
+                    li.classList.remove('oficio-inactivo');
+                } else {
+                    li.classList.add('oficio-inactivo');
+                }
+                
+                // Actualizar el nombre (tachado o no)
+                const nombreSpan = li.querySelector('.oficio-nombre');
+                if (nombreSpan) {
+                    if (activo) {
+                        nombreSpan.classList.remove('nombre-tachado');
+                    } else {
+                        nombreSpan.classList.add('nombre-tachado');
+                    }
+                }
+            }
+            
+            // Actualizar título del toggle
+            const label = t.closest('.toggle-switch');
+            if (label) {
+                label.title = activo ? 'Activo - Clic para desactivar' : 'Inactivo - Clic para activar';
+            }
+            
+            // Recargar estadísticas
+            loadStats();
+            
+            // Mostrar notificación
+            showToast(activo ? '✅ Oficio activado' : '🔴 Oficio desactivado');
+            
+        } catch(e){ 
+            console.error('❌ toggleActivo failed', e);
+            // Revertir el checkbox al estado anterior
+            t.checked = !t.checked;
+            alert('Error al cambiar el estado: ' + e.message);
+        } finally {
+            // Rehabilitar el toggle
+            setTimeout(() => {
+                t.disabled = wasDisabled;
+            }, 500);
+        }
+    });
 }
 
 // Funciones CRUD
@@ -1107,6 +1206,73 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
 }
 
 /* ========================================
+   TOGGLE SWITCH ACTIVO/INACTIVO
+   ======================================== */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.toggle-checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #dc3545; /* Rojo cuando está inactivo */
+    border-radius: 24px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-slider:before {
+    content: "✕";
+    position: absolute;
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: #dc3545;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-checkbox:checked + .toggle-slider {
+    background-color: #28a745; /* Verde cuando está activo */
+}
+
+.toggle-checkbox:checked + .toggle-slider:before {
+    content: "✓";
+    transform: translateX(20px);
+    color: #28a745;
+}
+
+.toggle-switch:hover .toggle-slider {
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-slider:active {
+    transform: scale(0.98);
+}
+
+/* ========================================
    OFICIOS INACTIVOS - ESTILO ESPECIAL
    ======================================== */
 .oficio-inactivo {
@@ -1268,6 +1434,7 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     align-items: center;
     gap: 0.5rem;
     min-width: 200px;
+    margin-left: auto; /* Flota a la derecha */
 }
 
 .filter-label {

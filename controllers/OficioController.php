@@ -14,6 +14,9 @@ if (isset($_GET['action'])) {
         case 'togglePopular':
             $controller->togglePopular();
             exit;
+        case 'toggleActivo':
+            $controller->toggleActivo();
+            exit;
         case 'obtener':
             $controller->obtenerOficio();
             exit;
@@ -72,6 +75,49 @@ class OficioController {
 
         try {
             $resultado = $this->oficioModel->togglePopular($id);
+            
+            if ($resultado['success']) {
+                echo json_encode([
+                    'success' => true,
+                    'newState' => $resultado['newState'],
+                    'message' => $resultado['message']
+                ]);
+            } else {
+                http_response_code(404);
+                echo json_encode([
+                    'success' => false,
+                    'message' => $resultado['message']
+                ]);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al procesar la solicitud: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Toggle estado activo/inactivo de un oficio (AJAX)
+     * URL: OficioController.php?action=toggleActivo&id=7
+     */
+    public function toggleActivo() {
+        header('Content-Type: application/json');
+        
+        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'ID de oficio no proporcionado o inválido'
+            ]);
+            return;
+        }
+
+        $id = (int)$_GET['id'];
+
+        try {
+            $resultado = $this->oficioModel->toggleActivo($id);
             
             if ($resultado['success']) {
                 echo json_encode([
