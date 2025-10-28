@@ -244,7 +244,7 @@ require_once __DIR__ . '/../../partials/header.php';
                                             <?php endif; ?>
                                             
                                             <!-- 5. Eliminar -->
-                                            <img src="assets/images/app/delete-icon.svg" 
+                                            <img src="<?= app_url('assets/images/app/delete-icon.svg') ?>" 
                                                  alt="Eliminar" 
                                                  onclick="deleteOficio(<?= $oficio['id'] ?>, '<?= htmlspecialchars($oficio['nombre']) ?>')" 
                                                  title="Eliminar"
@@ -724,12 +724,12 @@ function wireActivoToggle(){
                 }
                 
                 // Actualizar el nombre (tachado o no)
-                const nombreSpan = li.querySelector('.oficio-nombre');
-                if (nombreSpan) {
+                const nombreInput = li.querySelector('.oficio-nombre-input');
+                if (nombreInput) {
                     if (activo) {
-                        nombreSpan.classList.remove('nombre-tachado');
+                        nombreInput.classList.remove('nombre-tachado');
                     } else {
-                        nombreSpan.classList.add('nombre-tachado');
+                        nombreInput.classList.add('nombre-tachado');
                     }
                 }
             }
@@ -1471,11 +1471,12 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
 }
 
 .nombre-tachado {
-    text-decoration: line-through;
-    text-decoration-color: #dc3545;
-    text-decoration-thickness: 2px;
+    text-decoration: line-through !important;
+    text-decoration-color: #dc3545 !important;
+    text-decoration-thickness: 2px !important;
     color: #6c757d !important;
     font-style: italic;
+    opacity: 0.6;
 }
 
 /* Input editable inline para oficios */
