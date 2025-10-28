@@ -27,6 +27,9 @@ class CategoriaController {
             case 'updateNombre':
                 $this->updateNombre();
                 break;
+            case 'updateIcono':
+                $this->updateIcono();
+                break;
             case 'delete':
                 $this->delete();
                 break;
@@ -190,6 +193,49 @@ class CategoriaController {
                 ]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Error al actualizar la categoría']);
+            }
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Actualizar solo el ícono de una categoría (AJAX inline edit)
+     */
+    public function updateIcono() {
+        header('Content-Type: application/json');
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+            return;
+        }
+
+        try {
+            $id = (int)($_POST['id'] ?? 0);
+            $icono = trim($_POST['icono'] ?? '');
+
+            if ($id <= 0 || empty($icono)) {
+                echo json_encode(['success' => false, 'message' => 'ID e ícono son requeridos']);
+                return;
+            }
+
+            // Actualizar solo el ícono
+            require_once __DIR__ . '/../config/database.php';
+            $pdo = getPDO();
+            $stmt = $pdo->prepare("UPDATE categorias SET icono = ? WHERE id = ?");
+            $resultado = $stmt->execute([$icono, $id]);
+
+            if ($resultado) {
+                echo json_encode([
+                    'success' => true, 
+                    'message' => 'Ícono actualizado exitosamente',
+                    'icono' => $icono
+                ]);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al actualizar el ícono']);
             }
 
         } catch (Exception $e) {

@@ -167,9 +167,12 @@ require_once __DIR__ . '/../../partials/header.php';
             <?php foreach ($categorias as $categoria): ?>
                 <div class="category-card" data-categoria-id="<?= $categoria['id'] ?>">
                     <h3 class="category-title">
-                        <!-- 1. Viñeta (icono de categoría) -->
-                        <span class="category-icon">
-                            <i class="<?= htmlspecialchars($categoria['icono'] ?: 'fas fa-briefcase') ?>"></i>
+                        <!-- 1. Select de icono estilizado -->
+                        <span class="category-icon-wrapper" style="position: relative; display: inline-flex; align-items: center; cursor: pointer;" 
+                              data-categoria-id="<?= $categoria['id'] ?>"
+                              data-current-icon="<?= htmlspecialchars($categoria['icono'] ?: 'fas fa-briefcase') ?>">
+                            <i class="category-icon-display <?= htmlspecialchars($categoria['icono'] ?: 'fas fa-briefcase') ?>"></i>
+                            <i class="fas fa-chevron-down" style="font-size: 0.6rem; margin-left: 4px; color: #6c757d;"></i>
                         </span>
                         
                         <!-- 2. Input editable inline para categoría -->
@@ -660,6 +663,19 @@ require_once __DIR__ . '/../../partials/header.php';
 
 </section>
 
+<!-- Modal para seleccionar icono de categoría -->
+<div id="iconPickerModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: white; border-radius: 12px; max-width: 600px; max-height: 80vh; overflow-y: auto; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 2px solid #e9ecef; padding-bottom: 0.75rem;">
+            <h4 style="margin: 0; color: #002b47;"><i class="fas fa-icons"></i> Seleccionar Icono</h4>
+            <button onclick="closeIconPicker()" style="border: none; background: none; font-size: 1.5rem; cursor: pointer; color: #6c757d;">&times;</button>
+        </div>
+        <div id="iconPickerGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 0.5rem;">
+            <!-- Los íconos se cargarán aquí dinámicamente -->
+        </div>
+    </div>
+</div>
+
 <script>
 // Helper para construir URLs correctas según el entorno
 function getControllerUrl(path) {
@@ -683,6 +699,140 @@ function toTitleCase(str) {
         .join(' ');
 }
 
+// ======== SELECTOR DE ÍCONOS ========
+let currentCategoriaIdForIcon = null;
+
+const iconosDisponibles = [
+    // Limpieza
+    { icon: 'fa-solid fa-broom', label: '🧹 Limpieza' },
+    { icon: 'fa-solid fa-spray-can', label: '🎨 Spray' },
+    { icon: 'fa-solid fa-pump-soap', label: '🧴 Jabón' },
+    { icon: 'fa-solid fa-bucket', label: '🪣 Balde' },
+    { icon: 'fa-solid fa-hand-sparkles', label: '✨ Desinfección' },
+    // Construcción
+    { icon: 'fa-solid fa-hammer', label: '🔨 Construcción' },
+    { icon: 'fa-solid fa-hard-hat', label: '⛑️ Obra' },
+    { icon: 'fa-solid fa-building', label: '🏢 Edificio' },
+    { icon: 'fa-solid fa-wrench', label: '🔧 Herramientas' },
+    { icon: 'fa-solid fa-screwdriver', label: '🪛 Reparación' },
+    // Hogar
+    { icon: 'fa-solid fa-house', label: '🏠 Hogar' },
+    { icon: 'fa-solid fa-couch', label: '🛋️ Muebles' },
+    { icon: 'fa-solid fa-bed', label: '🛏️ Dormitorio' },
+    { icon: 'fa-solid fa-kitchen-set', label: '🍳 Cocina' },
+    { icon: 'fa-solid fa-lightbulb', label: '💡 Iluminación' },
+    // Jardinería
+    { icon: 'fa-solid fa-seedling', label: '🌱 Jardinería' },
+    { icon: 'fa-solid fa-tree', label: '🌳 Árboles' },
+    { icon: 'fa-solid fa-leaf', label: '🍃 Plantas' },
+    // Servicios
+    { icon: 'fa-solid fa-briefcase', label: '💼 Negocios' },
+    { icon: 'fa-solid fa-user-tie', label: '👔 Profesional' },
+    { icon: 'fa-solid fa-truck', label: '🚚 Transporte' },
+    { icon: 'fa-solid fa-car', label: '🚗 Vehículos' },
+    { icon: 'fa-solid fa-screwdriver-wrench', label: '🔧 Mecánica' },
+    // Educación
+    { icon: 'fa-solid fa-graduation-cap', label: '🎓 Educación' },
+    { icon: 'fa-solid fa-book', label: '📚 Libros' },
+    { icon: 'fa-solid fa-chalkboard-user', label: '👨‍🏫 Enseñanza' },
+    // Salud
+    { icon: 'fa-solid fa-heart-pulse', label: '❤️ Salud' },
+    { icon: 'fa-solid fa-user-doctor', label: '👨‍⚕️ Médico' },
+    { icon: 'fa-solid fa-kit-medical', label: '🏥 Hospital' },
+    // Tecnología
+    { icon: 'fa-solid fa-laptop', label: '💻 Tecnología' },
+    { icon: 'fa-solid fa-mobile', label: '📱 Móviles' },
+    { icon: 'fa-solid fa-wifi', label: '📶 Internet' },
+    // Eventos
+    { icon: 'fa-solid fa-cake-candles', label: '🎂 Celebración' },
+    { icon: 'fa-solid fa-gifts', label: '🎁 Regalos' },
+    { icon: 'fa-solid fa-champagne-glasses', label: '🥂 Brindis' },
+    // Varios
+    { icon: 'fa-solid fa-star', label: '⭐ Destacado' },
+    { icon: 'fa-solid fa-fire', label: '🔥 Popular' },
+    { icon: 'fa-solid fa-circle-check', label: '✅ Verificado' }
+];
+
+function openIconPicker(categoriaId, currentIcon) {
+    currentCategoriaIdForIcon = categoriaId;
+    const modal = document.getElementById('iconPickerModal');
+    const grid = document.getElementById('iconPickerGrid');
+    
+    // Limpiar y llenar grid
+    grid.innerHTML = '';
+    iconosDisponibles.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'icon-picker-btn';
+        btn.innerHTML = `<i class="${item.icon}"></i>`;
+        btn.title = item.label;
+        btn.onclick = () => selectIcon(item.icon);
+        if (item.icon === currentIcon) {
+            btn.style.background = '#002b47';
+            btn.style.color = 'white';
+        }
+        grid.appendChild(btn);
+    });
+    
+    modal.style.display = 'flex';
+}
+
+function closeIconPicker() {
+    document.getElementById('iconPickerModal').style.display = 'none';
+    currentCategoriaIdForIcon = null;
+}
+
+async function selectIcon(iconClass) {
+    if (!currentCategoriaIdForIcon) return;
+    
+    try {
+        const formData = new URLSearchParams();
+        formData.append('id', currentCategoriaIdForIcon);
+        formData.append('icono', iconClass);
+        
+        const r = await fetch(getControllerUrl('controllers/CategoriaController.php?action=updateIcono'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: formData
+        });
+        
+        const data = await r.json();
+        
+        if (data.success) {
+            // Actualizar el ícono en la UI
+            const wrapper = document.querySelector(`.category-icon-wrapper[data-categoria-id="${currentCategoriaIdForIcon}"]`);
+            if (wrapper) {
+                const iconDisplay = wrapper.querySelector('.category-icon-display');
+                iconDisplay.className = `category-icon-display ${iconClass}`;
+                wrapper.setAttribute('data-current-icon', iconClass);
+            }
+            closeIconPicker();
+        } else {
+            alert(data.message || 'Error al actualizar ícono');
+        }
+    } catch (e) {
+        console.error('Error:', e);
+        alert('Error al actualizar ícono');
+    }
+}
+
+function wireIconPicker() {
+    document.querySelectorAll('.category-icon-wrapper').forEach(wrapper => {
+        wrapper.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const categoriaId = wrapper.getAttribute('data-categoria-id');
+            const currentIcon = wrapper.getAttribute('data-current-icon');
+            openIconPicker(categoriaId, currentIcon);
+        });
+    });
+    
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('iconPickerModal')?.addEventListener('click', (e) => {
+        if (e.target.id === 'iconPickerModal') {
+            closeIconPicker();
+        }
+    });
+}
+
 // Inicialización cuando el DOM está listo
 document.addEventListener('DOMContentLoaded', () => {
     console.log('=== Iniciando Admin Categorías y Oficios ===');
@@ -694,6 +844,7 @@ document.addEventListener('DOMContentLoaded', () => {
         wireActivoToggle();
         wireInlineEdit();
         wireCRUDButtons();
+        wireIconPicker();
         loadStats();
         
         console.log('✓ Todas las funciones inicializadas correctamente');
@@ -1456,6 +1607,34 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
 </script>
 
 <style>
+/* ======== SELECTOR DE ÍCONOS ======== */
+.category-icon-wrapper:hover {
+    opacity: 0.7;
+    transform: scale(1.05);
+    transition: all 0.2s ease;
+}
+
+.icon-picker-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    background: #f8f9fa;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 1.5rem;
+}
+
+.icon-picker-btn:hover {
+    background: #002b47;
+    color: white;
+    border-color: #002b47;
+    transform: scale(1.1);
+}
+
 /* Bloques administrativos con título */
 .admin-block {
     background: white;
