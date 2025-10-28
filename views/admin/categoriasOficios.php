@@ -166,11 +166,12 @@ require_once __DIR__ . '/../../partials/header.php';
             <?php foreach ($categorias as $categoria): ?>
                 <div class="category-card" data-categoria-id="<?= $categoria['id'] ?>">
                     <h3 class="category-title">
+                        <!-- 1. Viñeta (icono de categoría) -->
                         <span class="category-icon">
                             <i class="<?= htmlspecialchars($categoria['icono'] ?: 'fas fa-briefcase') ?>"></i>
                         </span>
                         
-                        <!-- Input editable inline para categoría -->
+                        <!-- 2. Input editable inline para categoría -->
                         <input type="text" 
                                class="categoria-nombre-input"
                                data-categoria-id="<?= $categoria['id'] ?>"
@@ -179,12 +180,13 @@ require_once __DIR__ . '/../../partials/header.php';
                                style="border: none; background: transparent; font-size: inherit; font-weight: inherit; padding: 2px 8px; flex: 1; min-width: 200px; max-width: 400px; color: inherit;">
                         
                         <!-- Acciones de admin inline -->
-                        <span style="margin-left: auto; display: flex; gap: 0.5rem; font-size: 0.85rem;">
-                            <button class="btn btn-danger btn-sm" 
-                                    onclick="deleteCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars($categoria['nombre']) ?>')" 
-                                    title="Eliminar categoría">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                        <span style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center; font-size: 0.85rem;">
+                            <!-- 5. Eliminar -->
+                            <img src="assets/images/app/delete-icon.svg" 
+                                 alt="Eliminar" 
+                                 onclick="deleteCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars($categoria['nombre']) ?>')" 
+                                 title="Eliminar categoría"
+                                 style="width: 20px; height: 20px; cursor: pointer;">
                         </span>
                     </h3>
                     
@@ -200,50 +202,55 @@ require_once __DIR__ . '/../../partials/header.php';
                                     data-popular="<?= $oficio['popular'] ?>"
                                     data-activo="<?= $oficio['activo'] ?>">
                                     
-                                    <span style="display: inline-flex; align-items: center; flex: 1; gap: 8px;">
-                                        <!-- Toggle Switch Activo/Inactivo - AL FRENTE -->
-                                        <label class="toggle-switch" title="<?= $oficio['activo'] == 1 ? 'Activo - Clic para desactivar' : 'Inactivo - Clic para activar' ?>">
-                                            <input type="checkbox" 
-                                                   class="toggle-checkbox"
-                                                   data-toggle-activo="<?= $oficio['id'] ?>"
-                                                   <?= $oficio['activo'] == 1 ? 'checked' : '' ?>>
-                                            <span class="toggle-slider"></span>
-                                        </label>
+                                    <!-- Wrapper completo con todos los elementos -->
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.5rem; background: #f8f9fa; border-radius: 6px; border: 1px solid #e9ecef;">
+                                        <!-- 1. Viñeta (flechita a la derecha) -->
+                                        <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: #6c757d;"></i>
                                         
-                                        <!-- Flamita con imagen candela1.png - AL FRENTE -->
-                                        <?php if ($oficio['popular'] == 1): ?>
-                                            <img src="/camella.com.co/assets/images/app/candela1.png" 
-                                                 alt="Popular" 
-                                                 class="flamita-popular"
-                                                 data-toggle-popular="<?= $oficio['id'] ?>"
-                                                 title="Clic para quitar popularidad"
-                                                 style="cursor: pointer; width: 20px; height: 20px; object-fit: contain;">
-                                        <?php else: ?>
-                                            <img src="/camella.com.co/assets/images/app/candela1.png" 
-                                                 alt="No popular" 
-                                                 class="flamita-no-popular"
-                                                 data-toggle-popular="<?= $oficio['id'] ?>"
-                                                 title="Clic para marcar popular"
-                                                 style="cursor: pointer; width: 20px; height: 20px; object-fit: contain; opacity: 0.3; filter: grayscale(100%);">
-                                        <?php endif; ?>
-                                        
-                                        <!-- Input editable inline - DESPUÉS DE LAS VIÑETAS -->
+                                        <!-- 2. Input editable inline (Texto del oficio) -->
                                         <input type="text" 
                                                class="oficio-nombre-input <?= $oficio['activo'] == 0 ? 'nombre-tachado' : '' ?>"
                                                data-oficio-id="<?= $oficio['id'] ?>"
                                                value="<?= htmlspecialchars($oficio['nombre']) ?>"
                                                title="Haz clic para editar. Presiona Enter o pierde el foco para guardar"
                                                style="border: none; background: transparent; font-size: inherit; padding: 2px 4px; flex: 1; min-width: 150px; max-width: 300px;">
-                                    </span>
-                                    
-                                    <!-- Botón eliminar -->
-                                    <span style="display: flex; gap: 0.25rem; margin-left: auto;">
-                                        <button class="btn btn-outline-danger btn-sm" 
-                                                onclick="deleteOficio(<?= $oficio['id'] ?>, '<?= htmlspecialchars($oficio['nombre']) ?>')" 
-                                                title="Eliminar">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </span>
+                                        
+                                        <!-- Controles a la derecha -->
+                                        <div style="display: flex; gap: 0.5rem; align-items: center; margin-left: auto;">
+                                            <!-- 3. Toggle Switch Activo/Inactivo -->
+                                            <label class="toggle-switch" title="<?= $oficio['activo'] == 1 ? 'Activo - Clic para desactivar' : 'Inactivo - Clic para activar' ?>">
+                                                <input type="checkbox" 
+                                                       class="toggle-checkbox"
+                                                       data-toggle-activo="<?= $oficio['id'] ?>"
+                                                       <?= $oficio['activo'] == 1 ? 'checked' : '' ?>>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            
+                                            <!-- 4. Popular (candelita) -->
+                                            <?php if ($oficio['popular'] == 1): ?>
+                                                <img src="/camella.com.co/assets/images/app/candela1.png" 
+                                                     alt="Popular" 
+                                                     class="flamita-popular"
+                                                     data-toggle-popular="<?= $oficio['id'] ?>"
+                                                     title="Clic para quitar popularidad"
+                                                     style="cursor: pointer; width: 20px; height: 20px; object-fit: contain;">
+                                            <?php else: ?>
+                                                <img src="/camella.com.co/assets/images/app/candela1.png" 
+                                                     alt="No popular" 
+                                                     class="flamita-no-popular"
+                                                     data-toggle-popular="<?= $oficio['id'] ?>"
+                                                     title="Clic para marcar popular"
+                                                     style="cursor: pointer; width: 20px; height: 20px; object-fit: contain; opacity: 0.3; filter: grayscale(100%);">
+                                            <?php endif; ?>
+                                            
+                                            <!-- 5. Eliminar -->
+                                            <img src="assets/images/app/delete-icon.svg" 
+                                                 alt="Eliminar" 
+                                                 onclick="deleteOficio(<?= $oficio['id'] ?>, '<?= htmlspecialchars($oficio['nombre']) ?>')" 
+                                                 title="Eliminar"
+                                                 style="width: 20px; height: 20px; cursor: pointer;">
+                                        </div>
+                                    </div>
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -1503,28 +1510,29 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     border: 1px solid transparent !important;
     border-radius: 4px;
     transition: all 0.2s ease;
+    font-weight: 500;
     cursor: text;
 }
 
 .categoria-nombre-input:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: rgba(255, 255, 255, 0.2) !important;
+    background: #f8f9fa !important;
+    border-color: #dee2e6 !important;
 }
 
 .categoria-nombre-input:focus {
     outline: none;
-    background: rgba(255, 255, 255, 0.15) !important;
-    border-color: rgba(255, 255, 255, 0.4) !important;
-    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+    background: white !important;
+    border-color: #002b47 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 43, 71, 0.1);
 }
 
 .categoria-nombre-input.saving {
-    background: rgba(255, 255, 204, 0.3) !important;
+    background: #ffffcc !important;
     border-color: #ffc107 !important;
 }
 
 .categoria-nombre-input.saved {
-    background: rgba(212, 237, 218, 0.3) !important;
+    background: #d4edda !important;
     border-color: #28a745 !important;
 }
 
