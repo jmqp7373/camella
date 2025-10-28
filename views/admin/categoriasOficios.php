@@ -2339,20 +2339,33 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     
     /* FIX: Oficios en móvil */
     .oficio-item {
-        overflow-x: visible;
+        overflow-x: hidden !important;
     }
     
     .oficio-item > div {
         flex-wrap: nowrap !important;
-        padding: 0.75rem 0.5rem !important;
+        padding: 0.5rem !important;
         max-width: 100% !important;
-        overflow-x: visible;
+        width: 100% !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
     }
     
     .oficio-nombre-input {
-        max-width: 180px !important;
-        min-width: 120px !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
         font-size: 0.9rem !important;
+    }
+    
+    /* Reducir tamaño de controles en mobile */
+    .oficio-item img,
+    .oficio-item .toggle-switch {
+        transform: scale(0.85);
+    }
+    
+    .oficio-item > div > div {
+        gap: 0.25rem !important;
     }
     
     /* FIX: Botones en móvil */
