@@ -589,10 +589,10 @@ require_once __DIR__ . '/../../partials/header.php';
                             <div class="d-flex gap-2 justify-content-end">
                                 <button type="button" class="btn btn-outline-secondary btn-sm" 
                                         onclick="document.getElementById('formCategoria').reset(); document.getElementById('catId').value = '';">
-                                    <i class="fas fa-times"></i> Cancelar
+                                    <i class="fas fa-times me-2"></i>Cancelar
                                 </button>
                                 <button type="button" id="btnSaveCategoria" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-save"></i> Guardar Categoría
+                                    <i class="fas fa-save me-2"></i>Guardar Categoría
                                 </button>
                             </div>
                         </form>
@@ -644,10 +644,10 @@ require_once __DIR__ . '/../../partials/header.php';
                             <div class="d-flex gap-2 justify-content-end">
                                 <button type="button" class="btn btn-outline-secondary btn-sm" 
                                         onclick="document.getElementById('formOficio').reset(); document.getElementById('ofId').value = ''; document.getElementById('ofActivo').checked = true;">
-                                    <i class="fas fa-times"></i> Cancelar
+                                    <i class="fas fa-times me-2"></i>Cancelar
                                 </button>
                                 <button type="button" id="btnSaveOficio" class="btn btn-primary btn-sm">
-                                    <i class="fas fa-save"></i> Guardar Oficio
+                                    <i class="fas fa-save me-2"></i>Guardar Oficio
                                 </button>
                             </div>
                         </form>
