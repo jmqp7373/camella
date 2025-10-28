@@ -50,7 +50,7 @@ $totalCategorias = count($categorias);
 require_once __DIR__ . '/../../partials/header.php';
 ?>
 
-<div style="margin-top: 100px;">
+<div style="margin-top: 40px;">
 <!-- Hero Section RESTAURADO -->
 <div class="home-hero">
     <h1 class="page-title text-azul" style="margin-bottom: 10px;">
