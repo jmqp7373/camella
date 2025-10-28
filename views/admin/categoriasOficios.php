@@ -2011,6 +2011,116 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
         font-size: 1.1rem;
         padding: 0.875rem 1.25rem;
     }
+    
+    /* FIX: Contenedor principal en móvil */
+    .container {
+        padding-left: 15px !important;
+        padding-right: 15px !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* FIX: Bloque admin */
+    .admin-block {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .admin-block-content {
+        padding: 1rem !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* FIX: Tarjetas de categoría */
+    .category-card {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding: 1rem !important;
+        overflow-x: hidden !important;
+    }
+    
+    /* FIX: Título de categoría */
+    .category-title {
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+        font-size: 1rem !important;
+    }
+    
+    .category-icon {
+        font-size: 1.2rem !important;
+    }
+    
+    .categoria-nombre-input {
+        max-width: 100% !important;
+        min-width: 150px !important;
+        font-size: 0.95rem !important;
+    }
+    
+    /* FIX: Contenedor de búsqueda */
+    .search-container {
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+    }
+    
+    .search-input-wrapper {
+        min-width: 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    
+    .filter-wrapper {
+        width: 100% !important;
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+    
+    .filter-label {
+        width: 100% !important;
+    }
+    
+    .filter-select {
+        width: 100% !important;
+    }
+    
+    /* FIX: Formularios en móvil */
+    .form-section {
+        padding: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    .form-section-title {
+        font-size: 1rem !important;
+    }
+    
+    /* FIX: Oficios en móvil */
+    .oficio-item > div {
+        flex-wrap: wrap !important;
+        padding: 0.75rem 0.5rem !important;
+    }
+    
+    .oficio-nombre-input {
+        max-width: 100% !important;
+        min-width: 120px !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* FIX: Botones en móvil */
+    .category-title .btn-sm,
+    .oficio-item .btn-sm {
+        padding: 0.25rem 0.4rem !important;
+        font-size: 0.75rem !important;
+    }
+    
+    /* FIX: Stats horizontales */
+    .stats-horizontal {
+        gap: 0.5rem !important;
+    }
+    
+    .stat-item {
+        padding: 0.75rem !important;
+    }
 }
 
 /* Asegurar que elementos ocultos no ocupen espacio */
