@@ -442,8 +442,7 @@ const iconosDisponibles = [
         { icon: 'fa-solid fa-hand-sparkles', label: 'hand-sparkles - Desinfeccion' },
         { icon: 'fa-solid fa-wind', label: 'wind - Ventilacion' },
         { icon: 'fa-solid fa-toilet', label: 'toilet - Sanitario' },
-        { icon: 'fa-solid fa-dumpster', label: 'dumpster - Contenedor' },
-        { icon: 'fa-solid fa-sponge', label: 'sponge - Esponja' }
+        { icon: 'fa-solid fa-dumpster', label: 'dumpster - Contenedor' }
     ]},
     
     { categoria: 'CONSTRUCCION Y ALBANILERIA', iconos: [
@@ -560,8 +559,7 @@ const iconosDisponibles = [
     ]},
     
     { categoria: 'ROPA Y LAVANDERIA', iconos: [
-        { icon: 'fa-solid fa-shirt', label: 'shirt - Camisa' },
-        { icon: 'fa-solid fa-jug-detergent', label: 'jug-detergent - Detergente' }
+        { icon: 'fa-solid fa-shirt', label: 'shirt - Camisa' }
     ]},
     
     { categoria: 'MASCOTAS', iconos: [
