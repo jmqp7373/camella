@@ -155,6 +155,130 @@ require_once __DIR__ . '/../../partials/header.php';
     </div>
 </section>
 
+<!-- BLOQUE: CATEGORÍAS Y OFICIOS -->
+<section class="container mb-4">
+    <div class="admin-block">
+        <h2 class="admin-block-title">
+            <i class="fas fa-layer-group"></i> Categorías y Oficios
+        </h2>
+        <div class="admin-block-content">
+            <div class="categories-tree">
+                <?php if (!empty($categorias)): ?>
+            <?php foreach ($categorias as $categoria): ?>
+                <div class="category-card" data-categoria-id="<?= $categoria['id'] ?>">
+                    <h3 class="category-title">
+                        <!-- 1. Viñeta (icono de categoría) -->
+                        <span class="category-icon">
+                            <i class="<?= htmlspecialchars($categoria['icono'] ?: 'fas fa-briefcase') ?>"></i>
+                        </span>
+                        
+                        <!-- 2. Input editable inline para categoría -->
+                        <input type="text" 
+                               class="categoria-nombre-input"
+                               data-categoria-id="<?= $categoria['id'] ?>"
+                               value="<?= htmlspecialchars($categoria['nombre']) ?>"
+                               title="Haz clic para editar. Presiona Enter o pierde el foco para guardar"
+                               style="border: none; background: transparent; font-size: inherit; font-weight: inherit; padding: 2px 8px; flex: 1; min-width: 200px; max-width: 400px; color: inherit;">
+                        
+                        <!-- Acciones de admin inline -->
+                        <span style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center; font-size: 0.85rem;">
+                            <!-- 5. Eliminar -->
+                            <img src="assets/images/app/delete-icon.svg" 
+                                 alt="Eliminar" 
+                                 onclick="deleteCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars($categoria['nombre']) ?>')" 
+                                 title="Eliminar categoría"
+                                 style="width: 20px; height: 20px; cursor: pointer;">
+                        </span>
+                    </h3>
+                    
+                    <?php 
+                    $oficios = $oficiosPorCategoria[$categoria['id']] ?? [];
+                    if (!empty($oficios)): 
+                    ?>
+                        <ul class="subcategories">
+                            <?php foreach ($oficios as $oficio): ?>
+                                <li class="oficio-item <?= $oficio['activo'] == 0 ? 'oficio-inactivo' : '' ?>" 
+                                    data-oficio-id="<?= $oficio['id'] ?>" 
+                                    data-name="<?= strtolower($oficio['nombre']) ?>"
+                                    data-popular="<?= $oficio['popular'] ?>"
+                                    data-activo="<?= $oficio['activo'] ?>">
+                                    
+                                    <!-- Wrapper completo con todos los elementos -->
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.5rem; background: #f8f9fa; border-radius: 6px; border: 1px solid #e9ecef;">
+                                        <!-- 1. Viñeta (flechita a la derecha) -->
+                                        <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: #6c757d;"></i>
+                                        
+                                        <!-- 2. Input editable inline (Texto del oficio) -->
+                                        <input type="text" 
+                                               class="oficio-nombre-input <?= $oficio['activo'] == 0 ? 'nombre-tachado' : '' ?>"
+                                               data-oficio-id="<?= $oficio['id'] ?>"
+                                               value="<?= htmlspecialchars($oficio['nombre']) ?>"
+                                               title="Haz clic para editar. Presiona Enter o pierde el foco para guardar"
+                                               style="border: none; background: transparent; font-size: inherit; padding: 2px 4px; flex: 1; min-width: 150px; max-width: 300px;">
+                                        
+                                        <!-- Controles a la derecha -->
+                                        <div style="display: flex; gap: 0.5rem; align-items: center; margin-left: auto;">
+                                            <!-- 3. Toggle Switch Activo/Inactivo -->
+                                            <label class="toggle-switch" title="<?= $oficio['activo'] == 1 ? 'Activo - Clic para desactivar' : 'Inactivo - Clic para activar' ?>">
+                                                <input type="checkbox" 
+                                                       class="toggle-checkbox"
+                                                       data-toggle-activo="<?= $oficio['id'] ?>"
+                                                       <?= $oficio['activo'] == 1 ? 'checked' : '' ?>>
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                            
+                                            <!-- 4. Popular (candelita) -->
+                                            <?php if ($oficio['popular'] == 1): ?>
+                                                <img src="<?= app_url('assets/images/app/candela1.png') ?>" 
+                                                     alt="Popular" 
+                                                     class="flamita-popular"
+                                                     data-toggle-popular="<?= $oficio['id'] ?>"
+                                                     title="Clic para quitar popularidad"
+                                                     style="cursor: pointer; width: 20px; height: 20px; object-fit: contain;">
+                                            <?php else: ?>
+                                                <img src="<?= app_url('assets/images/app/candela1.png') ?>" 
+                                                     alt="No popular" 
+                                                     class="flamita-no-popular"
+                                                     data-toggle-popular="<?= $oficio['id'] ?>"
+                                                     title="Clic para marcar popular"
+                                                     style="cursor: pointer; width: 20px; height: 20px; object-fit: contain; opacity: 0.3; filter: grayscale(100%);">
+                                            <?php endif; ?>
+                                            
+                                            <!-- 5. Eliminar -->
+                                            <img src="<?= app_url('assets/images/app/delete-icon.svg') ?>" 
+                                                 alt="Eliminar" 
+                                                 onclick="deleteOficio(<?= $oficio['id'] ?>, '<?= htmlspecialchars($oficio['nombre']) ?>')" 
+                                                 title="Eliminar"
+                                                 style="width: 20px; height: 20px; cursor: pointer;">
+                                        </div>
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php else: ?>
+                        <ul class="subcategories">
+                            <li style="font-style: italic; color: #999;">No hay oficios registrados en esta categoría</li>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="category-card">
+                <h3 class="category-title">
+                    <span class="category-icon"><i class="fas fa-cog"></i></span>
+                    No hay categorías
+                </h3>
+                <ul class="subcategories">
+                    <li style="font-style: italic; color: #666;">
+                        No se encontraron categorías. <a href="javascript:location.reload()">Actualizar</a>
+                    </li>
+                </ul>
+            </div>
+        <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
 <!-- BLOQUE: NUEVA CATEGORÍA U OFICIO -->
 <section class="container mb-4">
     <div class="admin-block">
@@ -534,129 +658,6 @@ require_once __DIR__ . '/../../partials/header.php';
     </div>
 </section>
 
-<!-- BLOQUE: CATEGORÍAS Y OFICIOS -->
-<section class="container mb-4">
-    <div class="admin-block">
-        <h2 class="admin-block-title">
-            <i class="fas fa-layer-group"></i> Categorías y Oficios
-        </h2>
-        <div class="admin-block-content">
-            <div class="categories-tree">
-                <?php if (!empty($categorias)): ?>
-            <?php foreach ($categorias as $categoria): ?>
-                <div class="category-card" data-categoria-id="<?= $categoria['id'] ?>">
-                    <h3 class="category-title">
-                        <!-- 1. Viñeta (icono de categoría) -->
-                        <span class="category-icon">
-                            <i class="<?= htmlspecialchars($categoria['icono'] ?: 'fas fa-briefcase') ?>"></i>
-                        </span>
-                        
-                        <!-- 2. Input editable inline para categoría -->
-                        <input type="text" 
-                               class="categoria-nombre-input"
-                               data-categoria-id="<?= $categoria['id'] ?>"
-                               value="<?= htmlspecialchars($categoria['nombre']) ?>"
-                               title="Haz clic para editar. Presiona Enter o pierde el foco para guardar"
-                               style="border: none; background: transparent; font-size: inherit; font-weight: inherit; padding: 2px 8px; flex: 1; min-width: 200px; max-width: 400px; color: inherit;">
-                        
-                        <!-- Acciones de admin inline -->
-                        <span style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center; font-size: 0.85rem;">
-                            <!-- 5. Eliminar -->
-                            <img src="assets/images/app/delete-icon.svg" 
-                                 alt="Eliminar" 
-                                 onclick="deleteCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars($categoria['nombre']) ?>')" 
-                                 title="Eliminar categoría"
-                                 style="width: 20px; height: 20px; cursor: pointer;">
-                        </span>
-                    </h3>
-                    
-                    <?php 
-                    $oficios = $oficiosPorCategoria[$categoria['id']] ?? [];
-                    if (!empty($oficios)): 
-                    ?>
-                        <ul class="subcategories">
-                            <?php foreach ($oficios as $oficio): ?>
-                                <li class="oficio-item <?= $oficio['activo'] == 0 ? 'oficio-inactivo' : '' ?>" 
-                                    data-oficio-id="<?= $oficio['id'] ?>" 
-                                    data-name="<?= strtolower($oficio['nombre']) ?>"
-                                    data-popular="<?= $oficio['popular'] ?>"
-                                    data-activo="<?= $oficio['activo'] ?>">
-                                    
-                                    <!-- Wrapper completo con todos los elementos -->
-                                    <div style="display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.5rem; background: #f8f9fa; border-radius: 6px; border: 1px solid #e9ecef;">
-                                        <!-- 1. Viñeta (flechita a la derecha) -->
-                                        <i class="fas fa-chevron-right" style="font-size: 0.7rem; color: #6c757d;"></i>
-                                        
-                                        <!-- 2. Input editable inline (Texto del oficio) -->
-                                        <input type="text" 
-                                               class="oficio-nombre-input <?= $oficio['activo'] == 0 ? 'nombre-tachado' : '' ?>"
-                                               data-oficio-id="<?= $oficio['id'] ?>"
-                                               value="<?= htmlspecialchars($oficio['nombre']) ?>"
-                                               title="Haz clic para editar. Presiona Enter o pierde el foco para guardar"
-                                               style="border: none; background: transparent; font-size: inherit; padding: 2px 4px; flex: 1; min-width: 150px; max-width: 300px;">
-                                        
-                                        <!-- Controles a la derecha -->
-                                        <div style="display: flex; gap: 0.5rem; align-items: center; margin-left: auto;">
-                                            <!-- 3. Toggle Switch Activo/Inactivo -->
-                                            <label class="toggle-switch" title="<?= $oficio['activo'] == 1 ? 'Activo - Clic para desactivar' : 'Inactivo - Clic para activar' ?>">
-                                                <input type="checkbox" 
-                                                       class="toggle-checkbox"
-                                                       data-toggle-activo="<?= $oficio['id'] ?>"
-                                                       <?= $oficio['activo'] == 1 ? 'checked' : '' ?>>
-                                                <span class="toggle-slider"></span>
-                                            </label>
-                                            
-                                            <!-- 4. Popular (candelita) -->
-                                            <?php if ($oficio['popular'] == 1): ?>
-                                                <img src="<?= app_url('assets/images/app/candela1.png') ?>" 
-                                                     alt="Popular" 
-                                                     class="flamita-popular"
-                                                     data-toggle-popular="<?= $oficio['id'] ?>"
-                                                     title="Clic para quitar popularidad"
-                                                     style="cursor: pointer; width: 20px; height: 20px; object-fit: contain;">
-                                            <?php else: ?>
-                                                <img src="<?= app_url('assets/images/app/candela1.png') ?>" 
-                                                     alt="No popular" 
-                                                     class="flamita-no-popular"
-                                                     data-toggle-popular="<?= $oficio['id'] ?>"
-                                                     title="Clic para marcar popular"
-                                                     style="cursor: pointer; width: 20px; height: 20px; object-fit: contain; opacity: 0.3; filter: grayscale(100%);">
-                                            <?php endif; ?>
-                                            
-                                            <!-- 5. Eliminar -->
-                                            <img src="<?= app_url('assets/images/app/delete-icon.svg') ?>" 
-                                                 alt="Eliminar" 
-                                                 onclick="deleteOficio(<?= $oficio['id'] ?>, '<?= htmlspecialchars($oficio['nombre']) ?>')" 
-                                                 title="Eliminar"
-                                                 style="width: 20px; height: 20px; cursor: pointer;">
-                                        </div>
-                                    </div>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php else: ?>
-                        <ul class="subcategories">
-                            <li style="font-style: italic; color: #999;">No hay oficios registrados en esta categoría</li>
-                        </ul>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <div class="category-card">
-                <h3 class="category-title">
-                    <span class="category-icon"><i class="fas fa-cog"></i></span>
-                    No hay categorías
-                </h3>
-                <ul class="subcategories">
-                    <li style="font-style: italic; color: #666;">
-                        No se encontraron categorías. <a href="javascript:location.reload()">Actualizar</a>
-                    </li>
-                </ul>
-            </div>
-        <?php endif; ?>
-            </div>
-        </div>
-    </div>
 </section>
 
 <script>
@@ -671,6 +672,15 @@ function getControllerUrl(path) {
         // En producción, usar ruta relativa desde la raíz
         return `${baseUrl}/${path}`;
     }
+}
+
+// Función para aplicar Title Case
+function toTitleCase(str) {
+    if (!str) return '';
+    return str.toLowerCase()
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
 }
 
 // Inicialización cuando el DOM está listo
@@ -1100,8 +1110,14 @@ function wireInlineEdit(){
         
         // Guardar al perder el foco
         input.addEventListener('blur', async () => {
-            const nuevoNombre = input.value.trim();
+            let nuevoNombre = input.value.trim();
             const id = input.getAttribute('data-oficio-id');
+            
+            // Aplicar Title Case
+            if (nuevoNombre) {
+                nuevoNombre = toTitleCase(nuevoNombre);
+                input.value = nuevoNombre;
+            }
             
             // Si no cambió, no hacer nada
             if (nuevoNombre === valorOriginal) return;
@@ -1192,8 +1208,14 @@ function wireInlineEdit(){
         
         // Guardar al perder el foco
         input.addEventListener('blur', async () => {
-            const nuevoNombre = input.value.trim();
+            let nuevoNombre = input.value.trim();
             const id = input.getAttribute('data-categoria-id');
+            
+            // Aplicar Title Case
+            if (nuevoNombre) {
+                nuevoNombre = toTitleCase(nuevoNombre);
+                input.value = nuevoNombre;
+            }
             
             // Si no cambió, no hacer nada
             if (nuevoNombre === valorOriginal) return;
@@ -1374,6 +1396,14 @@ document.getElementById('btnSaveCategoria')?.addEventListener('click', async (e)
     const formData = new FormData(form);
     const isEdit = formData.get('id') !== '';
     
+    // Aplicar Title Case al nombre
+    const nombreInput = form.querySelector('input[name="nombre"]');
+    if (nombreInput?.value) {
+        const titleCased = toTitleCase(nombreInput.value);
+        nombreInput.value = titleCased;
+        formData.set('nombre', titleCased);
+    }
+    
     try {
         const action = isEdit ? 'update' : 'create';
         const r = await fetch(getControllerUrl(`controllers/CategoriaController.php?action=${action}`), {
@@ -1397,6 +1427,14 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     const form = document.getElementById('formOficio');
     const formData = new FormData(form);
     const isEdit = formData.get('id') !== '';
+    
+    // Aplicar Title Case al nombre
+    const nombreInput = form.querySelector('input[name="nombre"]');
+    if (nombreInput?.value) {
+        const titleCased = toTitleCase(nombreInput.value);
+        nombreInput.value = titleCased;
+        formData.set('nombre', titleCased);
+    }
     
     try {
         const action = isEdit ? 'update' : 'create';
@@ -1602,7 +1640,14 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow: hidden;
+}
+
+/* Wrapper interno del oficio */
+.oficio-item > div {
+    max-width: 100%;
+    overflow: hidden;
 }
 
 /* ========================================
@@ -2240,13 +2285,19 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     }
     
     /* FIX: Oficios en móvil */
+    .oficio-item {
+        overflow-x: hidden;
+    }
+    
     .oficio-item > div {
-        flex-wrap: wrap !important;
+        flex-wrap: nowrap !important;
         padding: 0.75rem 0.5rem !important;
+        max-width: 100% !important;
+        overflow-x: hidden;
     }
     
     .oficio-nombre-input {
-        max-width: 100% !important;
+        max-width: 180px !important;
         min-width: 120px !important;
         font-size: 0.9rem !important;
     }
