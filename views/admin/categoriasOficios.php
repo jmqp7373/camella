@@ -169,15 +169,17 @@ require_once __DIR__ . '/../../partials/header.php';
                         <span class="category-icon">
                             <i class="<?= htmlspecialchars($categoria['icono'] ?: 'fas fa-briefcase') ?>"></i>
                         </span>
-                        <?= htmlspecialchars($categoria['nombre']) ?>
+                        
+                        <!-- Input editable inline para categoría -->
+                        <input type="text" 
+                               class="categoria-nombre-input"
+                               data-categoria-id="<?= $categoria['id'] ?>"
+                               value="<?= htmlspecialchars($categoria['nombre']) ?>"
+                               title="Haz clic para editar. Presiona Enter o pierde el foco para guardar"
+                               style="border: none; background: transparent; font-size: inherit; font-weight: inherit; padding: 2px 8px; flex: 1; min-width: 200px; max-width: 400px; color: inherit;">
                         
                         <!-- Acciones de admin inline -->
                         <span style="margin-left: auto; display: flex; gap: 0.5rem; font-size: 0.85rem;">
-                            <button class="btn btn-primary btn-sm" 
-                                    onclick="editCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars($categoria['nombre']) ?>', '<?= htmlspecialchars($categoria['icono'] ?: '') ?>')" 
-                                    title="Editar categoría">
-                                <i class="fas fa-edit"></i>
-                            </button>
                             <button class="btn btn-danger btn-sm" 
                                     onclick="deleteCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars($categoria['nombre']) ?>')" 
                                     title="Eliminar categoría">
@@ -199,15 +201,7 @@ require_once __DIR__ . '/../../partials/header.php';
                                     data-activo="<?= $oficio['activo'] ?>">
                                     
                                     <span style="display: inline-flex; align-items: center; flex: 1; gap: 8px;">
-                                        <!-- Input editable inline -->
-                                        <input type="text" 
-                                               class="oficio-nombre-input <?= $oficio['activo'] == 0 ? 'nombre-tachado' : '' ?>"
-                                               data-oficio-id="<?= $oficio['id'] ?>"
-                                               value="<?= htmlspecialchars($oficio['nombre']) ?>"
-                                               title="Haz clic para editar. Presiona Enter o pierde el foco para guardar"
-                                               style="border: none; background: transparent; font-size: inherit; padding: 2px 4px; flex: 1; min-width: 150px; max-width: 300px;">
-                                        
-                                        <!-- Toggle Switch Activo/Inactivo -->
+                                        <!-- Toggle Switch Activo/Inactivo - AL FRENTE -->
                                         <label class="toggle-switch" title="<?= $oficio['activo'] == 1 ? 'Activo - Clic para desactivar' : 'Inactivo - Clic para activar' ?>">
                                             <input type="checkbox" 
                                                    class="toggle-checkbox"
@@ -216,7 +210,7 @@ require_once __DIR__ . '/../../partials/header.php';
                                             <span class="toggle-slider"></span>
                                         </label>
                                         
-                                        <!-- Flamita con imagen candela1.png -->
+                                        <!-- Flamita con imagen candela1.png - AL FRENTE -->
                                         <?php if ($oficio['popular'] == 1): ?>
                                             <img src="/camella.com.co/assets/images/app/candela1.png" 
                                                  alt="Popular" 
@@ -232,6 +226,14 @@ require_once __DIR__ . '/../../partials/header.php';
                                                  title="Clic para marcar popular"
                                                  style="cursor: pointer; width: 20px; height: 20px; object-fit: contain; opacity: 0.3; filter: grayscale(100%);">
                                         <?php endif; ?>
+                                        
+                                        <!-- Input editable inline - DESPUÉS DE LAS VIÑETAS -->
+                                        <input type="text" 
+                                               class="oficio-nombre-input <?= $oficio['activo'] == 0 ? 'nombre-tachado' : '' ?>"
+                                               data-oficio-id="<?= $oficio['id'] ?>"
+                                               value="<?= htmlspecialchars($oficio['nombre']) ?>"
+                                               title="Haz clic para editar. Presiona Enter o pierde el foco para guardar"
+                                               style="border: none; background: transparent; font-size: inherit; padding: 2px 4px; flex: 1; min-width: 150px; max-width: 300px;">
                                     </span>
                                     
                                     <!-- Botón eliminar -->
@@ -833,6 +835,93 @@ function wireInlineEdit(){
             valorOriginal = input.value;
         });
     });
+    
+    // Edición inline para CATEGORÍAS
+    document.querySelectorAll('.categoria-nombre-input').forEach(input => {
+        let valorOriginal = input.value;
+        
+        // Guardar al presionar Enter
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                input.blur(); // Disparar el evento blur para guardar
+            }
+            if (e.key === 'Escape') {
+                input.value = valorOriginal;
+                input.blur();
+            }
+        });
+        
+        // Guardar al perder el foco
+        input.addEventListener('blur', async () => {
+            const nuevoNombre = input.value.trim();
+            const id = input.getAttribute('data-categoria-id');
+            
+            // Si no cambió, no hacer nada
+            if (nuevoNombre === valorOriginal) return;
+            
+            // Validar que no esté vacío
+            if (!nuevoNombre) {
+                alert('El nombre de la categoría no puede estar vacío');
+                input.value = valorOriginal;
+                return;
+            }
+            
+            // Mostrar estado de guardando
+            input.classList.add('saving');
+            
+            try {
+                const baseUrl = window.location.origin;
+                const url = `${baseUrl}/camella.com.co/controllers/CategoriaController.php?action=updateNombre`;
+                
+                const formData = new URLSearchParams();
+                formData.append('id', id);
+                formData.append('nombre', nuevoNombre);
+                
+                const r = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData
+                });
+                
+                if (!r.ok) {
+                    throw new Error('Error en la petición: ' + r.status);
+                }
+                
+                const data = await r.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al guardar');
+                }
+                
+                // Actualizar valor original y mostrar éxito
+                valorOriginal = nuevoNombre;
+                input.classList.remove('saving');
+                input.classList.add('saved');
+                
+                // Mostrar toast
+                showToast('✅ Categoría actualizada: ' + nuevoNombre);
+                
+                // Quitar clase de guardado después de 1 segundo
+                setTimeout(() => {
+                    input.classList.remove('saved');
+                }, 1000);
+                
+            } catch(e) {
+                console.error('❌ Error al guardar categoría:', e);
+                input.classList.remove('saving');
+                alert('Error al guardar: ' + e.message);
+                input.value = valorOriginal; // Revertir
+            }
+        });
+        
+        // Actualizar valor original cuando se hace foco
+        input.addEventListener('focus', () => {
+            valorOriginal = input.value;
+        });
+    });
 }
 
 // Funciones CRUD
@@ -1406,6 +1495,36 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
 
 .oficio-nombre-input.saved {
     background: #d4edda !important;
+    border-color: #28a745 !important;
+}
+
+/* Input editable inline para categorías */
+.categoria-nombre-input {
+    border: 1px solid transparent !important;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    cursor: text;
+}
+
+.categoria-nombre-input:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.categoria-nombre-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+}
+
+.categoria-nombre-input.saving {
+    background: rgba(255, 255, 204, 0.3) !important;
+    border-color: #ffc107 !important;
+}
+
+.categoria-nombre-input.saved {
+    background: rgba(212, 237, 218, 0.3) !important;
     border-color: #28a745 !important;
 }
 

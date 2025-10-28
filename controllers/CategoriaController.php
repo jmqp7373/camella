@@ -24,6 +24,9 @@ class CategoriaController {
             case 'update':
                 $this->update();
                 break;
+            case 'updateNombre':
+                $this->updateNombre();
+                break;
             case 'delete':
                 $this->delete();
                 break;
@@ -134,6 +137,57 @@ class CategoriaController {
 
             if ($resultado) {
                 echo json_encode(['success' => true, 'message' => 'Categoría actualizada exitosamente']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Error al actualizar la categoría']);
+            }
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Actualizar solo el nombre de una categoría (AJAX inline edit)
+     */
+    public function updateNombre() {
+        header('Content-Type: application/json');
+        
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            http_response_code(405);
+            echo json_encode(['success' => false, 'message' => 'Método no permitido']);
+            return;
+        }
+
+        try {
+            $id = (int)($_POST['id'] ?? 0);
+            $nombre = trim($_POST['nombre'] ?? '');
+
+            if ($id <= 0 || empty($nombre)) {
+                echo json_encode(['success' => false, 'message' => 'ID y nombre son requeridos']);
+                return;
+            }
+
+            // Verificar si ya existe otra categoría con el mismo nombre
+            require_once __DIR__ . '/../config/database.php';
+            $pdo = getPDO();
+            $stmt = $pdo->prepare("SELECT id FROM categorias WHERE nombre = ? AND id != ?");
+            $stmt->execute([$nombre, $id]);
+            if ($stmt->fetch()) {
+                echo json_encode(['success' => false, 'message' => 'Ya existe otra categoría con ese nombre']);
+                return;
+            }
+
+            // Actualizar solo el nombre
+            $stmt = $pdo->prepare("UPDATE categorias SET nombre = ? WHERE id = ?");
+            $resultado = $stmt->execute([$nombre, $id]);
+
+            if ($resultado) {
+                echo json_encode([
+                    'success' => true, 
+                    'message' => 'Categoría actualizada exitosamente',
+                    'nombre' => $nombre
+                ]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Error al actualizar la categoría']);
             }
