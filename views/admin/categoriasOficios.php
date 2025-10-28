@@ -214,10 +214,10 @@ require_once __DIR__ . '/../../partials/header.php';
                                                data-oficio-id="<?= $oficio['id'] ?>"
                                                value="<?= htmlspecialchars($oficio['nombre']) ?>"
                                                title="Haz clic para editar. Presiona Enter o pierde el foco para guardar"
-                                               style="border: none; background: transparent; font-size: inherit; padding: 2px 4px; flex: 1; min-width: 150px; max-width: 300px;">
+                                               style="border: none; background: transparent; font-size: inherit; padding: 2px 4px;">
                                         
                                         <!-- Controles a la derecha -->
-                                        <div style="display: flex; gap: 0.5rem; align-items: center; margin-left: auto;">
+                                        <div style="display: flex; gap: 0.5rem; align-items: center; margin-left: auto; flex-shrink: 0;">
                                             <!-- 3. Toggle Switch Activo/Inactivo -->
                                             <label class="toggle-switch" title="<?= $oficio['activo'] == 1 ? 'Activo - Clic para desactivar' : 'Inactivo - Clic para activar' ?>">
                                                 <input type="checkbox" 
@@ -1642,12 +1642,22 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     gap: 0.5rem;
     flex-wrap: nowrap;
     overflow: visible; /* Cambiado para permitir ver dropdown/focus */
+    position: relative;
 }
 
 /* Wrapper interno del oficio */
 .oficio-item > div {
     max-width: 100%;
+    width: 100%;
     overflow: visible; /* Cambiado para permitir ver focus states */
+    box-sizing: border-box;
+}
+
+/* Input de nombre del oficio */
+.oficio-nombre-input {
+    flex: 1 1 auto;
+    min-width: 0 !important;
+    max-width: none !important;
 }
 
 /* ========================================
