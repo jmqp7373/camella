@@ -155,6 +155,92 @@ require_once __DIR__ . '/../../partials/header.php';
     </div>
 </section>
 
+<!-- BLOQUE: NUEVA/EDITAR CATEGORÍA -->
+<section class="container mb-4">
+    <div class="admin-block">
+        <h2 class="admin-block-title">
+            <i class="fas fa-folder-plus"></i> Nueva / Editar Categoría
+        </h2>
+        <div class="admin-block-content">
+            <form id="formCategoria">
+                <input type="hidden" id="catId" name="id" value="">
+                
+                <div class="mb-3">
+                    <label for="catNombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="catNombre" name="nombre" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="catIcono" class="form-label">Icono (FontAwesome)</label>
+                    <input type="text" class="form-control" id="catIcono" name="icono" placeholder="fa-solid fa-broom">
+                    <small class="text-muted">Ejemplo: fa-solid fa-broom, fa-solid fa-wrench</small>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('formCategoria').reset(); document.getElementById('catId').value = '';">
+                        Cancelar
+                    </button>
+                    <button type="button" id="btnSaveCategoria" class="btn btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- BLOQUE: NUEVO/EDITAR OFICIO -->
+<section class="container mb-4">
+    <div class="admin-block">
+        <h2 class="admin-block-title">
+            <i class="fas fa-briefcase"></i> Nuevo / Editar Oficio
+        </h2>
+        <div class="admin-block-content">
+            <form id="formOficio">
+                <input type="hidden" id="ofId" name="id" value="">
+                
+                <div class="mb-3">
+                    <label for="ofTitulo" class="form-label">Nombre del oficio</label>
+                    <input type="text" class="form-control" id="ofTitulo" name="titulo" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="ofCatId" class="form-label">Categoría</label>
+                    <select class="form-select" id="ofCatId" name="categoria_id" required>
+                        <option value="">Seleccionar categoría...</option>
+                        <?php foreach ($categorias as $cat): ?>
+                            <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nombre']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="ofPopular" name="popular" value="1">
+                    <label class="form-check-label" for="ofPopular">
+                        Marcar como popular
+                    </label>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="ofActivo" name="activo" value="1" checked>
+                    <label class="form-check-label" for="ofActivo">
+                        Oficio activo
+                    </label>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('formOficio').reset(); document.getElementById('ofId').value = '';">
+                        Cancelar
+                    </button>
+                    <button type="button" id="btnSaveOficio" class="btn btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
 <!-- BLOQUE: CATEGORÍAS Y OFICIOS -->
 <section class="container mb-4">
     <div class="admin-block">
