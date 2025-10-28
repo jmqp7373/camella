@@ -148,7 +148,7 @@ require_once __DIR__ . '/../../partials/header.php';
             
             <!-- Contador de resultados -->
             <div id="searchResults" class="search-results-info" style="display: none;">
-                <i class="fas fa-info-circle"></i>
+                <i class="fas fa-info-circle" style="color: #002b47; font-size: 1rem;"></i>
                 <span id="resultsText">Mostrando todos los resultados</span>
             </div>
         </div>
@@ -943,6 +943,9 @@ function wireSearchAndFilters(){
             apply();
         }
     });
+    
+    // Aplicar al inicio para mostrar el mensaje predeterminado
+    apply();
     
     console.log('✓ Búsqueda y filtros inicializados correctamente');
 }
