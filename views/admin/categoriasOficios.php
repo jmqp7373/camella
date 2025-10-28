@@ -155,88 +155,105 @@ require_once __DIR__ . '/../../partials/header.php';
     </div>
 </section>
 
-<!-- BLOQUE: NUEVA/EDITAR CATEGORÍA -->
+<!-- BLOQUE: NUEVA CATEGORÍA U OFICIO -->
 <section class="container mb-4">
     <div class="admin-block">
         <h2 class="admin-block-title">
-            <i class="fas fa-folder-plus"></i> Nueva / Editar Categoría
+            <i class="fas fa-plus-circle"></i> Nueva Categoría u Oficio
         </h2>
         <div class="admin-block-content">
-            <form id="formCategoria">
-                <input type="hidden" id="catId" name="id" value="">
-                
-                <div class="mb-3">
-                    <label for="catNombre" class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="catNombre" name="nombre" required>
+            <div class="row g-4">
+                <!-- FORMULARIO: CATEGORÍA -->
+                <div class="col-md-6">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-folder-plus"></i> Categoría
+                        </h3>
+                        <form id="formCategoria">
+                            <input type="hidden" id="catId" name="id" value="">
+                            
+                            <div class="mb-3">
+                                <label for="catNombre" class="form-label fw-semibold">Nombre</label>
+                                <input type="text" class="form-control" id="catNombre" name="nombre" 
+                                       placeholder="Ej: Aseo y Limpieza" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="catIcono" class="form-label fw-semibold">Icono (FontAwesome)</label>
+                                <input type="text" class="form-control" id="catIcono" name="icono" 
+                                       placeholder="fa-solid fa-broom">
+                                <small class="text-muted d-block mt-1">
+                                    <i class="fas fa-info-circle"></i> Ejemplo: fa-solid fa-broom, fa-solid fa-wrench
+                                </small>
+                            </div>
+                            
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                        onclick="document.getElementById('formCategoria').reset(); document.getElementById('catId').value = '';">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                                <button type="button" id="btnSaveCategoria" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-save"></i> Guardar Categoría
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                
-                <div class="mb-3">
-                    <label for="catIcono" class="form-label">Icono (FontAwesome)</label>
-                    <input type="text" class="form-control" id="catIcono" name="icono" placeholder="fa-solid fa-broom">
-                    <small class="text-muted">Ejemplo: fa-solid fa-broom, fa-solid fa-wrench</small>
-                </div>
-                
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('formCategoria').reset(); document.getElementById('catId').value = '';">
-                        Cancelar
-                    </button>
-                    <button type="button" id="btnSaveCategoria" class="btn btn-primary">
-                        Guardar
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</section>
 
-<!-- BLOQUE: NUEVO/EDITAR OFICIO -->
-<section class="container mb-4">
-    <div class="admin-block">
-        <h2 class="admin-block-title">
-            <i class="fas fa-briefcase"></i> Nuevo / Editar Oficio
-        </h2>
-        <div class="admin-block-content">
-            <form id="formOficio">
-                <input type="hidden" id="ofId" name="id" value="">
-                
-                <div class="mb-3">
-                    <label for="ofTitulo" class="form-label">Nombre del oficio</label>
-                    <input type="text" class="form-control" id="ofTitulo" name="titulo" required>
+                <!-- FORMULARIO: OFICIO -->
+                <div class="col-md-6">
+                    <div class="form-section">
+                        <h3 class="form-section-title">
+                            <i class="fas fa-briefcase"></i> Oficio
+                        </h3>
+                        <form id="formOficio">
+                            <input type="hidden" id="ofId" name="id" value="">
+                            
+                            <div class="mb-3">
+                                <label for="ofTitulo" class="form-label fw-semibold">Nombre del oficio</label>
+                                <input type="text" class="form-control" id="ofTitulo" name="titulo" 
+                                       placeholder="Ej: Electricista básico" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="ofCatId" class="form-label fw-semibold">Categoría</label>
+                                <select class="form-select" id="ofCatId" name="categoria_id" required>
+                                    <option value="">Seleccionar categoría...</option>
+                                    <?php foreach ($categorias as $cat): ?>
+                                        <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nombre']) ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            
+                            <div class="d-flex gap-3 mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="ofPopular" name="popular" value="1">
+                                    <label class="form-check-label" for="ofPopular">
+                                        <i class="fas fa-fire" style="color: #ffc107;"></i> Popular
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="ofActivo" name="activo" value="1" checked>
+                                    <label class="form-check-label" for="ofActivo">
+                                        <i class="fas fa-check-circle" style="color: #28a745;"></i> Activo
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex gap-2 justify-content-end">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" 
+                                        onclick="document.getElementById('formOficio').reset(); document.getElementById('ofId').value = ''; document.getElementById('ofActivo').checked = true;">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                                <button type="button" id="btnSaveOficio" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-save"></i> Guardar Oficio
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                
-                <div class="mb-3">
-                    <label for="ofCatId" class="form-label">Categoría</label>
-                    <select class="form-select" id="ofCatId" name="categoria_id" required>
-                        <option value="">Seleccionar categoría...</option>
-                        <?php foreach ($categorias as $cat): ?>
-                            <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nombre']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="ofPopular" name="popular" value="1">
-                    <label class="form-check-label" for="ofPopular">
-                        Marcar como popular
-                    </label>
-                </div>
-                
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="ofActivo" name="activo" value="1" checked>
-                    <label class="form-check-label" for="ofActivo">
-                        Oficio activo
-                    </label>
-                </div>
-                
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('formOficio').reset(); document.getElementById('ofId').value = '';">
-                        Cancelar
-                    </button>
-                    <button type="button" id="btnSaveOficio" class="btn btn-primary">
-                        Guardar
-                    </button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </section>
@@ -1699,6 +1716,78 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
         opacity: 0.98;
         filter: brightness(1.05);
     }
+}
+
+/* ========================================
+   SECCIONES DE FORMULARIOS
+   ======================================== */
+.form-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    height: 100%;
+}
+
+.form-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #002b47;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-section-title i {
+    font-size: 1.2rem;
+}
+
+.form-section .form-label {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-section .form-control,
+.form-section .form-select {
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+}
+
+.form-section .form-control:focus,
+.form-section .form-select:focus {
+    border-color: #002b47;
+    box-shadow: 0 0 0 0.2rem rgba(0, 43, 71, 0.15);
+}
+
+.form-section .btn {
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.form-section .btn-primary {
+    background: linear-gradient(135deg, #002b47 0%, #004975 100%);
+    border: none;
+}
+
+.form-section .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 43, 71, 0.3);
+}
+
+.form-section .btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.form-section .btn-outline-secondary:hover {
+    background: #6c757d;
+    color: white;
 }
 
 /* ========================================
