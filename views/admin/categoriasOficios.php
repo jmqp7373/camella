@@ -308,284 +308,16 @@ require_once __DIR__ . '/../../partials/header.php';
                             
                             <div class="mb-3">
                                 <label for="catIcono" class="form-label fw-semibold">Icono</label>
-                                <select class="form-select" id="catIcono" name="icono" required>
-                                    <option value="">Seleccionar icono...</option>
-                                    
-                                    <optgroup label="🧹 LIMPIEZA Y ASEO">
-                                    <option value="fa-solid fa-broom">🧹 Escoba - Limpieza</option>
-                                    <option value="fa-solid fa-spray-can">🎨 Spray - Limpieza profunda</option>
-                                    <option value="fa-solid fa-pump-soap">🧴 Jabón - Productos limpieza</option>
-                                    <option value="fa-solid fa-bath">� Bañera - Limpieza baños</option>
-                                    <option value="fa-solid fa-toilet">🚽 Sanitario - Limpieza sanitaria</option>
-                                    <option value="fa-solid fa-dumpster">🗑️ Contenedor - Recolección basuras</option>
-                                    <option value="fa-solid fa-bucket">🪣 Balde - Limpieza</option>
-                                    <option value="fa-solid fa-sponge">🧽 Esponja - Limpieza</option>
-                                    <option value="fa-solid fa-hand-sparkles">✨ Desinfección - Higiene</option>
-                                    <option value="fa-solid fa-wind">💨 Ventilación - Aire limpio</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🏗️ CONSTRUCCIÓN Y ALBAÑILERÍA">
-                                    <option value="fa-solid fa-hammer">🔨 Martillo - Construcción</option>
-                                    <option value="fa-solid fa-hard-hat">⛑️ Casco - Obra</option>
-                                    <option value="fa-solid fa-building">🏢 Edificio - Construcción</option>
-                                    <option value="fa-solid fa-trowel">🧱 Llana - Albañilería</option>
-                                    <option value="fa-solid fa-ruler-combined">📐 Escuadra - Medición</option>
-                                    <option value="fa-solid fa-ruler">📏 Regla - Medición</option>
-                                    <option value="fa-solid fa-level">📏 Nivel - Nivelación</option>
-                                    <option value="fa-solid fa-person-digging">⛏️ Excavación - Movimiento tierras</option>
-                                    <option value="fa-solid fa-trowel-bricks">🧱 Mampostería - Obra</option>
-                                    <option value="fa-solid fa-warehouse">🏭 Bodega - Almacén</option>
-                                    <option value="fa-solid fa-industry">🏭 Industrial - Planta</option>
-                                    <option value="fa-solid fa-city">🏙️ Urbano - Desarrollo</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🔧 REPARACIONES Y MANTENIMIENTO">
-                                    <option value="fa-solid fa-wrench">🔧 Llave - Mecánica</option>
-                                    <option value="fa-solid fa-screwdriver">🪛 Destornillador - Reparaciones</option>
-                                    <option value="fa-solid fa-toolbox">🧰 Caja herramientas - Multiservicios</option>
-                                    <option value="fa-solid fa-tools">🛠️ Herramientas - Mantenimiento</option>
-                                    <option value="fa-solid fa-gear">⚙️ Engranaje - Mecánica</option>
-                                    <option value="fa-solid fa-gears">⚙️ Engranajes - Mantenimiento</option>
-                                    <option value="fa-solid fa-screwdriver-wrench">🔧 Herramientas - Reparación</option>
-                                    <option value="fa-solid fa-oil-can">🛢️ Aceite - Lubricación</option>
-                                    <option value="fa-solid fa-hammer">🔨 Martillo - Reparación</option>
-                                    <option value="fa-solid fa-wrench-simple">� Ajustes - Mantenimiento</option>
-                                    <option value="fa-solid fa-kit-medical">🧰 Kit reparación - Emergencia</option>
-                                    <option value="fa-solid fa-file-contract">📋 Mantenimiento - Contrato</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🎨 PINTURA Y DECORACIÓN">
-                                    <option value="fa-solid fa-paintbrush">🖌️ Pincel - Pintura</option>
-                                    <option value="fa-solid fa-paint-roller">🎨 Rodillo - Pintura paredes</option>
-                                    <option value="fa-solid fa-palette">🎨 Paleta - Decoración</option>
-                                    <option value="fa-solid fa-fill-drip">💧 Bote pintura - Pintura</option>
-                                    <option value="fa-solid fa-spray-can">🎨 Aerosol - Pintura spray</option>
-                                    <option value="fa-solid fa-brush">🖌️ Brocha - Pintura</option>
-                                    <option value="fa-solid fa-tape">📏 Cinta - Pintura</option>
-                                    <option value="fa-solid fa-bezier-curve">〰️ Diseño - Decoración</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="⚡ ELECTRICIDAD">
-                                    <option value="fa-solid fa-plug">🔌 Enchufe - Electricidad</option>
-                                    <option value="fa-solid fa-bolt">⚡ Rayo - Electricidad</option>
-                                    <option value="fa-solid fa-lightbulb">💡 Bombilla - Iluminación</option>
-                                    <option value="fa-solid fa-battery-full">🔋 Batería - Energía</option>
-                                    <option value="fa-solid fa-plug-circle-bolt">⚡ Instalación eléctrica</option>
-                                    <option value="fa-solid fa-solar-panel">☀️ Panel solar - Energía</option>
-                                    <option value="fa-solid fa-lightbulb-on">� Iluminación LED</option>
-                                    <option value="fa-solid fa-bolt-lightning">⚡ Alta tensión - Electricidad</option>
-                                    <option value="fa-solid fa-tower-cell">📡 Torre - Telecomunicaciones</option>
-                                    <option value="fa-solid fa-cable-car">🚡 Cableado - Instalaciones</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🚰 PLOMERÍA">
-                                    <option value="fa-solid fa-faucet">🚰 Grifo - Plomería</option>
-                                    <option value="fa-solid fa-shower">🚿 Ducha - Instalación</option>
-                                    <option value="fa-solid fa-toilet">🚽 Sanitario - Plomería</option>
-                                    <option value="fa-solid fa-sink">🚰 Lavamanos - Instalación</option>
-                                    <option value="fa-solid fa-droplet">💧 Gota - Agua</option>
-                                    <option value="fa-solid fa-pipe">🚰 Tubería - Instalación</option>
-                                    <option value="fa-solid fa-faucet-drip">💧 Fugas - Reparación</option>
-                                    <option value="fa-solid fa-water">🌊 Agua - Fontanería</option>
-                                    <option value="fa-solid fa-toilet-paper">🧻 Sanitarios - Baño</option>
-                                    <option value="fa-solid fa-pump">💨 Bomba - Agua</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🪚 CARPINTERÍA">
-                                    <option value="fa-solid fa-saw">🪚 Sierra - Carpintería</option>
-                                    <option value="fa-solid fa-ruler">📏 Regla - Carpintería</option>
-                                    <option value="fa-solid fa-pencil">✏️ Lápiz - Carpintería</option>
-                                    <option value="fa-solid fa-tree">🌳 Madera - Carpintería</option>
-                                    <option value="fa-solid fa-hammer">🔨 Martillo - Carpintería</option>
-                                    <option value="fa-solid fa-screwdriver">🪛 Destornillador - Ensamble</option>
-                                    <option value="fa-solid fa-table">🪑 Mesa - Muebles</option>
-                                    <option value="fa-solid fa-door-open">🚪 Puerta - Carpintería</option>
-                                    <option value="fa-solid fa-stairs">🪜 Escaleras - Carpintería</option>
-                                    <option value="fa-solid fa-cubes">📦 Muebles - Ensamble</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🛋️ MUEBLES Y HOGAR">
-                                    <option value="fa-solid fa-couch">🛋️ Sofá - Muebles</option>
-                                    <option value="fa-solid fa-chair">🪑 Silla - Muebles</option>
-                                    <option value="fa-solid fa-bed">🛏️ Cama - Muebles</option>
-                                    <option value="fa-solid fa-door-open">🚪 Puerta - Instalación</option>
-                                    <option value="fa-solid fa-window-maximize">🪟 Ventana - Vidrios</option>
-                                    <option value="fa-solid fa-house">🏠 Casa - Hogar</option>
-                                    <option value="fa-solid fa-home">🏠 Hogar - Residencial</option>
-                                    <option value="fa-solid fa-table">🪑 Mesa - Comedor</option>
-                                    <option value="fa-solid fa-kitchen-set">🍳 Cocina - Muebles</option>
-                                    <option value="fa-solid fa-tv">📺 TV - Entretenimiento</option>
-                                    <option value="fa-solid fa-lamp">💡 Lámpara - Iluminación</option>
-                                    <option value="fa-solid fa-loveseat">🛋️ Love seat - Muebles</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🚚 TRANSPORTE Y MUDANZAS">
-                                    <option value="fa-solid fa-truck">🚚 Camión - Mudanzas</option>
-                                    <option value="fa-solid fa-van-shuttle">🚐 Van - Transporte</option>
-                                    <option value="fa-solid fa-car">🚗 Auto - Transporte</option>
-                                    <option value="fa-solid fa-motorcycle">🏍️ Moto - Mensajería</option>
-                                    <option value="fa-solid fa-bicycle">🚲 Bicicleta - Domicilios</option>
-                                    <option value="fa-solid fa-box">📦 Caja - Empaque</option>
-                                    <option value="fa-solid fa-boxes-stacked">📦 Cajas - Mudanzas</option>
-                                    <option value="fa-solid fa-dolly">� Carretilla - Carga</option>
-                                    <option value="fa-solid fa-truck-moving">🚚 Mudanzas - Transporte</option>
-                                    <option value="fa-solid fa-truck-fast">🚚 Envío rápido - Express</option>
-                                    <option value="fa-solid fa-pallet">📦 Pallet - Carga</option>
-                                    <option value="fa-solid fa-shipping-fast">📦 Envío - Logística</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🌳 JARDINERÍA Y PAISAJISMO">
-                                    <option value="fa-solid fa-tree">🌳 Árbol - Jardinería</option>
-                                    <option value="fa-solid fa-seedling">🌱 Planta - Siembra</option>
-                                    <option value="fa-solid fa-leaf">🍃 Hoja - Jardinería</option>
-                                    <option value="fa-solid fa-scissors">✂️ Tijeras - Poda</option>
-                                    <option value="fa-solid fa-flower">🌸 Flor - Jardinería</option>
-                                    <option value="fa-solid fa-clover">🍀 Trébol - Jardín</option>
-                                    <option value="fa-solid fa-sun-plant-wilt">🌱 Riego - Plantas</option>
-                                    <option value="fa-solid fa-trowel">🧱 Pala - Jardinería</option>
-                                    <option value="fa-solid fa-mountain">⛰️ Paisajismo - Terreno</option>
-                                    <option value="fa-solid fa-grass">🌿 Césped - Jardín</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🍳 GASTRONOMÍA Y COCINA">
-                                    <option value="fa-solid fa-kitchen-set">🍳 Cocina - Gastronomía</option>
-                                    <option value="fa-solid fa-utensils">🍴 Cubiertos - Restaurante</option>
-                                    <option value="fa-solid fa-pizza-slice">🍕 Pizza - Comida</option>
-                                    <option value="fa-solid fa-burger">🍔 Hamburguesa - Fast food</option>
-                                    <option value="fa-solid fa-cake-candles">🎂 Pastel - Repostería</option>
-                                    <option value="fa-solid fa-mug-hot">☕ Café - Bebidas</option>
-                                    <option value="fa-solid fa-champagne-glasses">🥂 Copas - Eventos</option>
-                                    <option value="fa-solid fa-bowl-food">🍲 Bowl - Comida</option>
-                                    <option value="fa-solid fa-cookie">🍪 Galleta - Panadería</option>
-                                    <option value="fa-solid fa-cheese">🧀 Queso - Gastronomía</option>
-                                    <option value="fa-solid fa-bacon">🥓 Bacon - Cocina</option>
-                                    <option value="fa-solid fa-ice-cream">🍦 Helado - Postres</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="💻 TECNOLOGÍA">
-                                    <option value="fa-solid fa-computer">💻 Computadora - Informática</option>
-                                    <option value="fa-solid fa-laptop">💻 Laptop - Reparación</option>
-                                    <option value="fa-solid fa-mobile">📱 Móvil - Tecnología</option>
-                                    <option value="fa-solid fa-wifi">📶 WiFi - Internet</option>
-                                    <option value="fa-solid fa-network-wired">🌐 Red - Redes</option>
-                                    <option value="fa-solid fa-camera">📷 Cámara - Fotografía</option>
-                                    <option value="fa-solid fa-video">📹 Video - Audiovisual</option>
-                                    <option value="fa-solid fa-server">🖥️ Servidor - IT</option>
-                                    <option value="fa-solid fa-microchip">💾 Chip - Hardware</option>
-                                    <option value="fa-solid fa-keyboard">⌨️ Teclado - Informática</option>
-                                    <option value="fa-solid fa-mouse">🖱️ Mouse - Periféricos</option>
-                                    <option value="fa-solid fa-headset">🎧 Audífonos - Audio</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="💅 BELLEZA Y CUIDADO PERSONAL">
-                                    <option value="fa-solid fa-scissors">✂️ Tijeras - Peluquería</option>
-                                    <option value="fa-solid fa-cut">✂️ Corte - Estilista</option>
-                                    <option value="fa-solid fa-spray-can-sparkles">💅 Spray - Belleza</option>
-                                    <option value="fa-solid fa-hand-sparkles">✨ Manicure - Uñas</option>
-                                    <option value="fa-solid fa-face-smile">😊 Facial - Spa</option>
-                                    <option value="fa-solid fa-spa">� Spa - Relajación</option>
-                                    <option value="fa-solid fa-wand-magic-sparkles">✨ Maquillaje - Belleza</option>
-                                    <option value="fa-solid fa-gem">💎 Premium - Lujo</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="👕 ROPA Y LAVANDERÍA">
-                                    <option value="fa-solid fa-shirt">👕 Camisa - Ropa</option>
-                                    <option value="fa-solid fa-jug-detergent">🧴 Detergente - Lavandería</option>
-                                    <option value="fa-solid fa-sock">🧦 Calcetín - Ropa</option>
-                                    <option value="fa-solid fa-tshirt">👕 Camiseta - Ropa</option>
-                                    <option value="fa-solid fa-mitten">🧤 Guante - Ropa</option>
-                                    <option value="fa-solid fa-vest">🦺 Chaleco - Ropa</option>
-                                    <option value="fa-solid fa-iron">🔥 Plancha - Lavandería</option>
-                                    <option value="fa-solid fa-tape">📏 Costura - Arreglos</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🐾 MASCOTAS">
-                                    <option value="fa-solid fa-paw">🐾 Huella - Mascotas</option>
-                                    <option value="fa-solid fa-dog">🐕 Perro - Veterinaria</option>
-                                    <option value="fa-solid fa-cat">🐈 Gato - Veterinaria</option>
-                                    <option value="fa-solid fa-fish">🐟 Pez - Acuarios</option>
-                                    <option value="fa-solid fa-bone">🦴 Hueso - Veterinaria</option>
-                                    <option value="fa-solid fa-horse">🐴 Caballo - Veterinaria</option>
-                                    <option value="fa-solid fa-dove">🕊️ Ave - Veterinaria</option>
-                                    <option value="fa-solid fa-shield-dog">🐕 Protección - Mascotas</option>
-                                    <option value="fa-solid fa-syringe">� Veterinaria - Salud</option>
-                                    <option value="fa-solid fa-bowl-rice">🍚 Alimento - Mascotas</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="❤️ SALUD Y CUIDADO">
-                                    <option value="fa-solid fa-heart-pulse">❤️ Pulso - Salud</option>
-                                    <option value="fa-solid fa-suitcase-medical">💼 Médico - Emergencia</option>
-                                    <option value="fa-solid fa-stethoscope">🩺 Estetoscopio - Consulta</option>
-                                    <option value="fa-solid fa-user-nurse">👩‍⚕️ Enfermera - Cuidado</option>
-                                    <option value="fa-solid fa-wheelchair">♿ Silla ruedas - Movilidad</option>
-                                    <option value="fa-solid fa-hand-holding-heart">💝 Cuidado - Asistencia</option>
-                                    <option value="fa-solid fa-hospital">🏥 Hospital - Salud</option>
-                                    <option value="fa-solid fa-pills">💊 Medicinas - Farmacia</option>
-                                    <option value="fa-solid fa-thermometer">�️ Termómetro - Salud</option>
-                                    <option value="fa-solid fa-briefcase-medical">💼 Paramédico - Emergencia</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🎓 EDUCACIÓN">
-                                    <option value="fa-solid fa-graduation-cap">🎓 Graduación - Educación</option>
-                                    <option value="fa-solid fa-book">📖 Libro - Enseñanza</option>
-                                    <option value="fa-solid fa-chalkboard-user">👨‍� Profesor - Clases</option>
-                                    <option value="fa-solid fa-pen">🖊️ Pluma - Escritura</option>
-                                    <option value="fa-solid fa-school">🏫 Escuela - Educación</option>
-                                    <option value="fa-solid fa-user-graduate">🎓 Estudiante - Educación</option>
-                                    <option value="fa-solid fa-book-open">📖 Lectura - Educación</option>
-                                    <option value="fa-solid fa-apple-whole">🍎 Manzana - Educación</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🛡️ SEGURIDAD">
-                                    <option value="fa-solid fa-shield">�️ Escudo - Seguridad</option>
-                                    <option value="fa-solid fa-lock">🔒 Candado - Seguridad</option>
-                                    <option value="fa-solid fa-key">🔑 Llave - Cerrajería</option>
-                                    <option value="fa-solid fa-video">📹 Cámara - Vigilancia</option>
-                                    <option value="fa-solid fa-shield-halved">🛡️ Protección - Seguridad</option>
-                                    <option value="fa-solid fa-user-shield">👮 Guardia - Vigilancia</option>
-                                    <option value="fa-solid fa-bell">🔔 Alarma - Seguridad</option>
-                                    <option value="fa-solid fa-fire-extinguisher">🧯 Extintor - Seguridad</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="🎵 EVENTOS Y ENTRETENIMIENTO">
-                                    <option value="fa-solid fa-music">🎵 Música - Eventos</option>
-                                    <option value="fa-solid fa-microphone">🎤 Micrófono - Audio</option>
-                                    <option value="fa-solid fa-gifts">🎁 Regalos - Eventos</option>
-                                    <option value="fa-solid fa-cake-candles">🎂 Pastel - Celebración</option>
-                                    <option value="fa-solid fa-champagne-glasses">🥂 Brindis - Fiesta</option>
-                                    <option value="fa-solid fa-guitar">🎸 Guitarra - Música</option>
-                                    <option value="fa-solid fa-drum">🥁 Batería - Música</option>
-                                    <option value="fa-solid fa-theater-masks">� Teatro - Arte</option>
-                                    <option value="fa-solid fa-camera-retro">📷 Fotografía - Eventos</option>
-                                    <option value="fa-solid fa-wand-magic-sparkles">✨ Decoración - Eventos</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="💼 OFICINA Y NEGOCIOS">
-                                    <option value="fa-solid fa-briefcase">💼 Maletín - Negocios</option>
-                                    <option value="fa-solid fa-file-invoice">� Factura - Contabilidad</option>
-                                    <option value="fa-solid fa-calculator">🧮 Calculadora - Finanzas</option>
-                                    <option value="fa-solid fa-print">🖨️ Impresora - Oficina</option>
-                                    <option value="fa-solid fa-warehouse">🏭 Almacén - Logística</option>
-                                    <option value="fa-solid fa-chart-line">📈 Gráfica - Análisis</option>
-                                    <option value="fa-solid fa-money-bill">💵 Dinero - Finanzas</option>
-                                    <option value="fa-solid fa-clipboard">📋 Clipboard - Administración</option>
-                                    <option value="fa-solid fa-folder">📁 Carpeta - Archivo</option>
-                                    <option value="fa-solid fa-phone">📞 Teléfono - Atención</option>
-                                    </optgroup>
-                                    
-                                    <optgroup label="⭐ VARIOS">
-                                    <option value="fa-solid fa-fire">🔥 Fuego - Popular</option>
-                                    <option value="fa-solid fa-star">⭐ Estrella - Destacado</option>
-                                    <option value="fa-solid fa-circle-check">✅ Check - Verificado</option>
-                                    <option value="fa-solid fa-users">👥 Usuarios - Comunidad</option>
-                                    <option value="fa-solid fa-handshake">🤝 Acuerdo - Servicios</option>
-                                    <option value="fa-solid fa-medal">🏅 Medalla - Excelencia</option>
-                                    <option value="fa-solid fa-trophy">🏆 Trofeo - Premium</option>
-                                    <option value="fa-solid fa-crown">👑 Corona - VIP</option>
-                                    </optgroup>
-                                </select>
+                                <input type="hidden" id="catIcono" name="icono" required>
+                                <div id="catIconoDisplay" class="form-control" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="openFormIconPicker()">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <i id="catIconoIcon" class="fas fa-question" style="font-size: 1.5rem;"></i>
+                                        <span id="catIconoLabel">Seleccionar icono...</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down" style="color: #6c757d;"></i>
+                                </div>
                                 <small class="text-muted d-block mt-1">
-                                    <i class="fas fa-info-circle"></i> Selecciona un icono que represente la categoría
+                                    <i class="fas fa-info-circle"></i> Haz clic para seleccionar un icono
                                 </small>
                             </div>
                             
@@ -784,6 +516,13 @@ function closeIconPicker() {
 async function selectIcon(iconClass) {
     if (!currentCategoriaIdForIcon) return;
     
+    // Si es desde el formulario, solo actualizar UI (no AJAX)
+    if (currentCategoriaIdForIcon === 'form') {
+        const label = iconosDisponibles.find(i => i.icon === iconClass)?.label || iconClass;
+        selectFormIcon(iconClass, label);
+        return;
+    }
+    
     try {
         const formData = new URLSearchParams();
         formData.append('id', currentCategoriaIdForIcon);
@@ -813,6 +552,39 @@ async function selectIcon(iconClass) {
         console.error('Error:', e);
         alert('Error al actualizar ícono');
     }
+}
+
+// Función para abrir selector desde el formulario de nueva categoría
+function openFormIconPicker() {
+    currentCategoriaIdForIcon = 'form';  // Marcador especial para formulario
+    const modal = document.getElementById('iconPickerModal');
+    const grid = document.getElementById('iconPickerGrid');
+    const currentIcon = document.getElementById('catIcono').value;
+    
+    // Limpiar y llenar grid
+    grid.innerHTML = '';
+    iconosDisponibles.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = 'icon-picker-btn';
+        btn.innerHTML = `<i class="${item.icon}"></i>`;
+        btn.title = item.label;
+        btn.onclick = () => selectFormIcon(item.icon, item.label);
+        if (item.icon === currentIcon) {
+            btn.style.background = '#002b47';
+            btn.style.color = 'white';
+        }
+        grid.appendChild(btn);
+    });
+    
+    modal.style.display = 'flex';
+}
+
+// Seleccionar ícono para el formulario (no usa AJAX)
+function selectFormIcon(iconClass, label) {
+    document.getElementById('catIcono').value = iconClass;
+    document.getElementById('catIconoIcon').className = iconClass;
+    document.getElementById('catIconoLabel').textContent = label;
+    closeIconPicker();
 }
 
 function wireIconPicker() {
