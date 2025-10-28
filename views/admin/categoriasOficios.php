@@ -561,8 +561,7 @@ const iconosDisponibles = [
     
     { categoria: 'ROPA Y LAVANDERIA', iconos: [
         { icon: 'fa-solid fa-shirt', label: 'shirt - Camisa' },
-        { icon: 'fa-solid fa-jug-detergent', label: 'jug-detergent - Detergente' },
-        { icon: 'fa-solid fa-vest', label: 'vest - Chaleco' }
+        { icon: 'fa-solid fa-jug-detergent', label: 'jug-detergent - Detergente' }
     ]},
     
     { categoria: 'MASCOTAS', iconos: [
@@ -572,8 +571,7 @@ const iconosDisponibles = [
         { icon: 'fa-solid fa-fish', label: 'fish - Pez' },
         { icon: 'fa-solid fa-bone', label: 'bone - Hueso' },
         { icon: 'fa-solid fa-horse', label: 'horse - Caballo' },
-        { icon: 'fa-solid fa-dove', label: 'dove - Ave' },
-        { icon: 'fa-solid fa-shield-dog', label: 'shield-dog - Proteccion' }
+        { icon: 'fa-solid fa-dove', label: 'dove - Ave' }
     ]},
     
     { categoria: 'SALUD Y CUIDADO', iconos: [
