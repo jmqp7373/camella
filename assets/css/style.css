@@ -295,6 +295,63 @@ body {
     background: rgba(255, 210, 0, 0.1);
 }
 
+/* Información de la empresa en el footer */
+.footer-company {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
+}
+
+.company-details {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.company-name {
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+}
+
+.company-name i {
+    color: var(--color-amarillo);
+    margin-right: 0.5rem;
+}
+
+.company-info-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.info-item i {
+    color: var(--color-amarillo);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .company-info-grid {
+        flex-direction: column;
+        gap: 0.8rem;
+        align-items: center;
+    }
+    
+    .footer-company {
+        margin-top: 1rem;
+        padding-top: 1rem;
+    }
+}
+
 /* ========================================
    RESPONSIVE
    ======================================== */

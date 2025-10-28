@@ -1,7 +1,7 @@
 <?php
 /**
  * Script para verificar y crear la tabla magic_links
- * Ejecutar una vez: http://localhost/camella.com.co/setup_magic_links.php
+ * Ejecutar una vez: http://localhost/camella.com.co/scripts/setup_magic_links.php
  */
 
 error_reporting(E_ALL);

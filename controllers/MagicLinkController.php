@@ -73,29 +73,62 @@ class MagicLinkController {
             return $this->jsonResponse(false, 'Número no ingresado o inválido');
         }
 
-        $code = $this->generateVerificationCode();
-        $magicToken = $this->generateMagicToken();
-        error_log("MagicLinkController sendCode: Código generado: " . $code);
-
-        if ($this->saveVerificationCode($phone, $code, $magicToken)) {
-            error_log("MagicLinkController sendCode: Código guardado en BD, enviando SMS...");
-            
-            // Guardar en historial
-            $this->saveToHistory($phone, $code, $magicToken, 'created');
-            
-            $sent = $this->sendWhatsAppMessage($phone, $code, $magicToken);
-            if ($sent) {
-                error_log("MagicLinkController sendCode: SMS enviado exitosamente");
-                return $this->jsonResponse(true, 'Código enviado exitosamente');
-            } else {
-                error_log("MagicLinkController sendCode: Error al enviar SMS");
-                $this->updateHistoryStatus($phone, $code, 'failed');
-                return $this->jsonResponse(false, 'Error al enviar el código');
-            }
-        } else {
-            error_log("MagicLinkController sendCode: Error al guardar en BD");
-            return $this->jsonResponse(false, 'Error interno del servidor');
+        // ENVÍO VIA MESSAGEBIRD (proveedor principal)
+        // MessageBird genera internamente el código y token
+        error_log("MagicLinkController sendCode: Enviando SMS vía MessageBird...");
+        
+        // Hacer petición interna al script de MessageBird
+        $ch = curl_init('http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/../scripts/sendSmsMessageBird.php');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['phone' => $phone]));
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        
+        $response = curl_exec($ch);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+        
+        if (!empty($curlError)) {
+            error_log("MagicLinkController sendCode: Error cURL - {$curlError}");
+            return $this->jsonResponse(false, 'Error al enviar el código. Intenta de nuevo.');
         }
+        
+        // Decodificar respuesta de MessageBird
+        $resultado = json_decode($response, true);
+        
+        if (!$resultado || !isset($resultado['success'])) {
+            error_log("MagicLinkController sendCode: Respuesta inválida de MessageBird");
+            return $this->jsonResponse(false, 'Error interno al enviar SMS');
+        }
+        
+        if (!$resultado['success']) {
+            error_log("MagicLinkController sendCode: Error de MessageBird - " . ($resultado['error'] ?? 'desconocido'));
+            return $this->jsonResponse(false, 'Error al enviar el código. Intenta de nuevo.');
+        }
+        
+        // Extraer código y token de la respuesta
+        $code = $resultado['code'];
+        $magicToken = $resultado['token'];
+        
+        // Log del envío exitoso
+        error_log("MagicLinkController sendCode: SMS enviado exitosamente vía MessageBird");
+        error_log("MagicLinkController sendCode: Código: {$code}, Token: {$magicToken}");
+        error_log("MagicLinkController sendCode: SMS enviado exitosamente via {$resultado['provider']}");
+        
+        error_log("MagicLinkController sendCode: SMS enviado exitosamente, guardando en BD...");
+        
+        // Intentar guardar en BD (pero no fallar si no se puede)
+        $savedInDB = $this->saveVerificationCode($phone, $code, $magicToken);
+        
+        if ($savedInDB) {
+            error_log("MagicLinkController sendCode: Código guardado en BD correctamente");
+            $this->saveToHistory($phone, $code, $magicToken, 'sent');
+        } else {
+            error_log("MagicLinkController sendCode: ADVERTENCIA - No se pudo guardar en BD, pero SMS fue enviado");
+            // Aún así devolvemos éxito porque el SMS SÍ se envió
+        }
+        
+        return $this->jsonResponse(true, 'Código enviado exitosamente');
     }
 
     private function verifyCode() {
@@ -295,7 +328,11 @@ class MagicLinkController {
         }
     }
 
-    private function sendWhatsAppMessage($phone, $code, $magicToken) {
+    /**
+     * MÉTODO LEGACY - Ya no se usa, reemplazado por Infobip
+     * Se mantiene como referencia para fallback manual si es necesario
+     */
+    private function sendWhatsAppMessage_OLD($phone, $code, $magicToken) {
         try {
             // El autoload ya se cargó al inicio del archivo
             $twilio = new Client(TWILIO_SID, TWILIO_AUTH_TOKEN);

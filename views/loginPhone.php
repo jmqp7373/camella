@@ -18,10 +18,12 @@ $isLocalhost = (
 
 if ($isLocalhost) {
     // Entorno local/ngrok - usar ruta relativa desde index.php (raíz del proyecto)
-    $magicLinkControllerUrl = 'controllers/MagicLinkController.php';
+    $verificationControllerUrl = 'controllers/sendTwiliosVerificationCode.php';
+    $verifyCodeControllerUrl = 'controllers/verifyTwilioCode.php';
 } else {
     // Entorno de producción - usar URL absoluta
-    $magicLinkControllerUrl = 'https://camella.com.co/controllers/MagicLinkController.php';
+    $verificationControllerUrl = 'https://camella.com.co/controllers/sendTwiliosVerificationCode.php';
+    $verifyCodeControllerUrl = 'https://camella.com.co/controllers/verifyTwilioCode.php';
 }
 ?>
 
@@ -32,7 +34,7 @@ if ($isLocalhost) {
             <p>Ingresa tu número para recibir un enlace mágico y código de acceso</p>
         </div>
 
-        <form class="login-form" method="POST" action="<?= $magicLinkControllerUrl ?>" id="phoneLoginForm">
+        <form class="login-form" method="POST" action="<?= $verificationControllerUrl ?>" id="phoneLoginForm">
             <div class="form-group">
                 <label for="phone">
                     <i class="fas fa-phone"></i> Número de celular
@@ -231,13 +233,15 @@ if ($isLocalhost) {
 </style>
 
 <script>
-// URL del controlador basada en el entorno (inyectada desde PHP arriba)
-const magicLinkControllerUrl = '<?= $magicLinkControllerUrl ?>';
+// URLs de controladores basadas en el entorno (inyectadas desde PHP arriba)
+const verificationControllerUrl = '<?= $verificationControllerUrl ?>';
+const verifyCodeControllerUrl = '<?= $verifyCodeControllerUrl ?>';
 
-// Debug: Verificar que la URL se cargó correctamente
-console.log('🎯 URL del controlador:', magicLinkControllerUrl);
-if (!magicLinkControllerUrl || magicLinkControllerUrl === '') {
-    console.error('❌ ERROR: magicLinkControllerUrl está vacía o indefinida');
+// Debug: Verificar que las URLs se cargaron correctamente
+console.log('🎯 URL envío código:', verificationControllerUrl);
+console.log('🎯 URL verificar código:', verifyCodeControllerUrl);
+if (!verificationControllerUrl || verificationControllerUrl === '') {
+    console.error('❌ ERROR: verificationControllerUrl está vacía o indefinida');
     alert('Error de configuración: URL del controlador no definida');
 }
 
@@ -329,17 +333,17 @@ function sendMagicLinkAndCode(phone) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
     submitBtn.disabled = true;
 
-    postForm(magicLinkControllerUrl, {
-        action: 'enviarCodigo',
+    postForm(verificationControllerUrl, {
         phone: '+57' + phone
     })
     .then((data) => {
-        if (data.success) {
+        if (data.ok) {
             showCodeInterface();
             startCountdown();
             codeSent = true;
+            alert('Código enviado correctamente. Revisa tu SMS.');
         } else {
-            alert('Error al enviar el código: ' + (data.message || 'Sin detalle'));
+            alert('Error al enviar el código: ' + (data.message || data.msg || 'Sin detalle'));
         }
     })
     .catch((error) => {
@@ -365,26 +369,16 @@ function verifyCodeAndLogin(phone, code) {
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
     submitBtn.disabled = true;
 
-    postForm(magicLinkControllerUrl, {
-        action: 'validarCodigo',
+    postForm(verifyCodeControllerUrl, {
         phone: '+57' + phone,
         code: code
     })
     .then((data) => {
-        if (data.success) {
-            // Redirigir según el rol del usuario
-            const role = data.data?.role || 'publicante';
-            console.log('✅ Login exitoso. Rol:', role);
-            
-            if (role === 'admin') {
-                window.location.href = 'views/admin/dashboard.php';
-            } else if (role === 'promotor') {
-                window.location.href = 'views/promotor/dashboard.php';
-            } else {
-                window.location.href = 'views/publicante/dashboard.php';
-            }
+        if (data.ok && data.redirect) {
+            console.log('✅ Login exitoso. Redirigiendo a:', data.redirect);
+            window.location.href = data.redirect;
         } else {
-            alert('Código incorrecto. Por favor verifica e intenta nuevamente.');
+            alert(data.msg || 'Código incorrecto o expirado.');
         }
     })
     .catch((error) => {

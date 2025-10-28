@@ -15,6 +15,25 @@
                     <li><a href="index.php?view=ayuda"><i class="fas fa-question-circle"></i> Ayuda</a></li>
                 </ul>
             </nav>
+            
+            <div class="footer-company">
+                <div class="company-details">
+                    <p class="company-name">
+                        <i class="fas fa-building"></i> 
+                        Propiedad de <strong>Digital Wise Company S.A.S.</strong>
+                    </p>
+                    <div class="company-info-grid">
+                        <span class="info-item">
+                            <i class="fas fa-id-card"></i> 
+                            NIT: 901652435-6
+                        </span>
+                        <span class="info-item">
+                            <i class="fas fa-map-marker-alt"></i> 
+                            Cra 70 #32-82, Medellín, Colombia
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
     </footer>
 

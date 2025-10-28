@@ -4,7 +4,7 @@
  * 
  * INSTRUCCIONES:
  * 1. Subir este archivo al servidor de producción
- * 2. Acceder a: https://camella.com.co/setup_magic_links_production.php
+ * 2. Acceder a: https://camella.com.co/scripts/setup_magic_links_production.php
  * 3. Verificar que la tabla se creó correctamente
  * 4. ELIMINAR este archivo del servidor por seguridad
  */

@@ -1,7 +1,7 @@
 <?php
 /**
  * Verificar y agregar columna 'usos' a la tabla magic_links
- * http://localhost/camella.com.co/fix_magic_links_table.php
+ * http://localhost/camella.com.co/scripts/fix_magic_links_table.php
  */
 
 error_reporting(E_ALL);

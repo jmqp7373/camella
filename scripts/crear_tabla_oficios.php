@@ -1,7 +1,7 @@
 <?php
 /**
  * Script para crear la tabla oficios en la base de datos
- * Ejecutar una sola vez desde el navegador: http://localhost/camella.com.co/crear_tabla_oficios.php
+ * Ejecutar una sola vez desde el navegador: http://localhost/camella.com.co/scripts/crear_tabla_oficios.php
  */
 
 error_reporting(E_ALL);

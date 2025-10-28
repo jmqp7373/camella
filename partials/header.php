@@ -86,7 +86,7 @@ $esDashboard = (strpos($archivoActual, 'dashboard') !== false);
                     <!-- Usuario autenticado -->
                     <?php if ($esDashboard): ?>
                         <!-- Vista Dashboard: Solo mostrar botón Salir -->
-                        <a href="<?= app_url('logout.php') ?>" class="btn btn-logout" title="Cerrar sesión">
+                        <a href="<?= app_url('views/logout.php') ?>" class="btn btn-logout" title="Cerrar sesión">
                             <i class="fas fa-sign-out-alt"></i> Salir
                         </a>
                     <?php else: ?>
@@ -107,7 +107,7 @@ $esDashboard = (strpos($archivoActual, 'dashboard') !== false);
                         <?php if (!$enPaginaPublicar): ?>
                             <a href="<?= $urlPublicar ?>" class="btn btn-publish">+ Publícate</a>
                         <?php endif; ?>
-                        <a href="<?= app_url('logout.php') ?>" class="btn btn-logout" title="Cerrar sesión">
+                        <a href="<?= app_url('views/logout.php') ?>" class="btn btn-logout" title="Cerrar sesión">
                             <i class="fas fa-sign-out-alt"></i> Salir
                         </a>
                     <?php endif; ?>

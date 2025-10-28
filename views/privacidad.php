@@ -24,7 +24,7 @@ $pageTitle = "Política de Privacidad";
                 Propiedad de <strong>Digital Wise Company S.A.S.</strong><br>
                 NIT: 901652435-6<br>
                 Dirección: Cra 70 #32-82, Medellín, Colombia<br>
-                Correo electrónico: <a href="mailto:contacto@camella.com.co">contacto@camella.com.co</a></p>
+                Correo electrónico: <a href="mailto:admin@camella.com.co">admin@camella.com.co</a></p>
             </div>
         </section>
 
