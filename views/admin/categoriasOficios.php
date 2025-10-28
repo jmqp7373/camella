@@ -1641,13 +1641,13 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     align-items: center;
     gap: 0.5rem;
     flex-wrap: nowrap;
-    overflow: hidden;
+    overflow: visible; /* Cambiado para permitir ver dropdown/focus */
 }
 
 /* Wrapper interno del oficio */
 .oficio-item > div {
     max-width: 100%;
-    overflow: hidden;
+    overflow: visible; /* Cambiado para permitir ver focus states */
 }
 
 /* ========================================
@@ -2286,14 +2286,14 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     
     /* FIX: Oficios en móvil */
     .oficio-item {
-        overflow-x: hidden;
+        overflow-x: visible;
     }
     
     .oficio-item > div {
         flex-wrap: nowrap !important;
         padding: 0.75rem 0.5rem !important;
         max-width: 100% !important;
-        overflow-x: hidden;
+        overflow-x: visible;
     }
     
     .oficio-nombre-input {
