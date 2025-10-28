@@ -173,8 +173,8 @@ require_once __DIR__ . '/../../partials/header.php';
                             <input type="hidden" id="catId" name="id" value="">
                             
                             <div class="mb-3">
-                                <label for="catNombre" class="form-label fw-semibold">Nombre</label>
-                                <input type="text" class="form-control" id="catNombre" name="nombre" 
+                                <label for="catTitulo" class="form-label fw-semibold">Nombre</label>
+                                <input type="text" class="form-control" id="catTitulo" name="titulo" 
                                        placeholder="Ej: Aseo y Limpieza" required>
                             </div>
                             
@@ -426,7 +426,7 @@ require_once __DIR__ . '/../../partials/header.php';
                 <input type="hidden" name="id" id="catId">
                 <div class="mb-3">
                     <label class="form-label">Nombre</label>
-                    <input type="text" name="nombre" id="catNombre" class="form-control" required>
+                    <input type="text" name="titulo" id="catTitulo" class="form-control" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Icono (FontAwesome)</label>
@@ -1147,7 +1147,7 @@ function editCategoria(id, nombre, icono) {
     
     try {
         document.getElementById('catId').value = id;
-        document.getElementById('catNombre').value = nombre;
+        document.getElementById('catTitulo').value = nombre;
         document.getElementById('catIcono').value = icono;
         
         const modalElement = document.getElementById('modalCategoria');
@@ -1172,7 +1172,7 @@ function openCategoriaModal() {
     
     try {
         document.getElementById('catId').value = '';
-        document.getElementById('catNombre').value = '';
+        document.getElementById('catTitulo').value = '';
         document.getElementById('catIcono').value = '';
         
         const modalElement = document.getElementById('modalCategoria');
