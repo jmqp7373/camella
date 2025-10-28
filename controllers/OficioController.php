@@ -32,6 +32,9 @@ if (isset($_GET['action'])) {
         case 'update':
             $controller->update();
             exit;
+        case 'updateNombre':
+            $controller->updateNombre();
+            exit;
         case 'delete':
             $controller->delete();
             exit;
@@ -130,6 +133,59 @@ class OficioController {
                 echo json_encode([
                     'success' => false,
                     'message' => $resultado['message']
+                ]);
+            }
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al procesar la solicitud: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Actualizar solo el nombre de un oficio (AJAX inline edit)
+     * URL: OficioController.php?action=updateNombre
+     */
+    public function updateNombre() {
+        header('Content-Type: application/json');
+        
+        if (!isset($_POST['id']) || !is_numeric($_POST['id'])) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'ID de oficio no proporcionado o inválido'
+            ]);
+            return;
+        }
+
+        if (!isset($_POST['nombre']) || trim($_POST['nombre']) === '') {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Nombre de oficio no puede estar vacío'
+            ]);
+            return;
+        }
+
+        $id = (int)$_POST['id'];
+        $nombre = trim($_POST['nombre']);
+
+        try {
+            $resultado = $this->oficioModel->actualizarNombre($id, $nombre);
+            
+            if ($resultado) {
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Nombre actualizado correctamente',
+                    'nombre' => $nombre
+                ]);
+            } else {
+                http_response_code(500);
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Error al actualizar el nombre'
                 ]);
             }
         } catch (Exception $e) {

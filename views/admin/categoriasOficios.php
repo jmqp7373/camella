@@ -198,13 +198,17 @@ require_once __DIR__ . '/../../partials/header.php';
                                     data-popular="<?= $oficio['popular'] ?>"
                                     data-activo="<?= $oficio['activo'] ?>">
                                     
-                                    <span style="display: inline-flex; align-items: center; flex: 1;">
-                                        <span class="oficio-nombre <?= $oficio['activo'] == 0 ? 'nombre-tachado' : '' ?>">
-                                            <?= htmlspecialchars($oficio['nombre']) ?>
-                                        </span>
+                                    <span style="display: inline-flex; align-items: center; flex: 1; gap: 8px;">
+                                        <!-- Input editable inline -->
+                                        <input type="text" 
+                                               class="oficio-nombre-input <?= $oficio['activo'] == 0 ? 'nombre-tachado' : '' ?>"
+                                               data-oficio-id="<?= $oficio['id'] ?>"
+                                               value="<?= htmlspecialchars($oficio['nombre']) ?>"
+                                               title="Haz clic para editar. Presiona Enter o pierde el foco para guardar"
+                                               style="border: none; background: transparent; font-size: inherit; padding: 2px 4px; flex: 1; min-width: 150px; max-width: 300px;">
                                         
                                         <!-- Toggle Switch Activo/Inactivo -->
-                                        <label class="toggle-switch" style="margin-left: 12px;" title="<?= $oficio['activo'] == 1 ? 'Activo - Clic para desactivar' : 'Inactivo - Clic para activar' ?>">
+                                        <label class="toggle-switch" title="<?= $oficio['activo'] == 1 ? 'Activo - Clic para desactivar' : 'Inactivo - Clic para activar' ?>">
                                             <input type="checkbox" 
                                                    class="toggle-checkbox"
                                                    data-toggle-activo="<?= $oficio['id'] ?>"
@@ -219,24 +223,19 @@ require_once __DIR__ . '/../../partials/header.php';
                                                  class="flamita-popular"
                                                  data-toggle-popular="<?= $oficio['id'] ?>"
                                                  title="Clic para quitar popularidad"
-                                                 style="margin-left: 8px; cursor: pointer; width: 20px; height: 20px; object-fit: contain;">
+                                                 style="cursor: pointer; width: 20px; height: 20px; object-fit: contain;">
                                         <?php else: ?>
                                             <img src="/camella.com.co/assets/images/app/candela1.png" 
                                                  alt="No popular" 
                                                  class="flamita-no-popular"
                                                  data-toggle-popular="<?= $oficio['id'] ?>"
                                                  title="Clic para marcar popular"
-                                                 style="margin-left: 8px; cursor: pointer; width: 20px; height: 20px; object-fit: contain; opacity: 0.3; filter: grayscale(100%);">
+                                                 style="cursor: pointer; width: 20px; height: 20px; object-fit: contain; opacity: 0.3; filter: grayscale(100%);">
                                         <?php endif; ?>
                                     </span>
                                     
-                                    <!-- Acciones inline -->
+                                    <!-- Botón eliminar -->
                                     <span style="display: flex; gap: 0.25rem; margin-left: auto;">
-                                        <button class="btn btn-outline-primary btn-sm" 
-                                                onclick="editOficio(<?= $oficio['id'] ?>, '<?= htmlspecialchars($oficio['nombre']) ?>', <?= $categoria['id'] ?>, <?= $oficio['popular'] ?>)" 
-                                                title="Editar">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
                                         <button class="btn btn-outline-danger btn-sm" 
                                                 onclick="deleteOficio(<?= $oficio['id'] ?>, '<?= htmlspecialchars($oficio['nombre']) ?>')" 
                                                 title="Eliminar">
@@ -340,6 +339,7 @@ document.addEventListener('DOMContentLoaded', () => {
         wireSearchAndFilters();
         wirePopularToggle();
         wireActivoToggle();
+        wireInlineEdit();
         wireCRUDButtons();
         loadStats();
         
@@ -737,6 +737,101 @@ function wireActivoToggle(){
                 t.disabled = wasDisabled;
             }, 500);
         }
+    });
+}
+
+// Edición inline de oficios
+function wireInlineEdit(){
+    document.querySelectorAll('.oficio-nombre-input').forEach(input => {
+        let valorOriginal = input.value;
+        
+        // Guardar al presionar Enter
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                input.blur(); // Disparar el evento blur para guardar
+            }
+            if (e.key === 'Escape') {
+                input.value = valorOriginal;
+                input.blur();
+            }
+        });
+        
+        // Guardar al perder el foco
+        input.addEventListener('blur', async () => {
+            const nuevoNombre = input.value.trim();
+            const id = input.getAttribute('data-oficio-id');
+            
+            // Si no cambió, no hacer nada
+            if (nuevoNombre === valorOriginal) return;
+            
+            // Validar que no esté vacío
+            if (!nuevoNombre) {
+                alert('El nombre del oficio no puede estar vacío');
+                input.value = valorOriginal;
+                return;
+            }
+            
+            // Mostrar estado de guardando
+            input.classList.add('saving');
+            
+            try {
+                const baseUrl = window.location.origin;
+                const url = `${baseUrl}/camella.com.co/controllers/OficioController.php?action=updateNombre`;
+                
+                const formData = new URLSearchParams();
+                formData.append('id', id);
+                formData.append('nombre', nuevoNombre);
+                
+                const r = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: formData
+                });
+                
+                if (!r.ok) {
+                    throw new Error('Error en la petición: ' + r.status);
+                }
+                
+                const data = await r.json();
+                
+                if (!data.success) {
+                    throw new Error(data.message || 'Error al guardar');
+                }
+                
+                // Actualizar valor original y mostrar éxito
+                valorOriginal = nuevoNombre;
+                input.classList.remove('saving');
+                input.classList.add('saved');
+                
+                // Actualizar data-name del li para búsquedas
+                const li = input.closest('.oficio-item');
+                if (li) {
+                    li.setAttribute('data-name', nuevoNombre.toLowerCase());
+                }
+                
+                // Mostrar toast
+                showToast('✅ Oficio actualizado: ' + nuevoNombre);
+                
+                // Quitar clase de guardado después de 1 segundo
+                setTimeout(() => {
+                    input.classList.remove('saved');
+                }, 1000);
+                
+            } catch(e) {
+                console.error('❌ Error al guardar nombre:', e);
+                input.classList.remove('saving');
+                alert('Error al guardar: ' + e.message);
+                input.value = valorOriginal; // Revertir
+            }
+        });
+        
+        // Actualizar valor original cuando se hace foco
+        input.addEventListener('focus', () => {
+            valorOriginal = input.value;
+        });
     });
 }
 
@@ -1281,6 +1376,37 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     text-decoration-thickness: 2px;
     color: #6c757d !important;
     font-style: italic;
+}
+
+/* Input editable inline para oficios */
+.oficio-nombre-input {
+    border: 1px solid transparent !important;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-weight: 500;
+    cursor: text;
+}
+
+.oficio-nombre-input:hover {
+    background: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+}
+
+.oficio-nombre-input:focus {
+    outline: none;
+    background: white !important;
+    border-color: #002b47 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 43, 71, 0.1);
+}
+
+.oficio-nombre-input.saving {
+    background: #ffffcc !important;
+    border-color: #ffc107 !important;
+}
+
+.oficio-nombre-input.saved {
+    background: #d4edda !important;
+    border-color: #28a745 !important;
 }
 
 /* Badge de inactivo */

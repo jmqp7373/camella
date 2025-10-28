@@ -72,6 +72,27 @@ class Oficios extends BaseModel
     }
 
     /**
+     * Actualizar solo el nombre/título de un oficio
+     * Para edición inline rápida
+     */
+    public function actualizarNombre(int $id, string $nombre): bool
+    {
+        if (!$this->pdo) {
+            return false;
+        }
+
+        $sql = "UPDATE oficios SET titulo = ? WHERE id = ?";
+
+        try {
+            $stmt = $this->pdo->prepare($sql);
+            return $stmt->execute([$nombre, $id]);
+        } catch (Exception $e) {
+            error_log("Error actualizando nombre de oficio: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Eliminar oficio
      */
     public function eliminar(int $id): bool
