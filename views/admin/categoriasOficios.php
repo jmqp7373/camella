@@ -1458,16 +1458,22 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
    OFICIOS INACTIVOS - ESTILO ESPECIAL
    ======================================== */
 .oficio-inactivo {
-    background: linear-gradient(90deg, rgba(255, 235, 238, 0.4) 0%, rgba(255, 205, 210, 0.3) 100%) !important;
-    border-left: 3px solid #dc3545 !important;
-    padding-left: 12px !important;
     opacity: 0.85;
     transition: all 0.3s ease;
 }
 
 .oficio-inactivo:hover {
-    background: linear-gradient(90deg, rgba(255, 235, 238, 0.6) 0%, rgba(255, 205, 210, 0.5) 100%) !important;
     opacity: 1;
+}
+
+/* Aplicar estilos visuales al wrapper interno cuando el oficio está inactivo */
+.oficio-inactivo > div {
+    background: linear-gradient(90deg, rgba(255, 235, 238, 0.4) 0%, rgba(255, 205, 210, 0.3) 100%) !important;
+    border-left: 3px solid #dc3545 !important;
+}
+
+.oficio-inactivo:hover > div {
+    background: linear-gradient(90deg, rgba(255, 235, 238, 0.6) 0%, rgba(255, 205, 210, 0.5) 100%) !important;
 }
 
 .nombre-tachado {
