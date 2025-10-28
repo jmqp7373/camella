@@ -184,7 +184,7 @@ require_once __DIR__ . '/../../partials/header.php';
                                 <select class="form-select" id="catIcono" name="icono" required>
                                     <option value="">Seleccionar icono...</option>
                                     
-                                    <!-- LIMPIEZA Y ASEO (10 iconos) -->
+                                    <optgroup label="🧹 LIMPIEZA Y ASEO">
                                     <option value="fa-solid fa-broom">🧹 Escoba - Limpieza</option>
                                     <option value="fa-solid fa-spray-can">🎨 Spray - Limpieza profunda</option>
                                     <option value="fa-solid fa-pump-soap">🧴 Jabón - Productos limpieza</option>
@@ -195,8 +195,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-sponge">🧽 Esponja - Limpieza</option>
                                     <option value="fa-solid fa-hand-sparkles">✨ Desinfección - Higiene</option>
                                     <option value="fa-solid fa-wind">💨 Ventilación - Aire limpio</option>
+                                    </optgroup>
                                     
-                                    <!-- CONSTRUCCIÓN Y ALBAÑILERÍA (12 iconos) -->
+                                    <optgroup label="🏗️ CONSTRUCCIÓN Y ALBAÑILERÍA">
                                     <option value="fa-solid fa-hammer">🔨 Martillo - Construcción</option>
                                     <option value="fa-solid fa-hard-hat">⛑️ Casco - Obra</option>
                                     <option value="fa-solid fa-building">🏢 Edificio - Construcción</option>
@@ -209,8 +210,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-warehouse">🏭 Bodega - Almacén</option>
                                     <option value="fa-solid fa-industry">🏭 Industrial - Planta</option>
                                     <option value="fa-solid fa-city">🏙️ Urbano - Desarrollo</option>
+                                    </optgroup>
                                     
-                                    <!-- REPARACIONES Y MANTENIMIENTO (12 iconos) -->
+                                    <optgroup label="🔧 REPARACIONES Y MANTENIMIENTO">
                                     <option value="fa-solid fa-wrench">🔧 Llave - Mecánica</option>
                                     <option value="fa-solid fa-screwdriver">🪛 Destornillador - Reparaciones</option>
                                     <option value="fa-solid fa-toolbox">🧰 Caja herramientas - Multiservicios</option>
@@ -223,9 +225,10 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-wrench-simple">� Ajustes - Mantenimiento</option>
                                     <option value="fa-solid fa-kit-medical">🧰 Kit reparación - Emergencia</option>
                                     <option value="fa-solid fa-file-contract">📋 Mantenimiento - Contrato</option>
+                                    </optgroup>
                                     
-                                    <!-- PINTURA Y DECORACIÓN (8 iconos) -->
-                                    <option value="fa-solid fa-paintbrush">�🖌️ Pincel - Pintura</option>
+                                    <optgroup label="🎨 PINTURA Y DECORACIÓN">
+                                    <option value="fa-solid fa-paintbrush">🖌️ Pincel - Pintura</option>
                                     <option value="fa-solid fa-paint-roller">🎨 Rodillo - Pintura paredes</option>
                                     <option value="fa-solid fa-palette">🎨 Paleta - Decoración</option>
                                     <option value="fa-solid fa-fill-drip">💧 Bote pintura - Pintura</option>
@@ -233,8 +236,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-brush">🖌️ Brocha - Pintura</option>
                                     <option value="fa-solid fa-tape">📏 Cinta - Pintura</option>
                                     <option value="fa-solid fa-bezier-curve">〰️ Diseño - Decoración</option>
+                                    </optgroup>
                                     
-                                    <!-- ELECTRICIDAD (10 iconos) -->
+                                    <optgroup label="⚡ ELECTRICIDAD">
                                     <option value="fa-solid fa-plug">🔌 Enchufe - Electricidad</option>
                                     <option value="fa-solid fa-bolt">⚡ Rayo - Electricidad</option>
                                     <option value="fa-solid fa-lightbulb">💡 Bombilla - Iluminación</option>
@@ -245,9 +249,10 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-bolt-lightning">⚡ Alta tensión - Electricidad</option>
                                     <option value="fa-solid fa-tower-cell">📡 Torre - Telecomunicaciones</option>
                                     <option value="fa-solid fa-cable-car">🚡 Cableado - Instalaciones</option>
+                                    </optgroup>
                                     
-                                    <!-- PLOMERÍA (10 iconos) -->
-                                    <option value="fa-solid fa-faucet">�🚰 Grifo - Plomería</option>
+                                    <optgroup label="🚰 PLOMERÍA">
+                                    <option value="fa-solid fa-faucet">🚰 Grifo - Plomería</option>
                                     <option value="fa-solid fa-shower">🚿 Ducha - Instalación</option>
                                     <option value="fa-solid fa-toilet">🚽 Sanitario - Plomería</option>
                                     <option value="fa-solid fa-sink">🚰 Lavamanos - Instalación</option>
@@ -257,8 +262,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-water">🌊 Agua - Fontanería</option>
                                     <option value="fa-solid fa-toilet-paper">🧻 Sanitarios - Baño</option>
                                     <option value="fa-solid fa-pump">💨 Bomba - Agua</option>
+                                    </optgroup>
                                     
-                                    <!-- CARPINTERÍA (10 iconos) -->
+                                    <optgroup label="🪚 CARPINTERÍA">
                                     <option value="fa-solid fa-saw">🪚 Sierra - Carpintería</option>
                                     <option value="fa-solid fa-ruler">📏 Regla - Carpintería</option>
                                     <option value="fa-solid fa-pencil">✏️ Lápiz - Carpintería</option>
@@ -269,8 +275,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-door-open">🚪 Puerta - Carpintería</option>
                                     <option value="fa-solid fa-stairs">🪜 Escaleras - Carpintería</option>
                                     <option value="fa-solid fa-cubes">📦 Muebles - Ensamble</option>
+                                    </optgroup>
                                     
-                                    <!-- MUEBLES Y HOGAR (12 iconos) -->
+                                    <optgroup label="🛋️ MUEBLES Y HOGAR">
                                     <option value="fa-solid fa-couch">🛋️ Sofá - Muebles</option>
                                     <option value="fa-solid fa-chair">🪑 Silla - Muebles</option>
                                     <option value="fa-solid fa-bed">🛏️ Cama - Muebles</option>
@@ -283,8 +290,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-tv">📺 TV - Entretenimiento</option>
                                     <option value="fa-solid fa-lamp">💡 Lámpara - Iluminación</option>
                                     <option value="fa-solid fa-loveseat">🛋️ Love seat - Muebles</option>
+                                    </optgroup>
                                     
-                                    <!-- TRANSPORTE Y MUDANZAS (12 iconos) -->
+                                    <optgroup label="🚚 TRANSPORTE Y MUDANZAS">
                                     <option value="fa-solid fa-truck">🚚 Camión - Mudanzas</option>
                                     <option value="fa-solid fa-van-shuttle">🚐 Van - Transporte</option>
                                     <option value="fa-solid fa-car">🚗 Auto - Transporte</option>
@@ -297,8 +305,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-truck-fast">🚚 Envío rápido - Express</option>
                                     <option value="fa-solid fa-pallet">📦 Pallet - Carga</option>
                                     <option value="fa-solid fa-shipping-fast">📦 Envío - Logística</option>
+                                    </optgroup>
                                     
-                                    <!-- JARDINERÍA Y PAISAJISMO (10 iconos) -->
+                                    <optgroup label="🌳 JARDINERÍA Y PAISAJISMO">
                                     <option value="fa-solid fa-tree">🌳 Árbol - Jardinería</option>
                                     <option value="fa-solid fa-seedling">🌱 Planta - Siembra</option>
                                     <option value="fa-solid fa-leaf">🍃 Hoja - Jardinería</option>
@@ -309,8 +318,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-trowel">🧱 Pala - Jardinería</option>
                                     <option value="fa-solid fa-mountain">⛰️ Paisajismo - Terreno</option>
                                     <option value="fa-solid fa-grass">🌿 Césped - Jardín</option>
+                                    </optgroup>
                                     
-                                    <!-- GASTRONOMÍA Y COCINA (12 iconos) -->
+                                    <optgroup label="🍳 GASTRONOMÍA Y COCINA">
                                     <option value="fa-solid fa-kitchen-set">🍳 Cocina - Gastronomía</option>
                                     <option value="fa-solid fa-utensils">🍴 Cubiertos - Restaurante</option>
                                     <option value="fa-solid fa-pizza-slice">🍕 Pizza - Comida</option>
@@ -323,8 +333,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-cheese">🧀 Queso - Gastronomía</option>
                                     <option value="fa-solid fa-bacon">🥓 Bacon - Cocina</option>
                                     <option value="fa-solid fa-ice-cream">🍦 Helado - Postres</option>
+                                    </optgroup>
                                     
-                                    <!-- TECNOLOGÍA (12 iconos) -->
+                                    <optgroup label="💻 TECNOLOGÍA">
                                     <option value="fa-solid fa-computer">💻 Computadora - Informática</option>
                                     <option value="fa-solid fa-laptop">💻 Laptop - Reparación</option>
                                     <option value="fa-solid fa-mobile">📱 Móvil - Tecnología</option>
@@ -337,8 +348,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-keyboard">⌨️ Teclado - Informática</option>
                                     <option value="fa-solid fa-mouse">🖱️ Mouse - Periféricos</option>
                                     <option value="fa-solid fa-headset">🎧 Audífonos - Audio</option>
+                                    </optgroup>
                                     
-                                    <!-- BELLEZA Y CUIDADO PERSONAL (8 iconos) -->
+                                    <optgroup label="💅 BELLEZA Y CUIDADO PERSONAL">
                                     <option value="fa-solid fa-scissors">✂️ Tijeras - Peluquería</option>
                                     <option value="fa-solid fa-cut">✂️ Corte - Estilista</option>
                                     <option value="fa-solid fa-spray-can-sparkles">💅 Spray - Belleza</option>
@@ -347,9 +359,10 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-spa">� Spa - Relajación</option>
                                     <option value="fa-solid fa-wand-magic-sparkles">✨ Maquillaje - Belleza</option>
                                     <option value="fa-solid fa-gem">💎 Premium - Lujo</option>
+                                    </optgroup>
                                     
-                                    <!-- ROPA Y LAVANDERÍA (8 iconos) -->
-                                    <option value="fa-solid fa-shirt">�👕 Camisa - Ropa</option>
+                                    <optgroup label="👕 ROPA Y LAVANDERÍA">
+                                    <option value="fa-solid fa-shirt">👕 Camisa - Ropa</option>
                                     <option value="fa-solid fa-jug-detergent">🧴 Detergente - Lavandería</option>
                                     <option value="fa-solid fa-sock">🧦 Calcetín - Ropa</option>
                                     <option value="fa-solid fa-tshirt">👕 Camiseta - Ropa</option>
@@ -357,8 +370,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-vest">🦺 Chaleco - Ropa</option>
                                     <option value="fa-solid fa-iron">🔥 Plancha - Lavandería</option>
                                     <option value="fa-solid fa-tape">📏 Costura - Arreglos</option>
+                                    </optgroup>
                                     
-                                    <!-- MASCOTAS (10 iconos) -->
+                                    <optgroup label="🐾 MASCOTAS">
                                     <option value="fa-solid fa-paw">🐾 Huella - Mascotas</option>
                                     <option value="fa-solid fa-dog">🐕 Perro - Veterinaria</option>
                                     <option value="fa-solid fa-cat">🐈 Gato - Veterinaria</option>
@@ -369,8 +383,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-shield-dog">🐕 Protección - Mascotas</option>
                                     <option value="fa-solid fa-syringe">� Veterinaria - Salud</option>
                                     <option value="fa-solid fa-bowl-rice">🍚 Alimento - Mascotas</option>
+                                    </optgroup>
                                     
-                                    <!-- SALUD Y CUIDADO (10 iconos) -->
+                                    <optgroup label="❤️ SALUD Y CUIDADO">
                                     <option value="fa-solid fa-heart-pulse">❤️ Pulso - Salud</option>
                                     <option value="fa-solid fa-suitcase-medical">💼 Médico - Emergencia</option>
                                     <option value="fa-solid fa-stethoscope">🩺 Estetoscopio - Consulta</option>
@@ -381,8 +396,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-pills">💊 Medicinas - Farmacia</option>
                                     <option value="fa-solid fa-thermometer">�️ Termómetro - Salud</option>
                                     <option value="fa-solid fa-briefcase-medical">💼 Paramédico - Emergencia</option>
+                                    </optgroup>
                                     
-                                    <!-- EDUCACIÓN (8 iconos) -->
+                                    <optgroup label="🎓 EDUCACIÓN">
                                     <option value="fa-solid fa-graduation-cap">🎓 Graduación - Educación</option>
                                     <option value="fa-solid fa-book">📖 Libro - Enseñanza</option>
                                     <option value="fa-solid fa-chalkboard-user">👨‍� Profesor - Clases</option>
@@ -391,8 +407,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-user-graduate">🎓 Estudiante - Educación</option>
                                     <option value="fa-solid fa-book-open">📖 Lectura - Educación</option>
                                     <option value="fa-solid fa-apple-whole">🍎 Manzana - Educación</option>
+                                    </optgroup>
                                     
-                                    <!-- SEGURIDAD (8 iconos) -->
+                                    <optgroup label="🛡️ SEGURIDAD">
                                     <option value="fa-solid fa-shield">�️ Escudo - Seguridad</option>
                                     <option value="fa-solid fa-lock">🔒 Candado - Seguridad</option>
                                     <option value="fa-solid fa-key">🔑 Llave - Cerrajería</option>
@@ -400,9 +417,10 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-shield-halved">🛡️ Protección - Seguridad</option>
                                     <option value="fa-solid fa-user-shield">👮 Guardia - Vigilancia</option>
                                     <option value="fa-solid fa-bell">🔔 Alarma - Seguridad</option>
-                                    <option value="fa-solid fa-fire-extinguisher">� Extintor - Seguridad</option>
+                                    <option value="fa-solid fa-fire-extinguisher">🧯 Extintor - Seguridad</option>
+                                    </optgroup>
                                     
-                                    <!-- EVENTOS Y ENTRETENIMIENTO (10 iconos) -->
+                                    <optgroup label="🎵 EVENTOS Y ENTRETENIMIENTO">
                                     <option value="fa-solid fa-music">🎵 Música - Eventos</option>
                                     <option value="fa-solid fa-microphone">🎤 Micrófono - Audio</option>
                                     <option value="fa-solid fa-gifts">🎁 Regalos - Eventos</option>
@@ -413,8 +431,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-theater-masks">� Teatro - Arte</option>
                                     <option value="fa-solid fa-camera-retro">📷 Fotografía - Eventos</option>
                                     <option value="fa-solid fa-wand-magic-sparkles">✨ Decoración - Eventos</option>
+                                    </optgroup>
                                     
-                                    <!-- OFICINA Y NEGOCIOS (10 iconos) -->
+                                    <optgroup label="💼 OFICINA Y NEGOCIOS">
                                     <option value="fa-solid fa-briefcase">💼 Maletín - Negocios</option>
                                     <option value="fa-solid fa-file-invoice">� Factura - Contabilidad</option>
                                     <option value="fa-solid fa-calculator">🧮 Calculadora - Finanzas</option>
@@ -425,8 +444,9 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-clipboard">📋 Clipboard - Administración</option>
                                     <option value="fa-solid fa-folder">📁 Carpeta - Archivo</option>
                                     <option value="fa-solid fa-phone">📞 Teléfono - Atención</option>
+                                    </optgroup>
                                     
-                                    <!-- VARIOS (8 iconos) -->
+                                    <optgroup label="⭐ VARIOS">
                                     <option value="fa-solid fa-fire">🔥 Fuego - Popular</option>
                                     <option value="fa-solid fa-star">⭐ Estrella - Destacado</option>
                                     <option value="fa-solid fa-circle-check">✅ Check - Verificado</option>
@@ -435,6 +455,7 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <option value="fa-solid fa-medal">🏅 Medalla - Excelencia</option>
                                     <option value="fa-solid fa-trophy">🏆 Trofeo - Premium</option>
                                     <option value="fa-solid fa-crown">👑 Corona - VIP</option>
+                                    </optgroup>
                                 </select>
                                 <small class="text-muted d-block mt-1">
                                     <i class="fas fa-info-circle"></i> Selecciona un icono que represente la categoría
