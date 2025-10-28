@@ -60,7 +60,7 @@ require_once __DIR__ . '/../../partials/header.php';
     <p class="page-subtitle" style="margin-bottom: 1rem; line-height: 1.5;">
         Administra los oficios y marca cuáles están en alta demanda
     </p>
-    <a id="btnBackToDashboard" class="btn btn-outline-light btn-sm" href="/camella.com.co/views/admin/dashboard.php">
+    <a id="btnBackToDashboard" class="btn btn-outline-light btn-sm" href="<?= app_url('views/admin/dashboard.php') ?>">
         <i class="fas fa-arrow-left"></i> Volver al Dashboard
     </a>
 </div>
