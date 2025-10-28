@@ -50,8 +50,9 @@ $totalCategorias = count($categorias);
 require_once __DIR__ . '/../../partials/header.php';
 ?>
 
+<div style="margin-top: 100px;">
 <!-- Hero Section RESTAURADO -->
-<div class="home-hero" style="padding-top: 2rem;">
+<div class="home-hero">
     <h1 class="page-title text-azul" style="margin-bottom: 10px;">
         <i class="fas fa-layer-group"></i> 
         Gestión de Categorías y Oficios
@@ -1826,5 +1827,7 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     }
 }
 </style>
+
+</div><!-- Cierre del contenedor con margin-top -->
 
 <?php require_once __DIR__ . '/../../partials/footer.php'; ?>
