@@ -228,14 +228,14 @@ require_once __DIR__ . '/../../partials/header.php';
                                             
                                             <!-- 4. Popular (candelita) -->
                                             <?php if ($oficio['popular'] == 1): ?>
-                                                <img src="/camella.com.co/assets/images/app/candela1.png" 
+                                                <img src="<?= app_url('assets/images/app/candela1.png') ?>" 
                                                      alt="Popular" 
                                                      class="flamita-popular"
                                                      data-toggle-popular="<?= $oficio['id'] ?>"
                                                      title="Clic para quitar popularidad"
                                                      style="cursor: pointer; width: 20px; height: 20px; object-fit: contain;">
                                             <?php else: ?>
-                                                <img src="/camella.com.co/assets/images/app/candela1.png" 
+                                                <img src="<?= app_url('assets/images/app/candela1.png') ?>" 
                                                      alt="No popular" 
                                                      class="flamita-no-popular"
                                                      data-toggle-popular="<?= $oficio['id'] ?>"
@@ -339,6 +339,19 @@ require_once __DIR__ . '/../../partials/header.php';
 </div>
 
 <script>
+// Helper para construir URLs correctas según el entorno
+function getControllerUrl(path) {
+    const baseUrl = window.location.origin;
+    const isLocalhost = baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1');
+    
+    if (isLocalhost) {
+        return `${baseUrl}/camella.com.co/${path}`;
+    } else {
+        // En producción, usar ruta relativa desde la raíz
+        return `${baseUrl}/${path}`;
+    }
+}
+
 // Inicialización cuando el DOM está listo
 document.addEventListener('DOMContentLoaded', () => {
     console.log('=== Iniciando Admin Categorías y Oficios ===');
@@ -543,9 +556,8 @@ function wirePopularToggle(){
         }, 150);
         
         try {
-            // Construir URL absoluta completa basada en la ubicación actual
-            const baseUrl = window.location.origin; // http://localhost o https://localhost
-            const url = `${baseUrl}/camella.com.co/controllers/OficioController.php?action=togglePopular&id=${encodeURIComponent(id)}`;
+            // Construir URL usando helper
+            const url = getControllerUrl(`controllers/OficioController.php?action=togglePopular&id=${encodeURIComponent(id)}`);
             console.log('📡 Enviando petición a:', url);
             
             const r = await fetch(url, {
@@ -670,8 +682,7 @@ function wireActivoToggle(){
         t.disabled = true;
         
         try {
-            const baseUrl = window.location.origin;
-            const url = `${baseUrl}/camella.com.co/controllers/OficioController.php?action=toggleActivo&id=${encodeURIComponent(id)}`;
+            const url = getControllerUrl(`controllers/OficioController.php?action=toggleActivo&id=${encodeURIComponent(id)}`);
             console.log('📡 Enviando petición a:', url);
             
             const r = await fetch(url, {
@@ -785,8 +796,7 @@ function wireInlineEdit(){
             input.classList.add('saving');
             
             try {
-                const baseUrl = window.location.origin;
-                const url = `${baseUrl}/camella.com.co/controllers/OficioController.php?action=updateNombre`;
+                const url = getControllerUrl('controllers/OficioController.php?action=updateNombre');
                 
                 const formData = new URLSearchParams();
                 formData.append('id', id);
@@ -878,8 +888,7 @@ function wireInlineEdit(){
             input.classList.add('saving');
             
             try {
-                const baseUrl = window.location.origin;
-                const url = `${baseUrl}/camella.com.co/controllers/CategoriaController.php?action=updateNombre`;
+                const url = getControllerUrl('controllers/CategoriaController.php?action=updateNombre');
                 
                 const formData = new URLSearchParams();
                 formData.append('id', id);
@@ -939,8 +948,7 @@ function wireCRUDButtons(){
 // Carga de estadísticas (contadores)
 async function loadStats(){
     try {
-        const baseUrl = window.location.protocol + '//' + window.location.hostname;
-        const r = await fetch(`${baseUrl}/camella.com.co/controllers/OficioController.php?action=stats`);
+        const r = await fetch(getControllerUrl('controllers/OficioController.php?action=stats'));
         if (!r.ok) return;
         const data = await r.json();
         if (!data.success) return;
@@ -1091,8 +1099,7 @@ function deleteOficio(id, nombre) {
 // Ejecutar acciones CRUD
 async function executeCategoriaDelete(id) {
     try {
-        const baseUrl = window.location.protocol + '//' + window.location.hostname;
-        const r = await fetch(`${baseUrl}/camella.com.co/controllers/CategoriaController.php?action=delete&id=${id}`, {method: 'POST'});
+        const r = await fetch(getControllerUrl(`controllers/CategoriaController.php?action=delete&id=${id}`), {method: 'POST'});
         const data = await r.json();
         if (data.success) {
             alert('Categoría eliminada');
@@ -1105,8 +1112,7 @@ async function executeCategoriaDelete(id) {
 
 async function executeOficioDelete(id) {
     try {
-        const baseUrl = window.location.protocol + '//' + window.location.hostname;
-        const r = await fetch(`${baseUrl}/camella.com.co/controllers/OficioController.php?action=delete&id=${id}`, {method: 'POST'});
+        const r = await fetch(getControllerUrl(`controllers/OficioController.php?action=delete&id=${id}`), {method: 'POST'});
         const data = await r.json();
         if (data.success) {
             alert('Oficio eliminado');
@@ -1125,9 +1131,8 @@ document.getElementById('btnSaveCategoria')?.addEventListener('click', async (e)
     const isEdit = formData.get('id') !== '';
     
     try {
-        const baseUrl = window.location.protocol + '//' + window.location.hostname;
         const action = isEdit ? 'update' : 'create';
-        const r = await fetch(`${baseUrl}/camella.com.co/controllers/CategoriaController.php?action=${action}`, {
+        const r = await fetch(getControllerUrl(`controllers/CategoriaController.php?action=${action}`), {
             method: 'POST',
             body: formData
         });
@@ -1150,9 +1155,8 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     const isEdit = formData.get('id') !== '';
     
     try {
-        const baseUrl = window.location.protocol + '//' + window.location.hostname;
         const action = isEdit ? 'update' : 'create';
-        const r = await fetch(`${baseUrl}/camella.com.co/controllers/OficioController.php?action=${action}`, {
+        const r = await fetch(getControllerUrl(`controllers/OficioController.php?action=${action}`), {
             method: 'POST',
             body: formData
         });
