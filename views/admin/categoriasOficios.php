@@ -416,65 +416,6 @@ require_once __DIR__ . '/../../partials/header.php';
     </div>
 </section>
 
-<!-- CAMELLA: MODAL CATEGORIA -->
-<div class="modal fade" id="modalCategoria" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <form id="formCategoria" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Nueva / Editar categoría</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" name="id" id="catId">
-                <div class="mb-3">
-                    <label class="form-label">Nombre</label>
-                    <input type="text" name="titulo" id="catTitulo" class="form-control" required>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Icono (FontAwesome)</label>
-                    <input type="text" name="icono" id="catIcono" class="form-control" placeholder="fa-solid fa-broom">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="btnSaveCategoria">Guardar</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- CAMELLA: MODAL OFICIO -->
-<div class="modal fade" id="modalOficio" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <form id="formOficio" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Nuevo / Editar oficio</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" name="id" id="ofId">
-                <input type="hidden" name="categoria_id" id="ofCatId">
-                <div class="mb-3">
-                    <label class="form-label">Nombre del oficio</label>
-                    <input type="text" name="titulo" id="ofTitulo" class="form-control" required>
-                </div>
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="checkbox" id="ofPopular" name="popular" value="1">
-                    <label class="form-check-label" for="ofPopular">Marcar como popular</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="ofActivo" name="activo" value="1" checked>
-                    <label class="form-check-label" for="ofActivo">Oficio activo</label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="btnSaveOficio">Guardar</button>
-            </div>
-        </form>
-    </div>
-</div>
-
 <script>
 // Helper para construir URLs correctas según el entorno
 function getControllerUrl(path) {
@@ -1144,86 +1085,9 @@ function openOficioModal(categoriaId) {
     }
 }
 
-function editCategoria(id, nombre, icono) {
-    console.log('✏️ Editando categoría:', id, nombre);
-    
-    try {
-        document.getElementById('catId').value = id;
-        document.getElementById('catTitulo').value = nombre;
-        document.getElementById('catIcono').value = icono;
-        
-        const modalElement = document.getElementById('modalCategoria');
-        if (!modalElement) {
-            console.error('❌ Modal no encontrado: modalCategoria');
-            return;
-        }
-        
-        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-            new bootstrap.Modal(modalElement).show();
-        } else {
-            modalElement.classList.add('show');
-            modalElement.style.display = 'block';
-        }
-    } catch (error) {
-        console.error('❌ Error al abrir modal categoría:', error);
-    }
-}
-
-function openCategoriaModal() {
-    console.log('🆕 Abriendo modal para nueva categoría');
-    
-    try {
-        document.getElementById('catId').value = '';
-        document.getElementById('catTitulo').value = '';
-        document.getElementById('catIcono').value = '';
-        
-        const modalElement = document.getElementById('modalCategoria');
-        if (!modalElement) {
-            console.error('❌ Modal no encontrado: modalCategoria');
-            return;
-        }
-        
-        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-            new bootstrap.Modal(modalElement).show();
-        } else {
-            modalElement.classList.add('show');
-            modalElement.style.display = 'block';
-        }
-    } catch (error) {
-        console.error('❌ Error al abrir modal:', error);
-    }
-}
-
 function deleteCategoria(id, nombre) {
     if (confirm(`¿Eliminar la categoría "${nombre}"? Se eliminarán también todos sus oficios.`)) {
         executeCategoriaDelete(id);
-    }
-}
-
-function editOficio(id, nombre, categoriaId, popular) {
-    console.log('✏️ Editando oficio:', id, nombre);
-    
-    try {
-        document.getElementById('ofId').value = id;
-        document.getElementById('ofTitulo').value = nombre;
-        document.getElementById('ofCatId').value = categoriaId;
-        document.getElementById('ofPopular').checked = popular == 1;
-        document.getElementById('ofActivo').checked = true;
-        
-        const modalElement = document.getElementById('modalOficio');
-        if (!modalElement) {
-            console.error('❌ Modal no encontrado: modalOficio');
-            return;
-        }
-        
-        if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-            new bootstrap.Modal(modalElement).show();
-        } else {
-            modalElement.classList.add('show');
-            modalElement.style.display = 'block';
-        }
-    } catch (error) {
-        console.error('❌ Error al editar oficio:', error);
     }
 }
 
