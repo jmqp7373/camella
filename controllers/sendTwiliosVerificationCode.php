@@ -17,6 +17,9 @@ error_reporting(E_ALL);
 // Log de debug
 error_log("🚀 sendTwiliosVerificationCode.php iniciado - " . date('Y-m-d H:i:s'));
 
+// -------------------- Cargar configuración --------------------
+require_once __DIR__ . '/../config/config.php';
+
 // -------------------- Dependencias --------------------
 $autoload = __DIR__ . '/../vendor/autoload.php';
 if (!file_exists($autoload)) {
@@ -87,10 +90,26 @@ if (!extension_loaded('curl') || !extension_loaded('openssl')) {
 }
 
 // -------------------- Credenciales Twilio --------------------
-// NOTA: En producción, usar variables de entorno o archivo config no versionado
-$ACCOUNT_SID = getenv('TWILIO_ACCOUNT_SID') ?: 'YOUR_ACCOUNT_SID';
-$AUTH_TOKEN = getenv('TWILIO_AUTH_TOKEN') ?: 'YOUR_AUTH_TOKEN';  
-$FROM_NUMBER = getenv('TWILIO_FROM_NUMBER') ?: '+1XXXXXXXXXX';
+// Usar credenciales del archivo config.php
+$ACCOUNT_SID = defined('TWILIO_SID') ? TWILIO_SID : getenv('TWILIO_ACCOUNT_SID');
+$AUTH_TOKEN = defined('TWILIO_AUTH_TOKEN') ? TWILIO_AUTH_TOKEN : getenv('TWILIO_AUTH_TOKEN');  
+$FROM_NUMBER = defined('TWILIO_FROM_NUMBER') ? TWILIO_FROM_NUMBER : getenv('TWILIO_FROM_NUMBER');
+
+// Validar que las credenciales estén configuradas
+if (empty($ACCOUNT_SID) || $ACCOUNT_SID === 'YOUR_ACCOUNT_SID' || 
+    empty($AUTH_TOKEN) || $AUTH_TOKEN === 'YOUR_AUTH_TOKEN' ||
+    empty($FROM_NUMBER) || $FROM_NUMBER === '+1XXXXXXXXXX') {
+    $response = [
+        'ok' => false,
+        'msg' => 'Credenciales de Twilio no configuradas. Verifica config.php o variables de entorno.'
+    ];
+    echo json_encode($response, JSON_UNESCAPED_UNICODE);
+    error_log("❌ Credenciales de Twilio no configuradas correctamente");
+    exit;
+}
+
+error_log("✅ Credenciales Twilio cargadas - SID: " . substr($ACCOUNT_SID, 0, 10) . "...");
+
 
 // -------------------- Procesar datos de entrada --------------------
 $phone = $_POST['phone'] ?? '';
