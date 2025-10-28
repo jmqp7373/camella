@@ -66,4 +66,4 @@ Thumbs.db
 !/tests/test_conexion.php
 
 # === ARCHIVOS DE DESPLIEGUE Y AUTOMATIZACIÓN ===
-.github/
+# .github/ - Removido para permitir workflows
