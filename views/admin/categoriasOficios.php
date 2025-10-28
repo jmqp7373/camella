@@ -954,19 +954,20 @@ function updateSearchResults(searchText, filterMode, visible, total, visibleOfic
     if (!resultsDiv || !resultsText) return;
     
     let message = '';
-    let showResults = false;
+    let showResults = true; // Siempre mostrar información
     
-    if (searchText || filterMode !== 'all') {
-        showResults = true;
-        if (searchText && filterMode !== 'all') {
-            const filterName = filterMode === 'popular' ? 'populares' : 'no populares';
-            message = `🔍 Buscando "${searchText}" en oficios ${filterName}: ${visible} categorías y ${visibleOficios} oficios`;
-        } else if (searchText) {
-            message = `🔍 Resultados para "${searchText}": ${visible} de ${total} categorías y ${visibleOficios} oficios`;
-        } else if (filterMode !== 'all') {
-            const filterName = filterMode === 'popular' ? 'populares' : 'no populares';
-            message = `🔥 Mostrando solo oficios ${filterName}: ${visible} categorías y ${visibleOficios} oficios`;
-        }
+    if (searchText && filterMode !== 'all') {
+        const filterName = filterMode === 'popular' ? 'populares' : 'no populares';
+        message = `🔍 Buscando "${searchText}" en oficios ${filterName}: ${visible} categorías y ${visibleOficios} oficios`;
+    } else if (searchText) {
+        message = `🔍 Resultados para "${searchText}": ${visible} de ${total} categorías y ${visibleOficios} oficios`;
+    } else if (filterMode === 'popular') {
+        message = `🔥 Mostrando solo oficios populares: ${visible} categorías y ${visibleOficios} oficios`;
+    } else if (filterMode === 'nopopular') {
+        message = `📋 Mostrando solo oficios no populares: ${visible} categorías y ${visibleOficios} oficios`;
+    } else {
+        // Modo "Todos"
+        message = `� Mostrando todos los oficios: ${visible} categorías y ${visibleOficios} oficios`;
     }
     
     resultsText.textContent = message;
