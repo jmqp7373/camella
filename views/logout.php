@@ -21,6 +21,6 @@ if (isset($_COOKIE[session_name()])) {
 session_destroy();
 
 // Redirigir al home con mensaje
-header('Location: index.php?logout=success');
+header('Location: ../index.php?logout=success');
 exit;
 ?>
