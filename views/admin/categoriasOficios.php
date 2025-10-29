@@ -309,7 +309,7 @@ require_once __DIR__ . '/../../partials/header.php';
                             <div class="mb-3">
                                 <label for="catIcono" class="form-label fw-semibold">Icono</label>
                                 <input type="hidden" id="catIcono" name="icono" required>
-                                <div id="catIconoDisplay" class="form-control" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="openFormIconPicker()">
+                                <div id="catIconoDisplay" class="form-select" style="display: flex; align-items: center; justify-content: space-between; cursor: pointer; height: auto; min-height: 48px;" onclick="openFormIconPicker()">
                                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                                         <i id="catIconoIcon" class="fas fa-question" style="font-size: 1.5rem;"></i>
                                         <span id="catIconoLabel">Seleccionar icono...</span>
@@ -1672,23 +1672,28 @@ categoryDropdown?.querySelectorAll('.custom-select-option').forEach(option => {
 .custom-select-trigger {
     width: 100%;
     text-align: left;
-    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
-    background: white;
-    border: 1px solid #dee2e6;
+    padding: 0.75rem 2.5rem 0.75rem 0.75rem !important;
+    background: #f8f9fa !important;
+    border: 2px solid #e9ecef !important;
+    border-radius: 8px !important;
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
-    position: relative;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    min-height: 48px !important;
+    height: auto !important;
 }
 
 .custom-select-trigger:hover {
-    border-color: #002b47;
+    border-color: #002b47 !important;
 }
 
 .custom-select-trigger.active {
-    border-color: #002b47;
-    box-shadow: 0 0 0 0.25rem rgba(0, 43, 71, 0.1);
+    border-color: #002b47 !important;
+    background: white !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 43, 71, 0.15) !important;
 }
 
 .custom-select-trigger .fa-chevron-down {
