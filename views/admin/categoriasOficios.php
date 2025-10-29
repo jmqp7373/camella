@@ -352,12 +352,21 @@ require_once __DIR__ . '/../../partials/header.php';
                             
                             <div class="mb-3">
                                 <label for="ofCatId" class="form-label fw-semibold">Categoría</label>
-                                <select class="form-select" id="ofCatId" name="categoria_id" required>
-                                    <option value="">Seleccionar categoría...</option>
-                                    <?php foreach ($categorias as $cat): ?>
-                                        <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nombre']) ?></option>
-                                    <?php endforeach; ?>
-                                </select>
+                                <div class="custom-select-wrapper">
+                                    <button type="button" class="form-select custom-select-trigger" id="categorySelectBtn">
+                                        <span class="selected-text">Seleccionar categoría...</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                    <div class="custom-select-dropdown" id="categoryDropdown">
+                                        <?php foreach ($categorias as $cat): ?>
+                                            <div class="custom-select-option" data-value="<?= $cat['id'] ?>">
+                                                <span><?= htmlspecialchars($cat['nombre']) ?></span>
+                                                <i class="<?= htmlspecialchars($cat['icono']) ?>"></i>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    <input type="hidden" id="ofCatId" name="categoria_id" required>
+                                </div>
                             </div>
                             
                             <div class="d-flex gap-3 mb-3">
@@ -1579,6 +1588,51 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
         }
     } catch(e){ alert('Error al guardar oficio'); }
 });
+
+// ======== SELECT PERSONALIZADO CON ICONOS ========
+const categorySelectBtn = document.getElementById('categorySelectBtn');
+const categoryDropdown = document.getElementById('categoryDropdown');
+const categoryInput = document.getElementById('ofCatId');
+
+// Toggle dropdown
+categorySelectBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    categorySelectBtn.classList.toggle('active');
+    categoryDropdown.classList.toggle('show');
+});
+
+// Cerrar dropdown al hacer click fuera
+document.addEventListener('click', (e) => {
+    if (!categorySelectBtn?.contains(e.target) && !categoryDropdown?.contains(e.target)) {
+        categorySelectBtn?.classList.remove('active');
+        categoryDropdown?.classList.remove('show');
+    }
+});
+
+// Seleccionar opción
+categoryDropdown?.querySelectorAll('.custom-select-option').forEach(option => {
+    option.addEventListener('click', () => {
+        const value = option.dataset.value;
+        const text = option.querySelector('span').textContent;
+        const icon = option.querySelector('i').className;
+        
+        // Actualizar input hidden
+        categoryInput.value = value;
+        
+        // Actualizar texto del botón
+        categorySelectBtn.querySelector('.selected-text').innerHTML = 
+            `${text} <i class="${icon}" style="margin-left: 8px;"></i>`;
+        
+        // Marcar como seleccionado
+        categoryDropdown.querySelectorAll('.custom-select-option').forEach(opt => 
+            opt.classList.remove('selected'));
+        option.classList.add('selected');
+        
+        // Cerrar dropdown
+        categorySelectBtn.classList.remove('active');
+        categoryDropdown.classList.remove('show');
+    });
+});
 </script>
 
 <style>
@@ -1608,6 +1662,86 @@ document.getElementById('btnSaveOficio')?.addEventListener('click', async (e) =>
     color: white;
     border-color: #002b47;
     transform: scale(1.1);
+}
+
+/* ======== SELECT PERSONALIZADO CON ICONOS ======== */
+.custom-select-wrapper {
+    position: relative;
+}
+
+.custom-select-trigger {
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+    background: white;
+    border: 1px solid #dee2e6;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    position: relative;
+}
+
+.custom-select-trigger:hover {
+    border-color: #002b47;
+}
+
+.custom-select-trigger.active {
+    border-color: #002b47;
+    box-shadow: 0 0 0 0.25rem rgba(0, 43, 71, 0.1);
+}
+
+.custom-select-trigger .fa-chevron-down {
+    position: absolute;
+    right: 0.75rem;
+    transition: transform 0.3s ease;
+}
+
+.custom-select-trigger.active .fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+.custom-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-top: none;
+    border-radius: 0 0 0.375rem 0.375rem;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.custom-select-dropdown.show {
+    display: block;
+}
+
+.custom-select-option {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background-color 0.2s ease;
+}
+
+.custom-select-option:hover {
+    background-color: #f8f9fa;
+}
+
+.custom-select-option.selected {
+    background-color: #e3f2fd;
+    font-weight: 500;
+}
+
+.custom-select-option i {
+    font-size: 1.25rem;
+    color: #002b47;
 }
 
 /* Bloques administrativos con título */
