@@ -60,7 +60,7 @@ $ofertas_ejemplo = [
     <div class="filtros-container">
         <div class="filtro-item">
             <label for="ubicacion">Ubicación:</label>
-            <select id="ubicacion" class="form-control">
+            <select id="ubicacion" class="form-select">
                 <option value="">Todas las ciudades</option>
                 <option value="bogota">Bogotá</option>
                 <option value="medellin">Medellín</option>
@@ -72,7 +72,7 @@ $ofertas_ejemplo = [
         
         <div class="filtro-item">
             <label for="experiencia">Experiencia:</label>
-            <select id="experiencia" class="form-control">
+            <select id="experiencia" class="form-select">
                 <option value="">Cualquier nivel</option>
                 <option value="junior">Junior (0-2 años)</option>
                 <option value="semi-senior">Semi-Senior (2-5 años)</option>
@@ -96,7 +96,7 @@ $ofertas_ejemplo = [
         </h2>
         <div class="ordenar-por">
             <label>Ordenar por:</label>
-            <select class="form-control">
+            <select class="form-select">
                 <option value="fecha">Más recientes</option>
                 <option value="salario">Mejor salario</option>
                 <option value="relevancia">Relevancia</option>

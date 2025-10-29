@@ -109,7 +109,7 @@ $pageTitle = "Contacto";
             </div>
             <div class="form-group">
                 <label for="asunto">Asunto</label>
-                <select id="asunto" name="asunto">
+                <select id="asunto" name="asunto" class="form-select" required>
                     <option value="">Selecciona un asunto</option>
                     <option value="empleo">Búsqueda de empleo</option>
                     <option value="empresa">Servicios para empresas</option>

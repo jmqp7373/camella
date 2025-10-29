@@ -1159,3 +1159,35 @@ section:target, div:target {
 #crear-anuncio:target {
     animation: highlightSection 1.5s ease-in-out !important;
 }
+
+/* ========================================
+   ESTILOS GLOBALES PARA SELECTS
+   ======================================== */
+select,
+select.form-select,
+select.form-control {
+    border: 2px solid #e9ecef !important;
+    border-radius: 8px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    background: #f8f9fa !important;
+    font-weight: 500 !important;
+    padding: 0.75rem 2.5rem 0.75rem 0.75rem !important;
+    height: auto !important;
+    min-height: 48px !important;
+}
+
+select:focus,
+select.form-select:focus,
+select.form-control:focus {
+    background: white !important;
+    border-color: #002b47 !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 43, 71, 0.15) !important;
+    outline: none !important;
+}
+
+select:hover,
+select.form-select:hover,
+select.form-control:hover {
+    border-color: #002b47 !important;
+}
