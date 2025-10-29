@@ -360,8 +360,8 @@ require_once __DIR__ . '/../../partials/header.php';
                                     <div class="custom-select-dropdown" id="categoryDropdown">
                                         <?php foreach ($categorias as $cat): ?>
                                             <div class="custom-select-option" data-value="<?= $cat['id'] ?>">
-                                                <span><?= htmlspecialchars($cat['nombre']) ?></span>
                                                 <i class="<?= htmlspecialchars($cat['icono']) ?>"></i>
+                                                <span><?= htmlspecialchars($cat['nombre']) ?></span>
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
@@ -1619,9 +1619,9 @@ categoryDropdown?.querySelectorAll('.custom-select-option').forEach(option => {
         // Actualizar input hidden
         categoryInput.value = value;
         
-        // Actualizar texto del botón
+        // Actualizar texto del botón con el icono a la izquierda
         categorySelectBtn.querySelector('.selected-text').innerHTML = 
-            `${text} <i class="${icon}" style="margin-left: 8px;"></i>`;
+            `<i class="${icon}" style="margin-right: 8px;"></i>${text}`;
         
         // Marcar como seleccionado
         categoryDropdown.querySelectorAll('.custom-select-option').forEach(opt => 
@@ -1726,7 +1726,7 @@ categoryDropdown?.querySelectorAll('.custom-select-option').forEach(option => {
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 0.75rem;
     transition: background-color 0.2s ease;
 }
 
@@ -1742,6 +1742,8 @@ categoryDropdown?.querySelectorAll('.custom-select-option').forEach(option => {
 .custom-select-option i {
     font-size: 1.25rem;
     color: #002b47;
+    min-width: 1.5rem;
+    text-align: center;
 }
 
 /* Bloques administrativos con título */
