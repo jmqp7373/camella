@@ -300,17 +300,16 @@ body {
     padding-top: 1.5rem;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     width: 100%;
-}
-
-.company-details {
     text-align: center;
-    color: rgba(255, 255, 255, 0.9);
 }
 
 .company-name {
     font-size: 0.95rem;
     margin-bottom: 0.8rem;
     font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    display: inline-block;
+    margin-right: 1.5rem;
 }
 
 .company-name i {
@@ -318,16 +317,16 @@ body {
     margin-right: 0.5rem;
 }
 
-.company-info-grid {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
+.company-info-inline {
+    display: inline-flex;
+    gap: 1.5rem;
     flex-wrap: wrap;
     font-size: 0.85rem;
+    justify-content: center;
 }
 
 .info-item {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.4rem;
     color: rgba(255, 255, 255, 0.8);
