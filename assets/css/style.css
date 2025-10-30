@@ -303,13 +303,18 @@ body {
     text-align: center;
 }
 
+.company-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
 .company-name {
     font-size: 0.95rem;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.9);
-    display: inline-block;
-    margin-right: 1.5rem;
 }
 
 .company-name i {
@@ -317,18 +322,18 @@ body {
     margin-right: 0.5rem;
 }
 
-.company-info-inline {
-    display: inline-flex;
-    gap: 1.5rem;
+.company-info-grid {
+    display: flex;
+    gap: 2rem;
     flex-wrap: wrap;
     font-size: 0.85rem;
     justify-content: center;
 }
 
 .info-item {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
     color: rgba(255, 255, 255, 0.8);
 }
 

@@ -3,37 +3,35 @@
     <!-- Footer -->
     <footer class="main-footer">
         <div class="footer-content">
-            <!-- Primera fila: Copyright y enlaces -->
-            <div class="footer-top">
-                <div class="footer-info">
-                    <p>&copy; <?php echo date('Y'); ?> <strong>Camella.com.co</strong> - Portal de Empleo Líder en Colombia</p>
-                </div>
-                
-                <nav class="footer-nav">
-                    <ul class="footer-links">
-                        <li><a href="index.php?view=privacidad"><i class="fas fa-shield-alt"></i> Privacidad</a></li>
-                        <li><a href="index.php?view=terminos"><i class="fas fa-file-contract"></i> Términos</a></li>
-                        <li><a href="index.php?view=contacto"><i class="fas fa-phone"></i> Soporte</a></li>
-                        <li><a href="index.php?view=ayuda"><i class="fas fa-question-circle"></i> Ayuda</a></li>
-                    </ul>
-                </nav>
+            <div class="footer-info">
+                <p>&copy; <?php echo date('Y'); ?> <strong>Camella.com.co</strong> - Portal de Empleo Líder en Colombia</p>
             </div>
             
-            <!-- Segunda fila: Información de la empresa -->
+            <nav class="footer-nav">
+                <ul class="footer-links">
+                    <li><a href="index.php?view=privacidad"><i class="fas fa-shield-alt"></i> Privacidad</a></li>
+                    <li><a href="index.php?view=terminos"><i class="fas fa-file-contract"></i> Términos</a></li>
+                    <li><a href="index.php?view=contacto"><i class="fas fa-phone"></i> Soporte</a></li>
+                    <li><a href="index.php?view=ayuda"><i class="fas fa-question-circle"></i> Ayuda</a></li>
+                </ul>
+            </nav>
+            
             <div class="footer-company">
-                <p class="company-name">
-                    <i class="fas fa-building"></i> 
-                    Propiedad de <strong>Digital Wise Company S.A.S.</strong>
-                </p>
-                <div class="company-info-inline">
-                    <span class="info-item">
-                        <i class="fas fa-id-card"></i> 
-                        NIT: 901652435-6
-                    </span>
-                    <span class="info-item">
-                        <i class="fas fa-map-marker-alt"></i> 
-                        Cra 70 #32-82, Medellín, Colombia
-                    </span>
+                <div class="company-details">
+                    <p class="company-name">
+                        <i class="fas fa-building"></i> 
+                        Propiedad de <strong>Digital Wise Company S.A.S.</strong>
+                    </p>
+                    <div class="company-info-grid">
+                        <span class="info-item">
+                            <i class="fas fa-id-card"></i> 
+                            NIT: 901652435-6
+                        </span>
+                        <span class="info-item">
+                            <i class="fas fa-map-marker-alt"></i> 
+                            Cra 70 #32-82, Medellín, Colombia
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
