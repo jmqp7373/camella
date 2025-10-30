@@ -94,37 +94,33 @@ $pageTitle = "Contacto";
         <p class="form-description">
             Completa el formulario y nos pondremos en contacto contigo a la brevedad desde Medellín, Colombia.
         </p>
-        <form class="contact-form-wrapper">
+        <form id="contactForm" class="contact-form-wrapper" data-endpoint="controllers/send-email.php">
             <div class="form-group">
                 <label for="nombre">Nombre completo *</label>
-                <input type="text" id="nombre" name="nombre" placeholder="Tu nombre completo" required>
+                <input type="text" id="nombre" name="name" placeholder="Tu nombre completo" required>
             </div>
             <div class="form-group">
                 <label for="email">Correo electrónico *</label>
                 <input type="email" id="email" name="email" placeholder="tu@email.com" required>
             </div>
             <div class="form-group">
-                <label for="telefono">Teléfono / WhatsApp</label>
-                <input type="tel" id="telefono" name="telefono" placeholder="+57 310 1234567">
-            </div>
-            <div class="form-group">
                 <label for="asunto">Asunto</label>
-                <select id="asunto" name="asunto" class="form-select" required>
-                    <option value="">Selecciona un asunto</option>
-                    <option value="empleo">Búsqueda de empleo</option>
-                    <option value="empresa">Servicios para empresas</option>
-                    <option value="soporte">Soporte técnico</option>
-                    <option value="otro">Otro</option>
-                </select>
+                <input type="text" id="asunto" name="subject" placeholder="Asunto de tu mensaje" class="form-control">
             </div>
             <div class="form-group">
                 <label for="mensaje">Mensaje *</label>
-                <textarea id="mensaje" name="mensaje" rows="5" placeholder="Escribe tu mensaje aquí..." required></textarea>
+                <textarea id="mensaje" name="message" rows="5" placeholder="Escribe tu mensaje aquí..." required></textarea>
             </div>
+            
+            <!-- Honeypot anti-bot (completamente oculto) -->
+            <input type="text" name="website" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;" autocomplete="off" tabindex="-1" aria-hidden="true">
+            
             <button type="submit" class="btn btn-primary btn-send">
-                <i class="fas fa-send"></i> Enviar Mensaje
+                <i class="fas fa-paper-plane"></i> Enviar Mensaje
             </button>
         </form>
+        
+        <div id="formMessage" class="mt-3"></div>
     </div>
     
     <!-- Mapa de ubicación -->

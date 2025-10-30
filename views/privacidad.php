@@ -54,7 +54,7 @@ $pageTitle = "Política de Privacidad";
 
         <section class="privacy-section">
             <h2><span class="section-number">4.</span> Autorización del Usuario</h2>
-            <p>Al acceder, registrarte o usar <strong>Camella.com.co</strong>, autorizas de manera expresa el tratamiento de tus datos personales conforme a esta Política. En cualquier momento podrás revocar tu consentimiento o solicitar la eliminación de tus datos enviando una solicitud a <a href="mailto:privacidad@camella.com.co"><strong>privacidad@camella.com.co</strong></a>.</p>
+            <p>Al acceder, registrarte o usar <strong>Camella.com.co</strong>, autorizas de manera expresa el tratamiento de tus datos personales conforme a esta Política. En cualquier momento podrás revocar tu consentimiento o solicitar la eliminación de tus datos enviando una solicitud a <a href="mailto:admin@camella.com.co"><strong>admin@camella.com.co</strong></a>.</p>
         </section>
 
         <section class="privacy-section">
@@ -68,7 +68,7 @@ $pageTitle = "Política de Privacidad";
                 <li>Revocar la autorización o solicitar la supresión de tus datos cuando no se respeten los principios de la ley.</li>
             </ul>
             <div class="contact-info">
-                <p>Para ejercer estos derechos, comunícate a <a href="mailto:privacidad@camella.com.co"><strong>privacidad@camella.com.co</strong></a> indicando tu nombre completo, tipo y número de documento, y la descripción clara de la solicitud.</p>
+                <p>Para ejercer estos derechos, comunícate a <a href="mailto:admin@camella.com.co"><strong>admin@camella.com.co</strong></a> indicando tu nombre completo, tipo y número de documento, y la descripción clara de la solicitud.</p>
             </div>
         </section>
 

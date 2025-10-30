@@ -160,7 +160,7 @@ echo "<!-- DEBUG FINAL: Primera categoría a mostrar: " . (isset($categorias[0])
                 <div class="category-card" data-categoria-id="<?= $categoria['id'] ?>">
                     <h3 class="category-title">
                         <span class="category-icon"><i class="<?= htmlspecialchars($categoria['icono']) ?>"></i></span>
-                        <?= htmlspecialchars($categoria['nombre']) ?>
+                        <?= htmlspecialchars(ucwords(mb_strtolower($categoria['nombre']))) ?>
                     </h3>
                     
                     <?php if (!empty($categoria['oficios'])): ?>
@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const counter = entry.target;
                 const target = parseInt(counter.dataset.target);
                 
-                animateCounter(counter, 0, target, 2000);
+                animateCounter(counter, 0, target, 5000);
                 observer.unobserve(counter);
             }
         });

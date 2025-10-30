@@ -192,7 +192,7 @@ $pageTitle = "Términos y Condiciones";
                 <li>Demás normas aplicables en Colombia</li>
             </ul>
             <div class="data-contact">
-                <p>Para ejercer sus derechos como titular de datos, contacte: <a href="mailto:privacidad@camella.com.co"><strong>privacidad@camella.com.co</strong></a></p>
+                <p>Para ejercer sus derechos como titular de datos, contacte: <a href="mailto:admin@camella.com.co"><strong>admin@camella.com.co</strong></a></p>
             </div>
         </section>
 
@@ -247,7 +247,7 @@ $pageTitle = "Términos y Condiciones";
             <p>En caso de controversias, seguiremos el siguiente escalamiento:</p>
             <div class="conflict-resolution">
                 <ol class="resolution-steps">
-                    <li><strong>Contacto con soporte:</strong> <a href="mailto:soporte@camella.com.co">soporte@camella.com.co</a></li>
+                    <li><strong>Contacto con soporte:</strong> <a href="mailto:admin@camella.com.co">admin@camella.com.co</a></li>
                     <li><strong>Arreglo directo:</strong> Negociación de buena fe entre las partes</li>
                     <li><strong>Conciliación:</strong> Mecanismos alternativos cuando sea procedente</li>
                     <li><strong>Vía judicial:</strong> Como último recurso según la ley colombiana</li>
@@ -283,8 +283,8 @@ $pageTitle = "Términos y Condiciones";
                 NIT: 901652435-6<br>
                 Dirección: Cra 70 #32-82, Medellín, Colombia<br>
                 Correo general: <a href="mailto:admin@camella.com.co">admin@camella.com.co</a><br>
-                Soporte técnico: <a href="mailto:soporte@camella.com.co">soporte@camella.com.co</a><br>
-                Protección de datos: <a href="mailto:privacidad@camella.com.co">privacidad@camella.com.co</a></p>
+                Soporte técnico: <a href="mailto:admin@camella.com.co">admin@camella.com.co</a><br>
+                Protección de datos: <a href="mailto:admin@camella.com.co">admin@camella.com.co</a></p>
             </div>
         </section>
     </div>

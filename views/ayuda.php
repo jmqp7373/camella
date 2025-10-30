@@ -137,7 +137,7 @@ $pageTitle = "Centro de Ayuda";
                 <div class="contact-option">
                     <i class="fas fa-envelope"></i>
                     <h4>Correo Electrónico</h4>
-                    <p><a href="mailto:soporte@camella.com.co">soporte@camella.com.co</a></p>
+                    <p><a href="mailto:admin@camella.com.co">admin@camella.com.co</a></p>
                     <span class="response-time">Respuesta en 24 horas</span>
                 </div>
                 
@@ -146,13 +146,6 @@ $pageTitle = "Centro de Ayuda";
                     <h4>WhatsApp</h4>
                     <p><a href="https://wa.me/573103951529" target="_blank">+57 310 3951529</a></p>
                     <span class="response-time">Lun - Vie: 8:00 AM - 6:00 PM</span>
-                </div>
-                
-                <div class="contact-option">
-                    <i class="fas fa-comments"></i>
-                    <h4>Chat en Vivo</h4>
-                    <p>Disponible en el sitio web</p>
-                    <span class="response-time">Respuesta inmediata</span>
                 </div>
             </div>
         </div>

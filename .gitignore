@@ -42,28 +42,31 @@ database_credentials.php
 
 # Permitir database.php (sin credenciales) pero no config.php
 !config/database.php
-# === CONFIGURACIÓN ADICIONAL PARA CAMELLA.COM.CO ===
+# === CONFIGURACIï¿½N ADICIONAL PARA CAMELLA.COM.CO ===
 # Archivos sensibles
 /config/config.php
+/config/email-config.php
 
 # Archivos temporales o del sistema operativo
 *.log
 *.bak
 .DS_Store
 Thumbs.db
+/logs/*.log
+/logs/ratelimit.json
 
-# === IMÁGENES Y ARCHIVOS DE USUARIOS ===
-# Ignorar imágenes subidas por usuarios o anuncios
+# === IMï¿½GENES Y ARCHIVOS DE USUARIOS ===
+# Ignorar imï¿½genes subidas por usuarios o anuncios
 /assets/images/anuncios/
 /assets/images/anuncios/*
 
-# Mantener estructura vacía en deploy
+# Mantener estructura vacï¿½a en deploy
 !/assets/images/anuncios/.gitkeep
 
-# === TESTS LOCALES Y DIAGNÓSTICOS ===
+# === TESTS LOCALES Y DIAGNï¿½STICOS ===
 /tests/
 !/tests/check_tables.php
 !/tests/test_conexion.php
 
-# === ARCHIVOS DE DESPLIEGUE Y AUTOMATIZACIÓN ===
+# === ARCHIVOS DE DESPLIEGUE Y AUTOMATIZACIï¿½N ===
 # .github/ - Removido para permitir workflows

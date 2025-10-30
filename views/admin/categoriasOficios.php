@@ -18,10 +18,29 @@ require_once __DIR__ . '/../../models/Categorias.php';
 
 $pageTitle = "Gestión de Categorías y Oficios";
 $categoriasModel = new Categorias();
-$categorias = $categoriasModel->obtenerCategoriasConOficios();
+
+// En admin: obtener TODAS las categorías (con y sin oficios)
+$pdo = getPDO();
+$stmt = $pdo->query("
+    SELECT 
+        c.id,
+        c.nombre,
+        c.descripcion,
+        c.icono,
+        c.activo,
+        COALESCE(COUNT(o.id), 0) AS total_oficios
+    FROM categorias c
+    LEFT JOIN oficios o ON o.categoria_id = c.id AND o.activo = 1
+    WHERE c.activo = 1
+    GROUP BY c.id, c.nombre, c.descripcion, c.icono, c.activo
+    ORDER BY c.id ASC
+");
+$categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// DEBUG: Verificar que se obtengan todas las categorías
+error_log("Admin panel: Total categorías obtenidas = " . count($categorias));
 
 // Obtener oficios por categoría y estadísticas
-$pdo = getPDO();
 $oficiosPorCategoria = [];
 $totalOficios = 0;
 $oficiosPopulares = 0;
@@ -164,7 +183,9 @@ require_once __DIR__ . '/../../partials/header.php';
         <div class="admin-block-content">
             <div class="categories-tree">
                 <?php if (!empty($categorias)): ?>
+            <!-- DEBUG: Renderizando <?= count($categorias) ?> categorías -->
             <?php foreach ($categorias as $categoria): ?>
+                <!-- Categoria ID: <?= $categoria['id'] ?> - <?= htmlspecialchars($categoria['nombre']) ?> -->
                 <div class="category-card" data-categoria-id="<?= $categoria['id'] ?>">
                     <h3 class="category-title">
                         <!-- 1. Select de icono estilizado -->
@@ -179,7 +200,7 @@ require_once __DIR__ . '/../../partials/header.php';
                         <input type="text" 
                                class="categoria-nombre-input"
                                data-categoria-id="<?= $categoria['id'] ?>"
-                               value="<?= htmlspecialchars($categoria['nombre']) ?>"
+                               value="<?= htmlspecialchars(ucwords(mb_strtolower($categoria['nombre']))) ?>"
                                title="Haz clic para editar. Presiona Enter o pierde el foco para guardar"
                                style="border: none; background: transparent; font-size: inherit; font-weight: inherit; padding: 2px 8px; flex: 1; min-width: 200px; max-width: 400px; color: inherit;">
                         
@@ -188,7 +209,7 @@ require_once __DIR__ . '/../../partials/header.php';
                             <!-- 5. Eliminar -->
                             <img src="assets/images/app/delete-icon.svg" 
                                  alt="Eliminar" 
-                                 onclick="deleteCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars($categoria['nombre']) ?>')" 
+                                 onclick="deleteCategoria(<?= $categoria['id'] ?>, '<?= htmlspecialchars(ucwords(mb_strtolower($categoria['nombre']))) ?>')" 
                                  title="Eliminar categoría"
                                  style="width: 20px; height: 20px; cursor: pointer;">
                         </span>
@@ -196,8 +217,9 @@ require_once __DIR__ . '/../../partials/header.php';
                     
                     <?php 
                     $oficios = $oficiosPorCategoria[$categoria['id']] ?? [];
-                    if (!empty($oficios)): 
                     ?>
+                    
+                    <?php if (!empty($oficios)): ?>
                         <ul class="subcategories">
                             <?php foreach ($oficios as $oficio): ?>
                                 <li class="oficio-item <?= $oficio['activo'] == 0 ? 'oficio-inactivo' : '' ?>" 
@@ -361,7 +383,7 @@ require_once __DIR__ . '/../../partials/header.php';
                                         <?php foreach ($categorias as $cat): ?>
                                             <div class="custom-select-option" data-value="<?= $cat['id'] ?>">
                                                 <i class="<?= htmlspecialchars($cat['icono']) ?>"></i>
-                                                <span><?= htmlspecialchars($cat['nombre']) ?></span>
+                                                <span><?= htmlspecialchars(ucwords(mb_strtolower($cat['nombre']))) ?></span>
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
@@ -904,7 +926,8 @@ function wireSearchAndFilters(){
             });
             
             // Mostrar/ocultar la tarjeta completa
-            const shouldShowCard = visibleOficios > 0 || (matchCategory && text && oficios.length === 0);
+            // En admin: siempre mostrar categorías, incluso sin oficios
+            const shouldShowCard = visibleOficios > 0 || matchCategory || oficios.length === 0;
             card.style.display = shouldShowCard ? '' : 'none';
             
             if (shouldShowCard) totalVisible++;
