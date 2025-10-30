@@ -384,6 +384,7 @@ function cargarCategoriasAPI() {
 /* Estilos específicos para la página de inicio - MAQUETACIÓN ORIGINAL COMPLETA */
 .home-hero {
     text-align: center;
+    margin-top: 3rem;
     margin-bottom: 3rem;
 }
 
