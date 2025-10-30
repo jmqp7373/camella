@@ -44,7 +44,7 @@ $pageTitle = "Contacto";
             <i class="fas fa-envelope"></i>
             <div class="contact-details">
                 <span class="contact-label">Email</span>
-                <a href="mailto:contacto@camella.com.co" class="contact-value">contacto@camella.com.co</a>
+                <a href="mailto:admin@camella.com.co" class="contact-value">admin@camella.com.co</a>
             </div>
         </div>
         

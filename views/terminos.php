@@ -282,7 +282,7 @@ $pageTitle = "Términos y Condiciones";
                 Propietario y operador de <strong>Camella.com.co</strong><br>
                 NIT: 901652435-6<br>
                 Dirección: Cra 70 #32-82, Medellín, Colombia<br>
-                Correo general: <a href="mailto:contacto@camella.com.co">contacto@camella.com.co</a><br>
+                Correo general: <a href="mailto:admin@camella.com.co">admin@camella.com.co</a><br>
                 Soporte técnico: <a href="mailto:soporte@camella.com.co">soporte@camella.com.co</a><br>
                 Protección de datos: <a href="mailto:privacidad@camella.com.co">privacidad@camella.com.co</a></p>
             </div>
