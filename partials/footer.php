@@ -3,18 +3,20 @@
     <!-- Footer -->
     <footer class="main-footer">
         <div class="footer-content">
-            <div class="footer-info">
-                <p>&copy; <?php echo date('Y'); ?> <strong>Camella.com.co</strong> - Portal de Empleo Líder en Colombia</p>
+            <div class="footer-top">
+                <div class="footer-info">
+                    <p>&copy; <?php echo date('Y'); ?> <strong>Camella.com.co</strong> - Portal de Empleo Líder en Colombia</p>
+                </div>
+                
+                <nav class="footer-nav">
+                    <ul class="footer-links">
+                        <li><a href="index.php?view=privacidad"><i class="fas fa-shield-alt"></i> Privacidad</a></li>
+                        <li><a href="index.php?view=terminos"><i class="fas fa-file-contract"></i> Términos</a></li>
+                        <li><a href="index.php?view=contacto"><i class="fas fa-phone"></i> Soporte</a></li>
+                        <li><a href="index.php?view=ayuda"><i class="fas fa-question-circle"></i> Ayuda</a></li>
+                    </ul>
+                </nav>
             </div>
-            
-            <nav class="footer-nav">
-                <ul class="footer-links">
-                    <li><a href="index.php?view=privacidad"><i class="fas fa-shield-alt"></i> Privacidad</a></li>
-                    <li><a href="index.php?view=terminos"><i class="fas fa-file-contract"></i> Términos</a></li>
-                    <li><a href="index.php?view=contacto"><i class="fas fa-phone"></i> Soporte</a></li>
-                    <li><a href="index.php?view=ayuda"><i class="fas fa-question-circle"></i> Ayuda</a></li>
-                </ul>
-            </nav>
             
             <div class="footer-company">
                 <div class="company-details">
