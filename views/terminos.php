@@ -287,14 +287,6 @@ $pageTitle = "Términos y Condiciones";
                 Protección de datos: <a href="mailto:privacidad@camella.com.co">privacidad@camella.com.co</a></p>
             </div>
         </section>
-
-        <div class="company-signature">
-            <div class="signature-content">
-                <p><strong>Digital Wise Company S.A.S.</strong></p>
-                <p>© 2025 – Todos los derechos reservados.</p>
-                <p>🌐 <a href="https://camella.com.co" target="_blank" rel="noopener">www.camella.com.co</a></p>
-            </div>
-        </div>
     </div>
 </div>
 

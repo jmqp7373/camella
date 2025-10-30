@@ -104,14 +104,6 @@ $pageTitle = "Política de Privacidad";
             <h2><span class="section-number">11.</span> Aceptación</h2>
             <p>Al utilizar <strong>Camella.com.co</strong>, confirmas que has leído, comprendido y aceptado esta Política de Privacidad en su totalidad.</p>
         </section>
-
-        <div class="company-signature">
-            <div class="signature-content">
-                <p><strong>Digital Wise Company S.A.S.</strong></p>
-                <p>© 2025 – Todos los derechos reservados.</p>
-                <p>🌐 <a href="https://camella.com.co" target="_blank" rel="noopener">www.camella.com.co</a></p>
-            </div>
-        </div>
     </div>
 </div>
 
