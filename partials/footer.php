@@ -23,11 +23,11 @@
                         Propiedad de <strong>Digital Wise Company S.A.S.</strong>
                     </p>
                     <div class="company-info-grid">
-                        <span class="info-item">
+                        <span class="footer-info-item">
                             <i class="fas fa-id-card"></i> 
                             NIT: 901652435-6
                         </span>
-                        <span class="info-item">
+                        <span class="footer-info-item">
                             <i class="fas fa-map-marker-alt"></i> 
                             Cra 70 #32-82, Medellín, Colombia
                         </span>

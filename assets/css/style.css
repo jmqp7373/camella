@@ -330,14 +330,14 @@ body {
     justify-content: center;
 }
 
-.info-item {
+.footer-info-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     color: rgba(255, 255, 255, 0.8);
 }
 
-.info-item i {
+.footer-info-item i {
     color: var(--color-amarillo);
     font-size: 0.9rem;
 }
