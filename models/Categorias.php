@@ -45,27 +45,68 @@ class Categorias extends BaseModel
 
         // Usar consulta con o sin subquery según si existe la columna
         if ($columnExists) {
-            $sql = "
-                SELECT 
-                    c.id,
-                    c.nombre,
-                    c.descripcion,
-                    c.icono,
-                    c.activo,
-                    COALESCE(COUNT(o.id), 0) AS total_oficios,
-                    (SELECT COUNT(*) 
-                     FROM anuncios a 
-                     INNER JOIN oficios o2 ON a.oficio_id = o2.id 
-                     WHERE o2.categoria_id = c.id 
-                     AND a.status = 'activo') AS total_anuncios
-                FROM categorias c
-                LEFT JOIN oficios o 
-                    ON o.categoria_id = c.id 
-                   AND o.activo = 1
-                WHERE c.activo = 1
-                GROUP BY c.id, c.nombre, c.descripcion, c.icono, c.activo
-                ORDER BY total_anuncios DESC, c.nombre ASC
-            ";
+            // Primero verificar si hay anuncios con oficio_id asignado
+            $hasAssignedOficios = false;
+            try {
+                $checkAssigned = $this->pdo->query("SELECT COUNT(*) as total FROM anuncios WHERE oficio_id IS NOT NULL AND status = 'activo'");
+                $result = $checkAssigned->fetch();
+                $hasAssignedOficios = $result['total'] > 0;
+            } catch (Exception $e) {
+                error_log("Error verificando anuncios con oficio_id: " . $e->getMessage());
+            }
+            
+            if ($hasAssignedOficios) {
+                // Si hay anuncios con oficio_id, usar conteo preciso
+                $sql = "
+                    SELECT 
+                        c.id,
+                        c.nombre,
+                        c.descripcion,
+                        c.icono,
+                        c.activo,
+                        COALESCE(COUNT(o.id), 0) AS total_oficios,
+                        (SELECT COUNT(*) 
+                         FROM anuncios a 
+                         INNER JOIN oficios o2 ON a.oficio_id = o2.id 
+                         WHERE o2.categoria_id = c.id 
+                         AND a.status = 'activo') AS total_anuncios
+                    FROM categorias c
+                    LEFT JOIN oficios o 
+                        ON o.categoria_id = c.id 
+                       AND o.activo = 1
+                    WHERE c.activo = 1
+                    GROUP BY c.id, c.nombre, c.descripcion, c.icono, c.activo
+                    ORDER BY total_anuncios DESC, c.nombre ASC
+                ";
+            } else {
+                // Si NO hay anuncios con oficio_id, mostrar total general de anuncios
+                $totalAnuncios = 0;
+                try {
+                    $countStmt = $this->pdo->query("SELECT COUNT(*) as total FROM anuncios WHERE status = 'activo'");
+                    $countResult = $countStmt->fetch();
+                    $totalAnuncios = $countResult['total'];
+                } catch (Exception $e) {
+                    error_log("Error contando anuncios activos: " . $e->getMessage());
+                }
+                
+                $sql = "
+                    SELECT 
+                        c.id,
+                        c.nombre,
+                        c.descripcion,
+                        c.icono,
+                        c.activo,
+                        COALESCE(COUNT(o.id), 0) AS total_oficios,
+                        $totalAnuncios AS total_anuncios
+                    FROM categorias c
+                    LEFT JOIN oficios o 
+                        ON o.categoria_id = c.id 
+                       AND o.activo = 1
+                    WHERE c.activo = 1
+                    GROUP BY c.id, c.nombre, c.descripcion, c.icono, c.activo
+                    ORDER BY c.nombre ASC
+                ";
+            }
         } else {
             // Consulta simplificada sin la columna oficio_id
             $sql = "
