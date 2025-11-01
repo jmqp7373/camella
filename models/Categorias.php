@@ -34,23 +34,58 @@ class Categorias extends BaseModel
             return [];
         }
 
-        $sql = "
-            SELECT 
-                c.id,
-                c.nombre,
-                c.descripcion,
-                c.icono,
-                c.activo,
-                COALESCE(COUNT(o.id), 0) AS total_oficios,
-                0 AS total_anuncios
-            FROM categorias c
-            LEFT JOIN oficios o 
-                ON o.categoria_id = c.id 
-               AND o.activo = 1
-            WHERE c.activo = 1
-            GROUP BY c.id, c.nombre, c.descripcion, c.icono, c.activo
-            ORDER BY c.nombre ASC
-        ";
+        // Verificar si la columna oficio_id existe en la tabla anuncios
+        $columnExists = false;
+        try {
+            $checkCol = $this->pdo->query("SHOW COLUMNS FROM anuncios LIKE 'oficio_id'");
+            $columnExists = $checkCol->rowCount() > 0;
+        } catch (Exception $e) {
+            error_log("Error verificando columna oficio_id: " . $e->getMessage());
+        }
+
+        // Usar consulta con o sin subquery según si existe la columna
+        if ($columnExists) {
+            $sql = "
+                SELECT 
+                    c.id,
+                    c.nombre,
+                    c.descripcion,
+                    c.icono,
+                    c.activo,
+                    COALESCE(COUNT(o.id), 0) AS total_oficios,
+                    (SELECT COUNT(*) 
+                     FROM anuncios a 
+                     INNER JOIN oficios o2 ON a.oficio_id = o2.id 
+                     WHERE o2.categoria_id = c.id 
+                     AND a.status = 'activo') AS total_anuncios
+                FROM categorias c
+                LEFT JOIN oficios o 
+                    ON o.categoria_id = c.id 
+                   AND o.activo = 1
+                WHERE c.activo = 1
+                GROUP BY c.id, c.nombre, c.descripcion, c.icono, c.activo
+                ORDER BY total_anuncios DESC, c.nombre ASC
+            ";
+        } else {
+            // Consulta simplificada sin la columna oficio_id
+            $sql = "
+                SELECT 
+                    c.id,
+                    c.nombre,
+                    c.descripcion,
+                    c.icono,
+                    c.activo,
+                    COALESCE(COUNT(o.id), 0) AS total_oficios,
+                    0 AS total_anuncios
+                FROM categorias c
+                LEFT JOIN oficios o 
+                    ON o.categoria_id = c.id 
+                   AND o.activo = 1
+                WHERE c.activo = 1
+                GROUP BY c.id, c.nombre, c.descripcion, c.icono, c.activo
+                ORDER BY c.nombre ASC
+            ";
+        }
 
         try {
             $stmt = $this->pdo->prepare($sql);
