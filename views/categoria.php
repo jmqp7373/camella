@@ -650,6 +650,15 @@ try {
     position: relative;
     background: #f8f9fa;
     min-height: 400px;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.modal-images:active {
+    cursor: grabbing;
 }
 
 .modal-image-main {
@@ -684,72 +693,35 @@ try {
     pointer-events: none;
 }
 
-.modal-image-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.9);
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    color: #333;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    transition: all 0.2s ease;
-    z-index: 50;
-    opacity: 0;
-}
-
-.modal-images:hover .modal-image-nav {
-    opacity: 1;
-}
-
-.modal-image-nav:hover {
-    background: white;
-    transform: translateY(-50%) scale(1.1);
-}
-
-.modal-image-nav.prev-img {
-    left: 0.5rem;
-}
-
-.modal-image-nav.next-img {
-    right: 0.5rem;
-}
-
-.modal-image-nav:disabled {
-    opacity: 0 !important;
-    cursor: not-allowed;
-}
-
 .modal-image-dots {
     position: absolute;
     bottom: 1rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 0.5rem;
-    z-index: 50;
+    gap: 0.4rem;
+    z-index: 100;
 }
 
 .modal-image-dot {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.5);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .modal-image-dot.active {
-    background: white;
-    width: 24px;
-    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.8);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.2);
+}
+
+.modal-image-dot:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.15);
 }
 
 .modal-info {
@@ -1142,14 +1114,6 @@ try {
                             <i class="fas fa-image"></i>
                         </div>
                         <div id="modalImageCounter" class="modal-image-counter" style="display: none;"></div>
-                        
-                        <button class="modal-image-nav prev-img" onclick="navegarImagen(-1); event.stopPropagation();">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="modal-image-nav next-img" onclick="navegarImagen(1); event.stopPropagation();">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                        
                         <div id="modalImageDots" class="modal-image-dots"></div>
                     </div>
                     
@@ -1268,8 +1232,6 @@ function mostrarImagenActual() {
     const modalImage = document.getElementById('modalImage');
     const modalImagePlaceholder = document.getElementById('modalImagePlaceholder');
     const modalImageCounter = document.getElementById('modalImageCounter');
-    const prevBtn = document.querySelector('.modal-image-nav.prev-img');
-    const nextBtn = document.querySelector('.modal-image-nav.next-img');
     
     if (currentImages.length > 0 && currentImageIndex < currentImages.length) {
         let imageSrc = currentImages[currentImageIndex].trim();
@@ -1291,10 +1253,6 @@ function mostrarImagenActual() {
         // Actualizar contador
         modalImageCounter.textContent = `${currentImageIndex + 1}/${currentImages.length} IMÁGENES`;
         modalImageCounter.style.display = 'block';
-        
-        // Actualizar botones de navegación
-        prevBtn.disabled = (currentImageIndex === 0);
-        nextBtn.disabled = (currentImageIndex === currentImages.length - 1);
         
         // Actualizar dots
         actualizarDots();
@@ -1320,6 +1278,39 @@ function actualizarDots() {
             dotsContainer.appendChild(dot);
         });
     }
+}
+
+// Variables para gestos táctiles y arrastre
+let touchStartX = 0;
+let touchEndX = 0;
+let mouseStartX = 0;
+let mouseEndX = 0;
+let isDragging = false;
+
+function handleGestureEnd() {
+    const modalImages = document.querySelector('.modal-images');
+    if (!modalImages) return;
+    
+    // Determinar si es touch o mouse
+    const deltaX = touchEndX !== 0 ? touchEndX - touchStartX : mouseEndX - mouseStartX;
+    const threshold = 50; // Umbral mínimo de deslizamiento en píxeles
+    
+    if (Math.abs(deltaX) > threshold) {
+        if (deltaX > 0) {
+            // Deslizar a la derecha = imagen anterior
+            navegarImagen(-1);
+        } else {
+            // Deslizar a la izquierda = imagen siguiente
+            navegarImagen(1);
+        }
+    }
+    
+    // Reset
+    touchStartX = 0;
+    touchEndX = 0;
+    mouseStartX = 0;
+    mouseEndX = 0;
+    isDragging = false;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1382,6 +1373,50 @@ document.addEventListener('DOMContentLoaded', function() {
             navegarAnuncio(1);
         }
     });
+    
+    // Eventos táctiles (touch) para dispositivos móviles
+    const modalImages = document.querySelector('.modal-images');
+    
+    modalImages.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    }, false);
+    
+    modalImages.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleGestureEnd();
+    }, false);
+    
+    // Eventos de mouse (click-arrastrar) para desktop
+    modalImages.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        mouseStartX = e.clientX;
+        modalImages.style.cursor = 'grabbing';
+    }, false);
+    
+    modalImages.addEventListener('mousemove', function(e) {
+        if (isDragging) {
+            mouseEndX = e.clientX;
+        }
+    }, false);
+    
+    modalImages.addEventListener('mouseup', function(e) {
+        if (isDragging) {
+            mouseEndX = e.clientX;
+            handleGestureEnd();
+            modalImages.style.cursor = 'grab';
+        }
+    }, false);
+    
+    modalImages.addEventListener('mouseleave', function(e) {
+        if (isDragging) {
+            mouseEndX = e.clientX;
+            handleGestureEnd();
+            modalImages.style.cursor = 'grab';
+        }
+    }, false);
+    
+    // Cursor visual para indicar interacción
+    modalImages.style.cursor = 'grab';
 });
 
 function mostrarAnuncio(index) {
@@ -1408,15 +1443,6 @@ function mostrarAnuncio(index) {
         document.querySelector('.modal-image-nav.prev-img').style.display = 'none';
         document.querySelector('.modal-image-nav.next-img').style.display = 'none';
         document.getElementById('modalImageDots').innerHTML = '';
-    }
-    
-    // Mostrar/ocultar controles según cantidad de imágenes
-    if (currentImages.length > 1) {
-        document.querySelector('.modal-image-nav.prev-img').style.display = 'flex';
-        document.querySelector('.modal-image-nav.next-img').style.display = 'flex';
-    } else {
-        document.querySelector('.modal-image-nav.prev-img').style.display = 'none';
-        document.querySelector('.modal-image-nav.next-img').style.display = 'none';
     }
     
     // Actualizar información
