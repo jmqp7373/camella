@@ -744,14 +744,15 @@ try {
     
     .modal-close {
         position: fixed;
-        top: 10px;
-        right: 10px;
+        top: 70px;
+        right: 15px;
         width: 42px;
         height: 42px;
         font-size: 1.4rem;
         background: rgba(220, 53, 69, 0.95);
         color: white;
         z-index: 10000;
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.5);
     }
     
     .modal-content {
@@ -813,17 +814,27 @@ try {
     }
     
     .modal-nav {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
+        position: fixed;
+        width: 38px;
+        height: 38px;
+        font-size: 1.1rem;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 9999;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    
+    .modal-nav:hover {
+        transform: translateY(-50%) scale(1.05);
     }
     
     .modal-nav.prev {
-        left: 0.5rem;
+        left: 10px;
     }
     
     .modal-nav.next {
-        right: 0.5rem;
+        right: 10px;
     }
 }
 
