@@ -1223,6 +1223,8 @@ function mostrarAnuncio(index) {
     if (anuncio.imagen_principal && anuncio.imagen_principal.trim() !== '') {
         let imageSrc = anuncio.imagen_principal.trim();
         
+        console.log('Original image path:', imageSrc);
+        
         // Construir URL correctamente dependiendo del formato
         if (imageSrc.startsWith('http://') || imageSrc.startsWith('https://') || imageSrc.startsWith('//')) {
             // URL completa
@@ -1231,24 +1233,30 @@ function mostrarAnuncio(index) {
             // Ruta absoluta desde el root
             modalImage.src = window.location.origin + imageSrc;
         } else {
-            // Ruta relativa - usar la ruta base del sitio
-            const pathArray = window.location.pathname.split('/');
-            const basePath = pathArray[1] ? '/' + pathArray[1] + '/' : '/';
-            modalImage.src = window.location.origin + basePath + imageSrc;
+            // Ruta relativa - construir desde la ubicación actual del documento
+            const currentUrl = new URL(window.location.href);
+            const baseUrl = currentUrl.origin + currentUrl.pathname.substring(0, currentUrl.pathname.lastIndexOf('/') + 1);
+            modalImage.src = baseUrl + imageSrc;
         }
         
-        console.log('Loading image:', modalImage.src);
+        console.log('Final image URL:', modalImage.src);
         modalImage.style.display = 'block';
         modalImagePlaceholder.style.display = 'none';
         
         // Manejo de error de carga de imagen
         modalImage.onerror = function() {
             console.error('Error loading image:', this.src);
+            console.error('Tried to load from:', imageSrc);
             this.style.display = 'none';
             modalImagePlaceholder.style.display = 'flex';
         };
+        
+        // Log cuando la imagen carga exitosamente
+        modalImage.onload = function() {
+            console.log('Image loaded successfully:', this.src);
+        };
     } else {
-        console.log('No image available');
+        console.log('No image available for this anuncio');
         modalImage.style.display = 'none';
         modalImagePlaceholder.style.display = 'flex';
     }
