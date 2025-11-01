@@ -23,6 +23,9 @@ if (isset($_GET['action'])) {
         case 'listarPorCategoria':
             $controller->listarPorCategoria();
             exit;
+        case 'getByCategoria':
+            $controller->getByCategoria();
+            exit;
         case 'listarPopulares':
             $controller->listarPopulares();
             exit;
@@ -294,6 +297,51 @@ class OficioController {
             echo json_encode([
                 'success' => false,
                 'message' => 'Error al listar oficios populares: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    /**
+     * Obtener oficios activos por categoría (para formulario de publicar)
+     * URL: OficioController.php?action=getByCategoria&id=<categoria_id>
+     */
+    public function getByCategoria() {
+        header('Content-Type: application/json');
+        
+        if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'ID de categoría no proporcionado o inválido'
+            ]);
+            return;
+        }
+
+        $categoriaId = (int)$_GET['id'];
+
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $pdo = getPDO();
+            
+            // Obtener oficios activos de la categoría
+            $stmt = $pdo->prepare("
+                SELECT id, titulo as nombre
+                FROM oficios
+                WHERE categoria_id = ? AND activo = 1
+                ORDER BY titulo ASC
+            ");
+            $stmt->execute([$categoriaId]);
+            $oficios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            echo json_encode([
+                'success' => true,
+                'data' => $oficios
+            ]);
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error al obtener oficios: ' . $e->getMessage()
             ]);
         }
     }

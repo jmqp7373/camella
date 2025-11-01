@@ -6,7 +6,7 @@
 
 // Verificar sesión y rol
 session_start();
-if (!isset($_SESSION['usuario']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['usuario']) || !in_array($_SESSION['role'], ['admin', 'promotor'])) {
     header('Location: ../../index.php');
     exit;
 }
@@ -149,25 +149,22 @@ require_once __DIR__ . '/../../partials/header.php';
                     <input id="searchInput" type="search" class="form-control search-input"
                            placeholder="Buscar categorías u oficios…" autocomplete="off"
                            aria-label="Buscar">
-                    <button id="clearSearch" class="btn-clear-search" style="display: none;" title="Limpiar búsqueda">
-                        <i class="fas fa-times"></i>
-                    </button>
                 </div>
                 <div class="filter-wrapper">
                     <label for="filterPopular" class="filter-label">
                         <i class="fas fa-filter"></i> Filtrar:
                     </label>
                     <select id="filterPopular" class="form-select filter-select" aria-label="Filtrar por popularidad">
-                        <option value="all">📋 Todos</option>
-                        <option value="popular">🔥 Solo populares</option>
-                        <option value="nopopular">⭕ No populares</option>
+                        <option value="all">&#128203; Todos</option>
+                        <option value="popular">&#128293; Solo populares</option>
+                        <option value="nopopular">&#11093; No populares</option>
                     </select>
                 </div>
             </div>
             
             <!-- Contador de resultados -->
             <div id="searchResults" class="search-results-info" style="display: none;">
-                <i class="fas fa-info-circle" style="color: #002b47; font-size: 1rem;"></i>
+                <i class="fas fa-filter" style="color: #17a2b8; font-size: 1rem;"></i>
                 <span id="resultsText">Mostrando todos los resultados</span>
             </div>
         </div>
@@ -191,8 +188,8 @@ require_once __DIR__ . '/../../partials/header.php';
                         <!-- 1. Select de icono estilizado -->
                         <span class="category-icon-wrapper" style="position: relative; display: inline-flex; align-items: center; cursor: pointer;" 
                               data-categoria-id="<?= $categoria['id'] ?>"
-                              data-current-icon="<?= htmlspecialchars($categoria['icono'] ?: 'fas fa-briefcase') ?>">
-                            <i class="category-icon-display <?= htmlspecialchars($categoria['icono'] ?: 'fas fa-briefcase') ?>"></i>
+                              data-current-icon="<?= htmlspecialchars($categoria['icono'] ?: 'fas fa-circle-question') ?>">
+                            <i class="category-icon-display <?= htmlspecialchars($categoria['icono'] ?: 'fas fa-circle-question') ?>" style="<?= empty($categoria['icono']) ? 'opacity: 0.5; color: #dc3545;' : '' ?>"></i>
                             <i class="fas fa-chevron-down" style="font-size: 0.6rem; margin-left: 4px; color: #6c757d;"></i>
                         </span>
                         
@@ -751,6 +748,7 @@ async function selectIcon(iconClass) {
             if (wrapper) {
                 const iconDisplay = wrapper.querySelector('.category-icon-display');
                 iconDisplay.className = `category-icon-display ${iconClass}`;
+                iconDisplay.removeAttribute('style'); // Limpiar estilo inline (rojo/opacidad)
                 wrapper.setAttribute('data-current-icon', iconClass);
             }
             closeIconPicker();
@@ -939,11 +937,6 @@ function wireSearchAndFilters(){
         updateSearchResults(text, mode, totalVisible, cards.length, totalOficiosVisibles, totalOficios);
         
         // Mostrar/ocultar botón de limpiar
-        const clearBtn = document.getElementById('clearSearch');
-        if (clearBtn) {
-            clearBtn.style.display = text ? 'block' : 'none';
-        }
-        
         showNoResultsMessage(totalVisible === 0 && (text || mode !== 'all'));
     };
     
@@ -956,15 +949,6 @@ function wireSearchAndFilters(){
     filter.addEventListener('change', () => {
         console.log('🔄 Filtro cambiado');
         apply();
-    });
-    
-    // Botón limpiar búsqueda
-    const clearBtn = document.getElementById('clearSearch');
-    clearBtn?.addEventListener('click', () => {
-        q.value = '';
-        filter.value = 'all';
-        apply();
-        q.focus();
     });
     
     // Limpiar búsqueda con Escape
@@ -1002,7 +986,7 @@ function updateSearchResults(searchText, filterMode, visible, total, visibleOfic
         message = `📋 Mostrando solo oficios no populares: ${visible} categorías y ${visibleOficios} oficios`;
     } else {
         // Modo "Todos"
-        message = `� Mostrando todos los oficios: ${visible} categorías y ${visibleOficios} oficios`;
+        message = `📋 Mostrando todos los oficios: ${visible} categorías y ${visibleOficios} oficios`;
     }
     
     resultsText.textContent = message;
@@ -1553,6 +1537,13 @@ document.getElementById('btnSaveCategoria')?.addEventListener('click', async (e)
     const form = document.getElementById('formCategoria');
     const formData = new FormData(form);
     const isEdit = formData.get('id') !== '';
+    
+    // Validar que se haya seleccionado un icono
+    const iconoValue = document.getElementById('catIcono').value;
+    if (!iconoValue || iconoValue === '') {
+        alert('⚠️ Debe seleccionar un icono para la categoría antes de guardarla.');
+        return;
+    }
     
     // Aplicar Title Case al nombre
     const nombreInput = form.querySelector('input[name="nombre"]');
@@ -2390,26 +2381,6 @@ categoryDropdown?.querySelectorAll('.custom-select-option').forEach(option => {
     border-color: #002b47;
     box-shadow: 0 0 0 0.2rem rgba(0, 43, 71, 0.15);
     transform: translateY(-1px);
-}
-
-.btn-clear-search {
-    position: absolute;
-    right: 0.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    color: #6c757d;
-    padding: 0.25rem 0.5rem;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-    z-index: 2;
-}
-
-.btn-clear-search:hover {
-    background: #dc3545;
-    color: white;
 }
 
 .filter-wrapper {

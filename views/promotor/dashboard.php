@@ -40,6 +40,11 @@ require_once __DIR__ . '/../../partials/header.php';
         <?php include __DIR__ . '/../bloques/bloque_publicante.php'; ?>
     </div>
 
+    <!-- BLOQUE GESTIÓN: Categorías y Oficios (admin y promotor) -->
+    <div class="dashboard-section">
+        <?php include __DIR__ . '/../bloques/bloque_gestion_categorias.php'; ?>
+    </div>
+
 </div>
 
 <?php require_once __DIR__ . '/../../partials/footer.php'; ?>

@@ -39,6 +39,9 @@ class CategoriaController {
             case 'list':
                 $this->listAll();
                 break;
+            case 'getActivas':
+                $this->getActivas();
+                break;
             default:
                 http_response_code(400);
                 echo json_encode(['success' => false, 'message' => 'Acción no válida']);
@@ -329,6 +332,36 @@ class CategoriaController {
         
         try {
             $categorias = $this->categoriaModel->obtenerTodas();
+            
+            echo json_encode([
+                'success' => true,
+                'data' => $categorias
+            ]);
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Obtener categorías activas (para formulario de publicar)
+     */
+    public function getActivas() {
+        header('Content-Type: application/json');
+        
+        try {
+            require_once __DIR__ . '/../config/database.php';
+            $pdo = getPDO();
+            
+            $stmt = $pdo->prepare("
+                SELECT id, nombre, icono
+                FROM categorias
+                WHERE activo = 1
+                ORDER BY id ASC
+            ");
+            $stmt->execute();
+            $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
             echo json_encode([
                 'success' => true,

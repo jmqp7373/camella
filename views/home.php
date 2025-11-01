@@ -77,7 +77,7 @@ try {
             echo "<!-- DEBUG: Procesando categorías de BD... -->";
             foreach ($categoriasDB as &$c) {
                 if (empty($c['icono'])) {
-                    $c['icono'] = $iconMap[$c['nombre']] ?? 'fas fa-briefcase';
+                    $c['icono'] = $iconMap[$c['nombre']] ?? 'fas fa-circle-question';
                 }
                 if (!isset($c['total_oficios'])) {
                     $c['total_oficios'] = 0; // fallback si el modelo no trae conteo
@@ -159,7 +159,7 @@ echo "<!-- DEBUG FINAL: Primera categoría a mostrar: " . (isset($categorias[0])
             <?php foreach ($categorias as $categoria): ?>
                 <div class="category-card" data-categoria-id="<?= $categoria['id'] ?>">
                     <h3 class="category-title">
-                        <span class="category-icon"><i class="<?= htmlspecialchars($categoria['icono']) ?>"></i></span>
+                        <span class="category-icon"><i class="<?= htmlspecialchars($categoria['icono']) ?>" style="<?= ($categoria['icono'] === 'fas fa-circle-question') ? 'opacity: 0.5; color: #dc3545;' : '' ?>"></i></span>
                         <?= htmlspecialchars(ucwords(mb_strtolower($categoria['nombre']))) ?>
                     </h3>
                     
@@ -293,14 +293,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Clic en la categoría completa
         card.addEventListener('click', function(e) {
             // No procesar si se hizo clic en un oficio específico
-            if (e.target.classList.contains('oficio-item')) {
+            if (e.target.closest('.oficio-item')) {
                 return;
             }
             
             console.log('Categoría seleccionada:', categoriaId);
             
-            // Aquí se puede agregar lógica para navegar o filtrar
-            // Por ejemplo: window.location.href = `index.php?view=buscar-empleo&categoria=${categoriaId}`;
+            // Redirigir a la vista de categoría
+            window.location.href = `index.php?view=categoria&id=${categoriaId}`;
         });
     });
     
@@ -315,8 +315,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log('Oficio seleccionado:', oficioId, 'de categoría:', categoriaId);
             
-            // Navegar a búsqueda específica
-            // window.location.href = `index.php?view=buscar-empleo&categoria=${categoriaId}&oficio=${oficioId}`;
+            // Redirigir a la vista de oficio
+            window.location.href = `index.php?view=oficio&id=${oficioId}`;
         });
     });
     

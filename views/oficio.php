@@ -1,6 +1,6 @@
 <?php 
 /**
- * Vista de Categoría - Muestra todos los anuncios de oficios de una categoría
+ * Vista de Oficio - Muestra todos los anuncios de un oficio específico
  * Recibe parámetro 'slug' o 'id' por GET
  */
 
@@ -8,17 +8,17 @@
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/app_paths.php';
 
-// Obtener el identificador de la categoría (puede ser slug o id)
-$categoriaSlug = isset($_GET['slug']) ? trim($_GET['slug']) : null;
-$categoriaId = isset($_GET['id']) ? intval($_GET['id']) : null;
+// Obtener el identificador del oficio (puede ser slug o id)
+$oficioSlug = isset($_GET['slug']) ? trim($_GET['slug']) : null;
+$oficioId = isset($_GET['id']) ? intval($_GET['id']) : null;
 
 // Validar que se recibió al menos un parámetro
-if (empty($categoriaSlug) && empty($categoriaId)) {
+if (empty($oficioSlug) && empty($oficioId)) {
     http_response_code(404);
-    $pageTitle = "Categoría no encontrada";
+    $pageTitle = "Oficio no encontrado";
     echo '<div style="text-align: center; padding: 4rem; background: #f8f9fa; margin: 20px; border-radius: 8px;">';
-    echo '<h2 style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Categoría no encontrada</h2>';
-    echo '<p>No se especificó una categoría válida.</p>';
+    echo '<h2 style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Oficio no especificado</h2>';
+    echo '<p>No se especificó un oficio válido.</p>';
     echo '<a href="' . app_url('index.php') . '" class="btn btn-primary mt-3"><i class="fas fa-home"></i> Volver al Inicio</a>';
     echo '</div>';
     return;
@@ -27,63 +27,79 @@ if (empty($categoriaSlug) && empty($categoriaId)) {
 try {
     $pdo = getPDO();
     
-    // Buscar la categoría (por slug o id)
-    if ($categoriaSlug) {
-        // Crear slug desde el nombre para comparación
+    // Buscar el oficio con información de su categoría
+    if ($oficioSlug) {
         $stmt = $pdo->prepare("
-            SELECT id, nombre, icono, descripcion 
-            FROM categorias 
-            WHERE activo = 1 
-            AND LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(nombre, ' ', '-'), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o')) = LOWER(?)
+            SELECT 
+                o.id, 
+                o.titulo, 
+                o.descripcion, 
+                o.popular,
+                c.id as categoria_id,
+                c.nombre as categoria_nombre,
+                c.icono as categoria_icono
+            FROM oficios o
+            INNER JOIN categorias c ON o.categoria_id = c.id
+            WHERE o.activo = 1 
+            AND c.activo = 1
+            AND LOWER(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(o.titulo, ' ', '-'), 'á', 'a'), 'é', 'e'), 'í', 'i'), 'ó', 'o')) = LOWER(?)
             LIMIT 1
         ");
-        $stmt->execute([$categoriaSlug]);
+        $stmt->execute([$oficioSlug]);
     } else {
         $stmt = $pdo->prepare("
-            SELECT id, nombre, icono, descripcion 
-            FROM categorias 
-            WHERE activo = 1 AND id = ?
+            SELECT 
+                o.id, 
+                o.titulo, 
+                o.descripcion, 
+                o.popular,
+                c.id as categoria_id,
+                c.nombre as categoria_nombre,
+                c.icono as categoria_icono
+            FROM oficios o
+            INNER JOIN categorias c ON o.categoria_id = c.id
+            WHERE o.activo = 1 
+            AND c.activo = 1
+            AND o.id = ?
             LIMIT 1
         ");
-        $stmt->execute([$categoriaId]);
+        $stmt->execute([$oficioId]);
     }
     
-    $categoria = $stmt->fetch(PDO::FETCH_ASSOC);
+    $oficio = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    // Si no existe la categoría, mostrar error 404
-    if (!$categoria) {
+    // Si no existe el oficio, mostrar error 404
+    if (!$oficio) {
         http_response_code(404);
-        $pageTitle = "Categoría no encontrada";
+        $pageTitle = "Oficio no encontrado";
         echo '<div style="text-align: center; padding: 4rem; background: #f8f9fa; margin: 20px; border-radius: 8px;">';
-        echo '<h2 style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Categoría no encontrada o inactiva</h2>';
-        echo '<p>La categoría que buscas no existe o ya no está disponible.</p>';
+        echo '<h2 style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> El oficio solicitado no existe o está inactivo</h2>';
+        echo '<p>El oficio que buscas no existe o ya no está disponible.</p>';
         echo '<a href="' . app_url('index.php') . '" class="btn btn-primary mt-3"><i class="fas fa-home"></i> Volver al Inicio</a>';
         echo '</div>';
         return;
     }
     
     // Configurar título de página
-    $pageTitle = htmlspecialchars($categoria['nombre']) . " | Camella";
+    $pageTitle = htmlspecialchars($oficio['titulo']) . " | Camella";
     
     // Paginación
     $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
     $perPage = 12;
     $offset = ($page - 1) * $perPage;
     
-    // Contar total de anuncios activos en esta categoría
+    // Contar total de anuncios activos en este oficio
     $stmtCount = $pdo->prepare("
-        SELECT COUNT(DISTINCT a.id) as total
-        FROM anuncios a
-        INNER JOIN oficios o ON a.oficio_id = o.id
-        WHERE o.categoria_id = ?
-        AND a.status = 'activo'
-        AND o.activo = 1
+        SELECT COUNT(id) as total
+        FROM anuncios
+        WHERE oficio_id = ?
+        AND status = 'activo'
     ");
-    $stmtCount->execute([$categoria['id']]);
+    $stmtCount->execute([$oficio['id']]);
     $totalAnuncios = $stmtCount->fetch(PDO::FETCH_ASSOC)['total'];
     $totalPages = ceil($totalAnuncios / $perPage);
     
-    // Obtener anuncios de esta categoría con paginación
+    // Obtener anuncios de este oficio con paginación
     $stmtAnuncios = $pdo->prepare("
         SELECT 
             a.id,
@@ -92,31 +108,28 @@ try {
             a.precio,
             a.imagen_principal,
             a.created_at,
-            o.titulo as oficio_nombre,
             u.phone as usuario_nombre,
             u.phone as usuario_telefono
         FROM anuncios a
-        INNER JOIN oficios o ON a.oficio_id = o.id
         LEFT JOIN users u ON a.user_id = u.id
-        WHERE o.categoria_id = ?
+        WHERE a.oficio_id = ?
         AND a.status = 'activo'
-        AND o.activo = 1
         ORDER BY a.created_at DESC
         LIMIT ? OFFSET ?
     ");
-    $stmtAnuncios->bindValue(1, $categoria['id'], PDO::PARAM_INT);
+    $stmtAnuncios->bindValue(1, $oficio['id'], PDO::PARAM_INT);
     $stmtAnuncios->bindValue(2, $perPage, PDO::PARAM_INT);
     $stmtAnuncios->bindValue(3, $offset, PDO::PARAM_INT);
     $stmtAnuncios->execute();
     $anuncios = $stmtAnuncios->fetchAll(PDO::FETCH_ASSOC);
     
 } catch (PDOException $e) {
-    error_log("Error en categoria.php: " . $e->getMessage());
+    error_log("Error en oficio.php: " . $e->getMessage());
     http_response_code(500);
     $pageTitle = "Error del servidor";
     echo '<div style="text-align: center; padding: 4rem; background: #f8f9fa; margin: 20px; border-radius: 8px;">';
     echo '<h2 style="color: #e74c3c;"><i class="fas fa-exclamation-triangle"></i> Error del servidor</h2>';
-    echo '<p>Ocurrió un error al cargar la categoría. Por favor, intenta nuevamente más tarde.</p>';
+    echo '<p>Ocurrió un error al cargar el oficio. Por favor, intenta nuevamente más tarde.</p>';
     echo '<a href="' . app_url('index.php') . '" class="btn btn-primary mt-3"><i class="fas fa-home"></i> Volver al Inicio</a>';
     echo '</div>';
     return;
@@ -124,49 +137,65 @@ try {
 ?>
 
 <style>
-.breadcrumb-categoria {
+.breadcrumb-oficio {
     background: transparent;
     padding: 1rem 0;
     margin-bottom: 1rem;
     font-size: 0.9rem;
 }
 
-.breadcrumb-categoria a {
+.breadcrumb-oficio a {
     color: #007bff;
     text-decoration: none;
 }
 
-.breadcrumb-categoria a:hover {
+.breadcrumb-oficio a:hover {
     text-decoration: underline;
 }
 
-.categoria-header {
-    background: linear-gradient(135deg, #003d7a 0%, #005bb5 100%);
+.oficio-header {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     color: white;
     padding: 3rem 0;
     margin-bottom: 2rem;
     border-radius: 0 0 20px 20px;
 }
 
-.categoria-icon {
-    font-size: 3rem;
+.oficio-category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
     margin-bottom: 1rem;
+    font-size: 0.95rem;
 }
 
-.categoria-title {
+.oficio-title {
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
 }
 
-.categoria-descripcion {
+.oficio-popular-badge {
+    display: inline-block;
+    background: rgba(255, 193, 7, 0.3);
+    color: #ffc107;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+}
+
+.oficio-descripcion {
     font-size: 1.1rem;
     opacity: 0.9;
     max-width: 800px;
     margin: 0 auto;
 }
 
-.categoria-stats {
+.oficio-stats {
     margin-top: 1rem;
     font-size: 1rem;
     opacity: 0.85;
@@ -186,7 +215,7 @@ try {
 .anuncio-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    border-color: #007bff;
+    border-color: #28a745;
 }
 
 .anuncio-image {
@@ -199,7 +228,7 @@ try {
 .anuncio-image-placeholder {
     width: 100%;
     height: 200px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -212,15 +241,6 @@ try {
     flex: 1;
     display: flex;
     flex-direction: column;
-}
-
-.anuncio-oficio {
-    font-size: 0.85rem;
-    color: #007bff;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .anuncio-titulo {
@@ -289,21 +309,21 @@ try {
     border: 1px solid #dee2e6;
     border-radius: 6px;
     text-decoration: none;
-    color: #007bff;
+    color: #28a745;
     background: white;
     transition: all 0.2s;
 }
 
 .pagination a:hover {
-    background: #007bff;
+    background: #28a745;
     color: white;
-    border-color: #007bff;
+    border-color: #28a745;
 }
 
 .pagination .active {
-    background: #007bff;
+    background: #28a745;
     color: white;
-    border-color: #007bff;
+    border-color: #28a745;
     font-weight: 600;
 }
 
@@ -319,43 +339,50 @@ try {
 }
 
 @media (max-width: 768px) {
-    .categoria-title {
+    .oficio-title {
         font-size: 2rem;
-    }
-    
-    .categoria-icon {
-        font-size: 2.5rem;
     }
 }
 </style>
 
 <!-- Breadcrumb -->
 <div class="container">
-    <nav class="breadcrumb-categoria" aria-label="breadcrumb">
+    <nav class="breadcrumb-oficio" aria-label="breadcrumb">
         <span>
             <a href="<?= app_url('index.php') ?>"><i class="fas fa-home"></i> Inicio</a> › 
-            <a href="<?= app_url('index.php') ?>">Categorías</a> › 
-            <strong><?= htmlspecialchars($categoria['nombre']) ?></strong>
+            <a href="<?= app_url('index.php?view=categoria&id=' . $oficio['categoria_id']) ?>">
+                <?= htmlspecialchars($oficio['categoria_nombre']) ?>
+            </a> › 
+            <strong><?= htmlspecialchars($oficio['titulo']) ?></strong>
         </span>
     </nav>
 </div>
 
-<!-- Header de Categoría -->
-<div class="categoria-header">
+<!-- Header del Oficio -->
+<div class="oficio-header">
     <div class="container text-center">
-        <div class="categoria-icon">
-            <i class="<?= htmlspecialchars($categoria['icono'] ?: 'fas fa-briefcase') ?>"></i>
+        <div class="oficio-category-badge">
+            <i class="<?= htmlspecialchars($oficio['categoria_icono'] ?: 'fas fa-briefcase') ?>"></i>
+            <?= htmlspecialchars($oficio['categoria_nombre']) ?>
         </div>
-        <h1 class="categoria-title"><?= htmlspecialchars($categoria['nombre']) ?></h1>
         
-        <?php if (!empty($categoria['descripcion'])): ?>
-            <p class="categoria-descripcion">
-                <?= htmlspecialchars($categoria['descripcion']) ?>
+        <h1 class="oficio-title">
+            <?= htmlspecialchars($oficio['titulo']) ?>
+            <?php if ($oficio['popular']): ?>
+                <span class="oficio-popular-badge">
+                    <i class="fas fa-fire"></i> Popular
+                </span>
+            <?php endif; ?>
+        </h1>
+        
+        <?php if (!empty($oficio['descripcion'])): ?>
+            <p class="oficio-descripcion">
+                <?= htmlspecialchars($oficio['descripcion']) ?>
             </p>
         <?php endif; ?>
         
-        <div class="categoria-stats">
-            <i class="fas fa-briefcase"></i> 
+        <div class="oficio-stats">
+            <i class="fas fa-bullhorn"></i> 
             <?= $totalAnuncios ?> <?= $totalAnuncios === 1 ? 'anuncio disponible' : 'anuncios disponibles' ?>
         </div>
     </div>
@@ -367,10 +394,10 @@ try {
         <!-- Sin anuncios -->
         <div class="no-anuncios">
             <i class="fas fa-inbox"></i>
-            <h3>Aún no hay publicaciones en esta categoría</h3>
-            <p>Sé el primero en publicar un anuncio en <strong><?= htmlspecialchars($categoria['nombre']) ?></strong></p>
-            <a href="<?= app_url('index.php?view=publicar-oferta') ?>" class="btn btn-primary mt-3">
-                <i class="fas fa-plus"></i> Publicar Anuncio
+            <h3>Aún no hay publicaciones disponibles para este oficio</h3>
+            <p>Sé el primero en ofrecer servicios de <strong><?= htmlspecialchars($oficio['titulo']) ?></strong></p>
+            <a href="<?= app_url('index.php?view=publicar-oferta') ?>" class="btn btn-success mt-3">
+                <i class="fas fa-plus"></i> Publicar un anuncio
             </a>
         </div>
     <?php else: ?>
@@ -392,10 +419,6 @@ try {
                         
                         <!-- Contenido -->
                         <div class="anuncio-body">
-                            <div class="anuncio-oficio">
-                                <i class="fas fa-tag"></i> <?= htmlspecialchars($anuncio['oficio_nombre']) ?>
-                            </div>
-                            
                             <h3 class="anuncio-titulo">
                                 <?= htmlspecialchars($anuncio['titulo']) ?>
                             </h3>
@@ -403,7 +426,7 @@ try {
                             <p class="anuncio-descripcion">
                                 <?php 
                                 $descripcion = htmlspecialchars($anuncio['descripcion'] ?? '');
-                                echo mb_substr($descripcion, 0, 150) . (mb_strlen($descripcion) > 150 ? '...' : '');
+                                echo mb_substr($descripcion, 0, 200) . (mb_strlen($descripcion) > 200 ? '...' : '');
                                 ?>
                             </p>
                             
@@ -432,8 +455,10 @@ try {
                                             echo "Ayer";
                                         } elseif ($diff->days < 7) {
                                             echo "Hace " . $diff->days . " días";
+                                        } elseif ($diff->days < 30) {
+                                            echo "Hace " . ceil($diff->days / 7) . " semanas";
                                         } else {
-                                            echo $fecha->format('d/m/Y');
+                                            echo "Publicado el " . $fecha->format('d/m/Y');
                                         }
                                         ?>
                                     </div>
@@ -462,7 +487,7 @@ try {
                 <div class="pagination">
                     <!-- Anterior -->
                     <?php if ($page > 1): ?>
-                        <a href="?view=categoria&<?= $categoriaSlug ? 'slug=' . urlencode($categoriaSlug) : 'id=' . $categoriaId ?>&page=<?= $page - 1 ?>">
+                        <a href="?view=oficio&<?= $oficioSlug ? 'slug=' . urlencode($oficioSlug) : 'id=' . $oficioId ?>&page=<?= $page - 1 ?>">
                             <i class="fas fa-chevron-left"></i> Anterior
                         </a>
                     <?php else: ?>
@@ -481,7 +506,7 @@ try {
                         <?php if ($i === $page): ?>
                             <span class="active"><?= $i ?></span>
                         <?php else: ?>
-                            <a href="?view=categoria&<?= $categoriaSlug ? 'slug=' . urlencode($categoriaSlug) : 'id=' . $categoriaId ?>&page=<?= $i ?>">
+                            <a href="?view=oficio&<?= $oficioSlug ? 'slug=' . urlencode($oficioSlug) : 'id=' . $oficioId ?>&page=<?= $i ?>">
                                 <?= $i ?>
                             </a>
                         <?php endif; ?>
@@ -489,7 +514,7 @@ try {
                     
                     <!-- Siguiente -->
                     <?php if ($page < $totalPages): ?>
-                        <a href="?view=categoria&<?= $categoriaSlug ? 'slug=' . urlencode($categoriaSlug) : 'id=' . $categoriaId ?>&page=<?= $page + 1 ?>">
+                        <a href="?view=oficio&<?= $oficioSlug ? 'slug=' . urlencode($oficioSlug) : 'id=' . $oficioId ?>&page=<?= $page + 1 ?>">
                             Siguiente <i class="fas fa-chevron-right"></i>
                         </a>
                     <?php else: ?>

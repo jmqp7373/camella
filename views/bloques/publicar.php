@@ -126,8 +126,10 @@ if ($isEdit) {
     $stmt = $db->prepare("
         SELECT 
             a.*,
+            o.categoria_id,
             (SELECT COUNT(*) FROM anuncio_imagenes ai WHERE ai.anuncio_id = a.id) as total_imagenes
         FROM anuncios a
+        LEFT JOIN oficios o ON a.oficio_id = o.id
         WHERE a.id = ?
     ");
     $stmt->execute([$id]);
@@ -447,6 +449,103 @@ require_once __DIR__ . '/../../partials/header.php';
         color: #856404;
         border: 1px solid #ffeaa7;
     }
+    
+    /* Estilos para select personalizado de categoría */
+    .custom-select-wrapper {
+        position: relative;
+        width: 100%;
+    }
+    
+    .custom-select-trigger {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #dddfe2;
+        border-radius: 8px;
+        font-size: 0.9375rem;
+        background: #f0f2f5;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.2s;
+        user-select: none;
+    }
+    
+    .custom-select-trigger:hover {
+        border-color: #1877f2;
+        background: white;
+    }
+    
+    .custom-select-trigger i:first-child {
+        font-size: 1.2rem;
+        min-width: 24px;
+        text-align: center;
+        color: #ffc107;
+    }
+    
+    .custom-select-trigger span {
+        flex: 1;
+        color: #1c1e21;
+    }
+    
+    .custom-select-arrow {
+        font-size: 0.875rem;
+        color: #65676b;
+        transition: transform 0.2s;
+    }
+    
+    .custom-select-trigger.active .custom-select-arrow {
+        transform: rotate(180deg);
+    }
+    
+    .custom-select-options {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #dddfe2;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 1000;
+    }
+    
+    .custom-select-option {
+        padding: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: background 0.2s;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    
+    .custom-select-option:last-child {
+        border-bottom: none;
+    }
+    
+    .custom-select-option:hover {
+        background: #f0f2f5;
+    }
+    
+    .custom-select-option.selected {
+        background: #e7f3ff;
+    }
+    
+    .custom-select-option i {
+        font-size: 1.2rem;
+        min-width: 24px;
+        text-align: center;
+        color: #ffc107;
+    }
+    
+    .custom-select-option span {
+        flex: 1;
+        color: #1c1e21;
+        font-size: 0.9375rem;
+    }
 </style>
 
 <div class="publicar-container">
@@ -472,6 +571,37 @@ require_once __DIR__ . '/../../partials/header.php';
         <!-- Sección: Información básica -->
         <div class="form-section">
             <div class="form-group">
+                <label for="categoria_id">Categoría <span style="color: #dc3545;">*</span></label>
+                <input type="hidden" id="categoria_id" name="categoria_id">
+                <div class="custom-select-wrapper" <?= $soloLectura ? 'style="pointer-events: none; opacity: 0.6;"' : '' ?>>
+                    <div class="custom-select-trigger" id="categoriaSelectTrigger">
+                        <i class="fas fa-circle-question" id="categoriaIconDisplay"></i>
+                        <span id="categoriaTextDisplay">Selecciona una categoría</span>
+                        <i class="fas fa-chevron-down custom-select-arrow"></i>
+                    </div>
+                    <div class="custom-select-options" id="categoriaSelectOptions" style="display: none;">
+                        <div class="custom-select-option" data-value="">
+                            <i class="fas fa-circle-question"></i>
+                            <span>Selecciona una categoría</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group" id="oficioGroup" style="display: none;">
+                <label for="oficio_id">Oficio <span style="color: #dc3545;">*</span></label>
+                <select 
+                    id="oficio_id" 
+                    name="oficio_id" 
+                    <?= $soloLectura ? 'disabled' : '' ?>>
+                    <option value="">Selecciona un oficio</option>
+                    <?php if ($isEdit && !empty($anuncio['oficio_id'])): ?>
+                        <option value="<?= $anuncio['oficio_id'] ?>" selected>Cargando...</option>
+                    <?php endif; ?>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="titulo">Título del anuncio <span style="color: #dc3545;">*</span></label>
                 <input 
                     type="text" 
@@ -496,16 +626,14 @@ require_once __DIR__ . '/../../partials/header.php';
             </div>
             
             <div class="form-group">
-                <label for="precio">Precio (COP)</label>
+                <label for="precio_display">Precio (COP)</label>
                 <input 
-                    type="number" 
-                    id="precio" 
-                    name="precio" 
-                    min="0" 
-                    step="1000"
-                    value="<?= $anuncio['precio'] ?? '' ?>"
-                    placeholder="50000"
+                    type="text" 
+                    id="precio_display" 
+                    value="<?= !empty($anuncio['precio']) ? number_format($anuncio['precio'], 0, ',', '.') : '' ?>"
+                    placeholder="50.000"
                     <?= $soloLectura ? 'readonly' : '' ?>>
+                <input type="hidden" id="precio" name="precio" value="<?= $anuncio['precio'] ?? '' ?>">
                 <small>Opcional - Deja en blanco si prefieres negociar</small>
             </div>
         </div>
@@ -563,17 +691,15 @@ require_once __DIR__ . '/../../partials/header.php';
         </div>
     </form>
     
-    <?php if ($isEdit && !$soloLectura): ?>
-        <!-- Botón adicional para volver al dashboard después de editar -->
-        <div style="text-align: center; margin-top: 1.5rem;">
-            <a href="<?= $dashboardUrl ?>#anuncios-publicados" 
-               style="display: inline-block; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; transition: background 0.2s; font-size: 0.95rem;"
-               onmouseover="this.style.background='#5a6268'"
-               onmouseout="this.style.background='#6c757d'">
-                <i class="fas fa-arrow-left"></i> Volver al Dashboard
-            </a>
-        </div>
-    <?php endif; ?>
+    <!-- Botón para volver al dashboard -->
+    <div style="text-align: center; margin-top: 1.5rem;">
+        <a href="<?= $dashboardUrl ?>#anuncios-publicados" 
+           style="display: inline-block; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; transition: background 0.2s; font-size: 0.95rem;"
+           onmouseover="this.style.background='#5a6268'"
+           onmouseout="this.style.background='#6c757d'">
+            <i class="fas fa-arrow-left"></i> Volver al Dashboard
+        </a>
+    </div>
 </div>
 
 <script>
@@ -826,18 +952,65 @@ function showAlert(message, type = 'info') {
 }
 
 // ============================================
+// FORMATEAR PRECIO CON SEPARADORES DE MILES
+// ============================================
+const precioDisplayInput = document.getElementById('precio_display');
+const precioHiddenInput = document.getElementById('precio');
+
+if (precioDisplayInput && !precioDisplayInput.readOnly) {
+    // Formatear número con puntos de miles
+    function formatearPrecio(valor) {
+        // Remover todo excepto dígitos
+        const numero = valor.replace(/\D/g, '');
+        
+        // Si está vacío, retornar vacío
+        if (!numero) return '';
+        
+        // Formatear con puntos de miles
+        return Number(numero).toLocaleString('es-CO');
+    }
+    
+    // Evento input para formatear mientras escribe
+    precioDisplayInput.addEventListener('input', function(e) {
+        const cursorPos = this.selectionStart;
+        const valorAnterior = this.value;
+        const valorFormateado = formatearPrecio(this.value);
+        
+        this.value = valorFormateado;
+        
+        // Guardar valor sin formato en campo hidden
+        const numeroLimpio = this.value.replace(/\D/g, '');
+        precioHiddenInput.value = numeroLimpio;
+        
+        // Ajustar posición del cursor
+        const diferencia = valorFormateado.length - valorAnterior.length;
+        if (diferencia !== 0) {
+            this.setSelectionRange(cursorPos + diferencia, cursorPos + diferencia);
+        }
+    });
+    
+    // Formatear valor inicial si existe
+    if (precioDisplayInput.value) {
+        precioDisplayInput.value = formatearPrecio(precioDisplayInput.value);
+        precioHiddenInput.value = precioDisplayInput.value.replace(/\D/g, '');
+    }
+}
+
+// ============================================
 // SUBMIT FORMULARIO
 // ============================================
 document.getElementById('anuncioForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
-    // Obtener datos del formulario
-    const formData = new FormData();
-    const titulo = document.getElementById('titulo').value.trim();
-    const descripcion = document.getElementById('descripcion').value.trim();
-    const precio = document.getElementById('precio').value.trim();
+    // Obtener FormData directamente del formulario (incluye todos los campos)
+    const formData = new FormData(e.target);
     
     // Validaciones básicas
+    const titulo = formData.get('titulo')?.trim();
+    const descripcion = formData.get('descripcion')?.trim();
+    const categoriaId = formData.get('categoria_id');
+    const oficioId = formData.get('oficio_id');
+    
     if (!titulo) {
         showAlert('El título es obligatorio', 'error');
         return;
@@ -848,14 +1021,14 @@ document.getElementById('anuncioForm').addEventListener('submit', async (e) => {
         return;
     }
     
-    // Agregar datos al FormData
-    if (window.anuncioId) {
-        formData.append('anuncio_id', window.anuncioId);
+    if (!categoriaId || !oficioId) {
+        showAlert('Debes seleccionar una categoría y un oficio antes de publicar tu anuncio', 'error');
+        return;
     }
-    formData.append('titulo', titulo);
-    formData.append('descripcion', descripcion);
-    if (precio) {
-        formData.append('precio', precio);
+    
+    // Agregar anuncio_id si existe
+    if (window.anuncioId) {
+        formData.set('anuncio_id', window.anuncioId);
     }
     
     // Deshabilitar botón de submit
@@ -873,8 +1046,6 @@ document.getElementById('anuncioForm').addEventListener('submit', async (e) => {
         const data = await response.json();
         
         if (data.success) {
-            showAlert(data.message, 'success');
-            
             // Si es modo CREAR (nuevo), actualizar a modo EDITAR para permitir subir fotos
             if (data.mode === 'create' && data.anuncio_id) {
                 // Actualizar anuncioId global
@@ -913,11 +1084,12 @@ document.getElementById('anuncioForm').addEventListener('submit', async (e) => {
                 const newUrl = window.location.pathname + '?modo=editar&id=' + data.anuncio_id;
                 window.history.pushState({path: newUrl}, '', newUrl);
                 
-                // Mostrar mensaje adicional
+                // Mostrar mensaje de éxito
                 showAlert('¡Anuncio creado! Ahora puedes agregar fotos', 'success');
                 
             } else {
-                // Si es modo EDITAR, redirigir al bloque de anuncios publicados después de 1.5 segundos
+                // Si es modo EDITAR, mostrar mensaje y redirigir después de 1.5 segundos
+                showAlert('¡Anuncio actualizado exitosamente!', 'success');
                 setTimeout(() => {
                     window.location.href = '<?= $dashboardUrl ?>#anuncios-publicados';
                 }, 1500);
@@ -934,6 +1106,158 @@ document.getElementById('anuncioForm').addEventListener('submit', async (e) => {
         console.error('Error:', error);
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
+    }
+});
+
+// ========================================
+// CARGAR CATEGORÍAS Y OFICIOS
+// ========================================
+document.addEventListener('DOMContentLoaded', async function() {
+    const categoriaInput = document.getElementById('categoria_id');
+    const categoriaTrigger = document.getElementById('categoriaSelectTrigger');
+    const categoriaOptions = document.getElementById('categoriaSelectOptions');
+    const categoriaIconDisplay = document.getElementById('categoriaIconDisplay');
+    const categoriaTextDisplay = document.getElementById('categoriaTextDisplay');
+    
+    const oficioSelect = document.getElementById('oficio_id');
+    const oficioGroup = document.getElementById('oficioGroup');
+    
+    let categoriasData = [];
+    
+    // Cargar categorías activas
+    try {
+        const response = await fetch('<?= app_url('controllers/CategoriaController.php') ?>?action=getActivas');
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            categoriasData = data.data;
+            
+            // Limpiar y recargar opciones
+            categoriaOptions.innerHTML = '<div class="custom-select-option" data-value=""><i class="fas fa-circle-question"></i><span>Selecciona una categoría</span></div>';
+            
+            data.data.forEach(categoria => {
+                const option = document.createElement('div');
+                option.className = 'custom-select-option';
+                option.setAttribute('data-value', categoria.id);
+                option.setAttribute('data-icon', categoria.icono || 'fas fa-circle-question');
+                option.innerHTML = `
+                    <i class="${categoria.icono || 'fas fa-circle-question'}"></i>
+                    <span>${categoria.nombre}</span>
+                `;
+                
+                option.addEventListener('click', function() {
+                    selectCategoria(categoria.id, categoria.nombre, categoria.icono || 'fas fa-circle-question');
+                });
+                
+                categoriaOptions.appendChild(option);
+            });
+            
+            // Si es modo edición, pre-seleccionar categoría
+            <?php if ($isEdit && !empty($anuncio['categoria_id'])): ?>
+            const selectedCat = categoriasData.find(c => c.id == <?= $anuncio['categoria_id'] ?>);
+            if (selectedCat) {
+                selectCategoria(selectedCat.id, selectedCat.nombre, selectedCat.icono || 'fas fa-circle-question', false);
+                await cargarOficios(selectedCat.id);
+            }
+            <?php endif; ?>
+        }
+    } catch (error) {
+        console.error('Error al cargar categorías:', error);
+        showAlert('Error al cargar las categorías', 'error');
+    }
+    
+    // Toggle dropdown de categorías
+    categoriaTrigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isActive = categoriaTrigger.classList.contains('active');
+        
+        if (isActive) {
+            categoriaTrigger.classList.remove('active');
+            categoriaOptions.style.display = 'none';
+        } else {
+            categoriaTrigger.classList.add('active');
+            categoriaOptions.style.display = 'block';
+        }
+    });
+    
+    // Cerrar dropdown al hacer click fuera
+    document.addEventListener('click', function() {
+        categoriaTrigger.classList.remove('active');
+        categoriaOptions.style.display = 'none';
+    });
+    
+    // Función para seleccionar categoría
+    async function selectCategoria(id, nombre, icono, loadOficios = true) {
+        categoriaInput.value = id;
+        categoriaIconDisplay.className = icono;
+        categoriaTextDisplay.textContent = nombre;
+        
+        // Marcar como seleccionada
+        document.querySelectorAll('.custom-select-option').forEach(opt => {
+            opt.classList.remove('selected');
+            if (opt.getAttribute('data-value') == id) {
+                opt.classList.add('selected');
+            }
+        });
+        
+        // Cerrar dropdown
+        categoriaTrigger.classList.remove('active');
+        categoriaOptions.style.display = 'none';
+        
+        // Cargar oficios
+        if (loadOficios) {
+            if (!id) {
+                oficioGroup.style.display = 'none';
+                oficioSelect.innerHTML = '<option value="">Selecciona un oficio</option>';
+                oficioSelect.required = false;
+            } else {
+                await cargarOficios(id);
+            }
+        }
+    }
+    
+    // Función para cargar oficios según categoría
+    async function cargarOficios(categoriaId) {
+        try {
+            oficioSelect.innerHTML = '<option value="">Cargando oficios...</option>';
+            oficioSelect.disabled = true;
+            
+            const response = await fetch(`<?= app_url('controllers/OficioController.php') ?>?action=getByCategoria&id=${categoriaId}`);
+            const data = await response.json();
+            
+            if (data.success && data.data) {
+                // Guardar la opción seleccionada actual si existe
+                const selectedOficioId = <?= $isEdit && !empty($anuncio['oficio_id']) ? $anuncio['oficio_id'] : 'null' ?>;
+                
+                oficioSelect.innerHTML = '<option value="">Selecciona un oficio</option>';
+                
+                if (data.data.length === 0) {
+                    oficioSelect.innerHTML = '<option value="">No hay oficios disponibles en esta categoría</option>';
+                    oficioGroup.style.display = 'none';
+                    oficioSelect.required = false;
+                } else {
+                    data.data.forEach(oficio => {
+                        const option = document.createElement('option');
+                        option.value = oficio.id;
+                        option.textContent = oficio.nombre;
+                        if (oficio.id == selectedOficioId) {
+                            option.selected = true;
+                        }
+                        oficioSelect.appendChild(option);
+                    });
+                    
+                    oficioGroup.style.display = 'block';
+                    oficioSelect.required = true;
+                }
+                
+                oficioSelect.disabled = <?= $soloLectura ? 'true' : 'false' ?>;
+            }
+        } catch (error) {
+            console.error('Error al cargar oficios:', error);
+            showAlert('Error al cargar los oficios', 'error');
+            oficioSelect.innerHTML = '<option value="">Error al cargar oficios</option>';
+            oficioSelect.disabled = false;
+        }
     }
 });
 </script>

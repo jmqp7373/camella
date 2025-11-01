@@ -62,6 +62,8 @@ switch ($action) {
         $titulo = isset($_POST['titulo']) ? trim($_POST['titulo']) : '';
         $descripcion = isset($_POST['descripcion']) ? trim($_POST['descripcion']) : '';
         $precio = isset($_POST['precio']) && !empty($_POST['precio']) ? (float)$_POST['precio'] : null;
+        $categoriaId = isset($_POST['categoria_id']) && !empty($_POST['categoria_id']) ? (int)$_POST['categoria_id'] : null;
+        $oficioId = isset($_POST['oficio_id']) && !empty($_POST['oficio_id']) ? (int)$_POST['oficio_id'] : null;
         $userId = $_SESSION['user_id'];
         
         // Validaciones
@@ -79,6 +81,15 @@ switch ($action) {
             echo json_encode([
                 'success' => false,
                 'message' => 'La descripción es obligatoria'
+            ]);
+            exit;
+        }
+        
+        if (empty($categoriaId) || empty($oficioId)) {
+            http_response_code(400);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Debes seleccionar una categoría y un oficio antes de publicar tu anuncio'
             ]);
             exit;
         }
@@ -116,10 +127,10 @@ switch ($action) {
                 // Actualizar el anuncio
                 $stmt = $db->prepare("
                     UPDATE anuncios 
-                    SET titulo = ?, descripcion = ?, precio = ?, updated_at = NOW()
+                    SET titulo = ?, descripcion = ?, precio = ?, oficio_id = ?, updated_at = NOW()
                     WHERE id = ?
                 ");
-                $stmt->execute([$titulo, $descripcion, $precio, $anuncioId]);
+                $stmt->execute([$titulo, $descripcion, $precio, $oficioId, $anuncioId]);
                 
                 echo json_encode([
                     'success' => true,
@@ -132,10 +143,10 @@ switch ($action) {
                 // MODO NUEVO: Crear nuevo anuncio
                 
                 $stmt = $db->prepare("
-                    INSERT INTO anuncios (user_id, titulo, descripcion, precio, status, created_at, updated_at)
-                    VALUES (?, ?, ?, ?, 'activo', NOW(), NOW())
+                    INSERT INTO anuncios (user_id, titulo, descripcion, precio, oficio_id, status, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, ?, 'activo', NOW(), NOW())
                 ");
-                $stmt->execute([$userId, $titulo, $descripcion, $precio]);
+                $stmt->execute([$userId, $titulo, $descripcion, $precio, $oficioId]);
                 
                 $nuevoAnuncioId = $db->lastInsertId();
                 
