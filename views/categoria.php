@@ -306,7 +306,14 @@ try {
     padding-top: 1rem;
     border-top: 1px solid #e0e0e0;
     position: relative;
-    overflow: visible;
+}
+
+.anuncio-footer > div:last-child {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .anuncio-precio {
@@ -399,6 +406,7 @@ try {
     vertical-align: middle;
     min-width: 90px;
     width: auto;
+    position: relative;
 }
 
 .btn-reveal-phone.revealed {
@@ -407,7 +415,8 @@ try {
     min-width: 200px;
     width: auto;
     padding: 0.5rem 1rem;
-    position: relative;
+    position: absolute;
+    right: 0;
     z-index: 10;
 }
 
