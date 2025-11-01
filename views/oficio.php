@@ -300,8 +300,10 @@ try {
 
 .anuncio-botones {
     display: flex;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
     align-items: stretch;
+    width: 100%;
 }
 
 .anuncio-precio {
@@ -393,20 +395,20 @@ try {
     background: #007bff;
     border: 1px solid #007bff;
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 0.625rem 1rem;
     border-radius: 6px;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-weight: 500;
     line-height: 1.5;
     text-align: center;
     white-space: nowrap;
     height: 38px;
-    min-width: 85px;
+    width: 100%;
 }
 
 .btn-reveal-phone:hover:not(.revealed) {
@@ -423,7 +425,7 @@ try {
 .btn-reveal-phone.revealed {
     background: #28a745;
     border-color: #28a745;
-    min-width: 165px;
+    width: 100%;
 }
 
 .btn-reveal-phone.revealed:hover {
@@ -445,16 +447,17 @@ try {
 }
 
 .btn.btn-success.btn-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     border-radius: 6px;
     height: 38px;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     white-space: nowrap;
     transition: all 0.2s ease;
+    width: 100%;
 }
 
 .btn.btn-success.btn-sm:hover {
@@ -495,11 +498,6 @@ try {
         font-size: 2rem;
     }
     
-    .anuncio-footer {
-        gap: 1rem;
-        padding-top: 1rem;
-    }
-    
     .anuncio-info-top {
         flex-direction: column;
         align-items: flex-start;
@@ -512,26 +510,6 @@ try {
     
     .anuncio-fecha {
         font-size: 0.75rem;
-    }
-    
-    .anuncio-botones {
-        width: 100%;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .btn.btn-success.btn-sm,
-    .btn-reveal-phone {
-        width: 100%;
-        justify-content: center;
-        min-width: unset;
-        padding: 0.625rem 1rem;
-        font-size: 0.9rem;
-    }
-    
-    .btn-reveal-phone.revealed {
-        width: 100%;
-        min-width: unset;
     }
 }
 </style>

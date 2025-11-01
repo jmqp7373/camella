@@ -127,18 +127,30 @@ try {
 <style>
 .breadcrumb-categoria {
     background: transparent;
-    padding: 1rem 0;
+    padding: 1rem 1.5rem;
     margin-bottom: 1rem;
     font-size: 0.9rem;
+}
+
+.breadcrumb-categoria span {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
 }
 
 .breadcrumb-categoria a {
     color: #007bff;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .breadcrumb-categoria a:hover {
     text-decoration: underline;
+}
+
+.breadcrumb-categoria strong {
+    color: #2c3e50;
 }
 
 .categoria-header {
@@ -317,8 +329,10 @@ try {
 
 .anuncio-botones {
     display: flex;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
     align-items: stretch;
+    width: 100%;
 }
 
 .anuncio-precio {
@@ -410,39 +424,40 @@ try {
     background: #007bff;
     border: 1px solid #007bff;
     color: white;
-    padding: 0.5rem 1rem;
+    padding: 0.625rem 1rem;
     border-radius: 6px;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     font-weight: 500;
     line-height: 1.5;
     text-align: center;
     white-space: nowrap;
     height: 38px;
-    min-width: 85px;
+    width: 100%;
 }
 
 .btn-reveal-phone.revealed {
     background: #28a745;
     border-color: #28a745;
-    min-width: 165px;
+    width: 100%;
 }
 
 .btn.btn-success.btn-sm {
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
+    padding: 0.625rem 1rem;
+    font-size: 0.9rem;
     font-weight: 500;
     border-radius: 6px;
     height: 38px;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     white-space: nowrap;
     transition: all 0.2s ease;
+    width: 100%;
 }
 
 .btn-reveal-phone:hover:not(.revealed) {
@@ -501,6 +516,245 @@ try {
     }
 }
 
+/* Modal de anuncio */
+.anuncio-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    overflow-y: auto;
+}
+
+.anuncio-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeInModal 0.3s ease;
+}
+
+@keyframes fadeInModal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-container {
+    position: relative;
+    width: 90%;
+    max-width: 900px;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    margin: 2rem auto;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: #f8f9fa;
+    transform: scale(1.1);
+}
+
+.modal-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.modal-nav:hover {
+    background: #007bff;
+    color: white;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.modal-nav.prev {
+    left: 1rem;
+}
+
+.modal-nav.next {
+    right: 1rem;
+}
+
+.modal-nav:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.modal-nav:disabled:hover {
+    background: white;
+    color: #333;
+    transform: translateY(-50%);
+}
+
+.modal-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+}
+
+.modal-images {
+    position: relative;
+    background: #f8f9fa;
+    min-height: 400px;
+}
+
+.modal-image-main {
+    width: 100%;
+    height: 500px;
+    object-fit: cover;
+}
+
+.modal-image-placeholder {
+    width: 100%;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9ecef;
+    color: #6c757d;
+    font-size: 4rem;
+}
+
+.modal-image-counter {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.modal-info {
+    padding: 2rem;
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+.modal-oficio {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.modal-titulo {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+}
+
+.modal-descripcion {
+    font-size: 1rem;
+    color: #6c757d;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    white-space: pre-wrap;
+}
+
+.modal-precio {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #28a745;
+    margin-bottom: 0.5rem;
+}
+
+.modal-fecha {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-botones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .modal-container {
+        width: 95%;
+        margin: 1rem auto;
+    }
+    
+    .modal-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-image-main,
+    .modal-image-placeholder {
+        height: 300px;
+    }
+    
+    .modal-info {
+        max-height: none;
+    }
+    
+    .modal-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    
+    .modal-nav.prev {
+        left: 0.5rem;
+    }
+    
+    .modal-nav.next {
+        right: 0.5rem;
+    }
+}
+
 @media (max-width: 768px) {
     .categoria-title {
         font-size: 2rem;
@@ -508,11 +762,6 @@ try {
     
     .categoria-icon {
         font-size: 2.5rem;
-    }
-    
-    .anuncio-footer {
-        gap: 1rem;
-        padding-top: 1rem;
     }
     
     .anuncio-info-top {
@@ -527,26 +776,6 @@ try {
     
     .anuncio-fecha {
         font-size: 0.75rem;
-    }
-    
-    .anuncio-botones {
-        width: 100%;
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .btn.btn-success.btn-sm,
-    .btn-reveal-phone {
-        width: 100%;
-        justify-content: center;
-        min-width: unset;
-        padding: 0.625rem 1rem;
-        font-size: 0.9rem;
-    }
-    
-    .btn-reveal-phone.revealed {
-        width: 100%;
-        min-width: unset;
     }
 }
 </style>
@@ -584,7 +813,7 @@ try {
 </div>
 
 <!-- Grid de Anuncios -->
-<div class="container-fluid px-4 mb-5">
+<div class="container-fluid mb-5" style="padding-left: 2rem; padding-right: 2rem;">
     <?php if (empty($anuncios)): ?>
         <!-- Sin anuncios -->
         <div class="no-anuncios">
@@ -598,9 +827,23 @@ try {
     <?php else: ?>
         <!-- Grid de anuncios -->
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
-            <?php foreach ($anuncios as $anuncio): ?>
+            <?php foreach ($anuncios as $index => $anuncio): ?>
                 <div>
-                    <div class="anuncio-card">
+                    <div class="anuncio-card" 
+                         style="cursor: pointer;"
+                         onclick="abrirModal(<?= $index ?>)"
+                         data-anuncio-index="<?= $index ?>"
+                         data-anuncio="<?= htmlspecialchars(json_encode([
+                             'id' => $anuncio['id'],
+                             'titulo' => $anuncio['titulo'],
+                             'descripcion' => $anuncio['descripcion'] ?? '',
+                             'precio' => $anuncio['precio'],
+                             'imagen_principal' => $anuncio['imagen_principal'] ?? '',
+                             'total_imagenes' => $anuncio['total_imagenes'] ?? 0,
+                             'oficio_nombre' => $anuncio['oficio_nombre'] ?? '',
+                             'created_at' => $anuncio['created_at'],
+                             'usuario_telefono' => $anuncio['usuario_telefono'] ?? ''
+                         ]), ENT_QUOTES, 'UTF-8') ?>">
                         <!-- Imagen -->
                         <div class="anuncio-image-wrapper">
                             <?php if (!empty($anuncio['imagen_principal'])): ?>
@@ -679,18 +922,20 @@ try {
                                     // Formatear para mostrar
                                     $telefonoFormateado = '+57 ' . substr($telefono, 2, 3) . ' ' . substr($telefono, 5);
                                 ?>
-                                <div class="anuncio-botones">
+                                <div class="anuncio-botones" onclick="event.stopPropagation()">
                                     <a href="https://wa.me/<?= htmlspecialchars($telefono) ?>?text=Hola,%20vi%20tu%20anuncio:%20<?= urlencode($anuncio['titulo']) ?>" 
                                        class="btn btn-success btn-sm" 
                                        target="_blank"
                                        rel="noopener noreferrer"
-                                       title="Contactar por WhatsApp">
+                                       title="Contactar por WhatsApp"
+                                       onclick="event.stopPropagation()">
                                         <i class="fab fa-whatsapp"></i>&nbsp;Contactar
                                     </a>
                                     <button class="btn-reveal-phone btn-sm" 
                                             data-telefono="<?= htmlspecialchars($telefonoFormateado) ?>"
                                             data-anuncio-id="<?= $anuncio['id'] ?>"
-                                            title="Ver número de teléfono">
+                                            title="Ver número de teléfono"
+                                            onclick="event.stopPropagation()">
                                         <i class="fas fa-phone"></i>&nbsp;<span class="phone-text">Ver #</span>
                                     </button>
                                 </div>
@@ -700,6 +945,44 @@ try {
                     </div>
                 </div>
             <?php endforeach; ?>
+        </div>
+        
+        <!-- Modal de Anuncio -->
+        <div id="anuncioModal" class="anuncio-modal">
+            <div class="modal-container">
+                <button class="modal-close" onclick="cerrarModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <button class="modal-nav prev" onclick="navegarAnuncio(-1)">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <button class="modal-nav next" onclick="navegarAnuncio(1)">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                
+                <div class="modal-content">
+                    <div class="modal-images">
+                        <img id="modalImage" src="" alt="" class="modal-image-main" style="display: none;">
+                        <div id="modalImagePlaceholder" class="modal-image-placeholder" style="display: none;">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div id="modalImageCounter" class="modal-image-counter" style="display: none;"></div>
+                    </div>
+                    
+                    <div class="modal-info">
+                        <div id="modalOficio" class="modal-oficio"></div>
+                        <h2 id="modalTitulo" class="modal-titulo"></h2>
+                        <p id="modalDescripcion" class="modal-descripcion"></p>
+                        
+                        <div id="modalPrecio" class="modal-precio"></div>
+                        <div id="modalFecha" class="modal-fecha"></div>
+                        
+                        <div id="modalBotones" class="modal-botones"></div>
+                    </div>
+                </div>
+            </div>
         </div>
         
         <!-- Paginación -->
@@ -750,7 +1033,57 @@ try {
 </div>
 
 <script>
+// Variables globales para el modal
+let anunciosData = [];
+let currentIndex = 0;
+
+// Funciones globales (deben estar disponibles para onclick)
+function abrirModal(index) {
+    console.log('Abriendo modal para index:', index);
+    console.log('Total anuncios:', anunciosData.length);
+    if (index >= 0 && index < anunciosData.length) {
+        currentIndex = index;
+        mostrarAnuncio(index);
+        const modal = document.getElementById('anuncioModal');
+        if (modal) {
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } else {
+            console.error('Modal element not found');
+        }
+    } else {
+        console.error('Invalid index:', index);
+    }
+}
+
+function cerrarModal() {
+    const modal = document.getElementById('anuncioModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+function navegarAnuncio(direction) {
+    const newIndex = currentIndex + direction;
+    if (newIndex >= 0 && newIndex < anunciosData.length) {
+        currentIndex = newIndex;
+        mostrarAnuncio(currentIndex);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Cargar datos de anuncios
+    const anuncioCards = document.querySelectorAll('[data-anuncio]');
+    anunciosData = Array.from(anuncioCards).map(card => {
+        try {
+            return JSON.parse(card.getAttribute('data-anuncio'));
+        } catch (e) {
+            console.error('Error parsing anuncio data:', e);
+            return null;
+        }
+    }).filter(a => a !== null);
+    
     // Manejar click en botones de revelar teléfono
     const btnRevealPhones = document.querySelectorAll('.btn-reveal-phone');
     
@@ -761,38 +1094,144 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const telefono = this.dataset.telefono;
             const phoneText = this.querySelector('.phone-text');
-            const icon = this.querySelector('i');
             
-            // Toggle visibility con transición suave
-            if (!this.classList.contains('revealed')) {
-                // Mostrar teléfono
-                this.classList.add('revealed');
-                icon.className = 'fas fa-phone-alt';
-                phoneText.style.opacity = '0';
-                
-                setTimeout(() => {
-                    phoneText.textContent = telefono;
-                    phoneText.style.opacity = '1';
-                }, 150);
-                
-                this.title = 'Ocultar número';
-                this.style.backgroundColor = '#6c757d';
-                this.style.borderColor = '#6c757d';
+            // Toggle visibility
+            if (this.classList.contains('revealed')) {
+                phoneText.textContent = 'Ver #';
+                this.classList.remove('revealed');
+                this.title = 'Ver número de teléfono';
             } else {
-                // Ocultar teléfono
-                phoneText.style.opacity = '0';
-                
-                setTimeout(() => {
-                    this.classList.remove('revealed');
-                    icon.className = 'fas fa-phone';
-                    phoneText.textContent = 'Ver #';
-                    phoneText.style.opacity = '1';
-                    this.title = 'Ver número de teléfono';
-                    this.style.backgroundColor = '';
-                    this.style.borderColor = '';
-                }, 150);
+                phoneText.textContent = telefono;
+                this.classList.add('revealed');
+                this.title = 'Ocultar número de teléfono';
             }
         });
     });
+    
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('anuncioModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            cerrarModal();
+        }
+    });
+    
+    // Cerrar con tecla ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            cerrarModal();
+        }
+        if (e.key === 'ArrowLeft') {
+            navegarAnuncio(-1);
+        }
+        if (e.key === 'ArrowRight') {
+            navegarAnuncio(1);
+        }
+    });
 });
+
+function mostrarAnuncio(index) {
+    const anuncio = anunciosData[index];
+    
+    // Actualizar imagen
+    const modalImage = document.getElementById('modalImage');
+    const modalImagePlaceholder = document.getElementById('modalImagePlaceholder');
+    const modalImageCounter = document.getElementById('modalImageCounter');
+    
+    if (anuncio.imagen_principal) {
+        modalImage.src = '<?= app_url('') ?>' + anuncio.imagen_principal;
+        modalImage.style.display = 'block';
+        modalImagePlaceholder.style.display = 'none';
+    } else {
+        modalImage.style.display = 'none';
+        modalImagePlaceholder.style.display = 'flex';
+    }
+    
+    if (anuncio.total_imagenes > 0) {
+        modalImageCounter.textContent = `1/${anuncio.total_imagenes} IMÁGENES`;
+        modalImageCounter.style.display = 'block';
+    } else {
+        modalImageCounter.style.display = 'none';
+    }
+    
+    // Actualizar información
+    document.getElementById('modalOficio').innerHTML = `<i class="fas fa-tag"></i> ${anuncio.oficio_nombre}`;
+    document.getElementById('modalTitulo').textContent = anuncio.titulo;
+    document.getElementById('modalDescripcion').textContent = anuncio.descripcion || 'Sin descripción';
+    
+    // Precio
+    const modalPrecio = document.getElementById('modalPrecio');
+    if (anuncio.precio && anuncio.precio > 0) {
+        modalPrecio.textContent = '$' + parseInt(anuncio.precio).toLocaleString('es-CO');
+        modalPrecio.style.color = '#28a745';
+    } else {
+        modalPrecio.textContent = 'A convenir';
+        modalPrecio.style.color = '#007bff';
+    }
+    
+    // Fecha
+    const fecha = new Date(anuncio.created_at);
+    const ahora = new Date();
+    const diffTime = Math.abs(ahora - fecha);
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    let fechaTexto = '';
+    if (diffDays === 0) {
+        fechaTexto = 'Publicado: Hoy';
+    } else if (diffDays === 1) {
+        fechaTexto = 'Publicado: Ayer';
+    } else if (diffDays < 7) {
+        fechaTexto = `Publicado: Hace ${diffDays} días`;
+    } else {
+        fechaTexto = 'Publicado: ' + fecha.toLocaleDateString('es-CO');
+    }
+    
+    document.getElementById('modalFecha').innerHTML = `<i class="fas fa-clock"></i> ${fechaTexto}`;
+    
+    // Botones
+    const modalBotones = document.getElementById('modalBotones');
+    if (anuncio.usuario_telefono) {
+        let telefono = anuncio.usuario_telefono.replace(/[^0-9]/g, '');
+        if (!telefono.startsWith('57')) {
+            telefono = '57' + telefono;
+        }
+        const telefonoFormateado = '+57 ' + telefono.substring(2, 5) + ' ' + telefono.substring(5);
+        
+        modalBotones.innerHTML = `
+            <a href="https://wa.me/${telefono}?text=Hola,%20vi%20tu%20anuncio:%20${encodeURIComponent(anuncio.titulo)}" 
+               class="btn btn-success btn-sm" 
+               target="_blank"
+               rel="noopener noreferrer">
+                <i class="fab fa-whatsapp"></i>&nbsp;Contactar
+            </a>
+            <button class="btn-reveal-phone btn-sm modal-phone-btn" 
+                    data-telefono="${telefonoFormateado}">
+                <i class="fas fa-phone"></i>&nbsp;<span class="phone-text">Ver #</span>
+            </button>
+        `;
+        
+        // Agregar evento al botón de teléfono del modal
+        const modalPhoneBtn = modalBotones.querySelector('.modal-phone-btn');
+        modalPhoneBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const phoneText = this.querySelector('.phone-text');
+            
+            if (this.classList.contains('revealed')) {
+                phoneText.textContent = 'Ver #';
+                this.classList.remove('revealed');
+            } else {
+                phoneText.textContent = telefonoFormateado;
+                this.classList.add('revealed');
+            }
+        });
+    } else {
+        modalBotones.innerHTML = '<p style="color: #6c757d; font-style: italic;">No hay información de contacto disponible</p>';
+    }
+    
+    // Actualizar estado de botones de navegación
+    const prevBtn = document.querySelector('.modal-nav.prev');
+    const nextBtn = document.querySelector('.modal-nav.next');
+    
+    prevBtn.disabled = (index === 0);
+    nextBtn.disabled = (index === anunciosData.length - 1);
+}
 </script>
