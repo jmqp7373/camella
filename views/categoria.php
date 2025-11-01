@@ -640,7 +640,8 @@ try {
 .modal-image-main {
     width: 100%;
     height: 500px;
-    object-fit: cover;
+    object-fit: contain;
+    background: #f8f9fa;
 }
 
 .modal-image-placeholder {
@@ -729,6 +730,7 @@ try {
     .anuncio-modal {
         align-items: flex-start;
         padding: 0;
+        padding-top: 60px;
     }
     
     .modal-container {
@@ -736,43 +738,78 @@ try {
         max-width: 100%;
         margin: 0;
         border-radius: 0;
-        max-height: 100vh;
+        max-height: calc(100vh - 60px);
         overflow-y: auto;
     }
     
     .modal-close {
-        top: 0.5rem;
-        right: 0.5rem;
-        width: 40px;
-        height: 40px;
-        font-size: 1.25rem;
-        background: rgba(255, 255, 255, 0.98);
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: 42px;
+        height: 42px;
+        font-size: 1.4rem;
+        background: rgba(220, 53, 69, 0.95);
+        color: white;
+        z-index: 10000;
     }
     
     .modal-content {
         grid-template-columns: 1fr;
     }
     
+    .modal-images {
+        min-height: 200px;
+    }
+    
     .modal-image-main,
     .modal-image-placeholder {
-        height: 250px;
+        height: 200px;
+        object-fit: contain;
+        background: #f8f9fa;
+    }
+    
+    .modal-image-counter {
+        top: 0.75rem;
+        left: 0.75rem;
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
     }
     
     .modal-info {
         max-height: none;
-        padding: 1.5rem;
+        padding: 1.25rem;
+    }
+    
+    .modal-oficio {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+        margin-bottom: 0.75rem;
     }
     
     .modal-titulo {
-        font-size: 1.35rem;
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
     }
     
     .modal-descripcion {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
     }
     
     .modal-precio {
-        font-size: 1.75rem;
+        font-size: 1.6rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .modal-fecha {
+        font-size: 0.8rem;
+        margin-bottom: 1rem;
+    }
+    
+    .modal-botones {
+        gap: 0.6rem;
+        margin-top: 1rem;
     }
     
     .modal-nav {
@@ -1172,30 +1209,35 @@ function mostrarAnuncio(index) {
     const modalImagePlaceholder = document.getElementById('modalImagePlaceholder');
     const modalImageCounter = document.getElementById('modalImageCounter');
     
-    if (anuncio.imagen_principal) {
-        // Construir URL correctamente
-        const baseUrl = window.location.origin + '/camella.com.co/';
-        let imageSrc = anuncio.imagen_principal;
+    if (anuncio.imagen_principal && anuncio.imagen_principal.trim() !== '') {
+        let imageSrc = anuncio.imagen_principal.trim();
         
-        // Si la imagen ya tiene la URL completa o empieza con /, úsala directamente
-        if (imageSrc.startsWith('http') || imageSrc.startsWith('//')) {
+        // Construir URL correctamente dependiendo del formato
+        if (imageSrc.startsWith('http://') || imageSrc.startsWith('https://') || imageSrc.startsWith('//')) {
+            // URL completa
             modalImage.src = imageSrc;
         } else if (imageSrc.startsWith('/')) {
+            // Ruta absoluta desde el root
             modalImage.src = window.location.origin + imageSrc;
         } else {
-            modalImage.src = baseUrl + imageSrc;
+            // Ruta relativa - usar la ruta base del sitio
+            const pathArray = window.location.pathname.split('/');
+            const basePath = pathArray[1] ? '/' + pathArray[1] + '/' : '/';
+            modalImage.src = window.location.origin + basePath + imageSrc;
         }
         
+        console.log('Loading image:', modalImage.src);
         modalImage.style.display = 'block';
         modalImagePlaceholder.style.display = 'none';
         
         // Manejo de error de carga de imagen
         modalImage.onerror = function() {
             console.error('Error loading image:', this.src);
-            modalImage.style.display = 'none';
+            this.style.display = 'none';
             modalImagePlaceholder.style.display = 'flex';
         };
     } else {
+        console.log('No image available');
         modalImage.style.display = 'none';
         modalImagePlaceholder.style.display = 'flex';
     }
