@@ -388,7 +388,7 @@ try {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease, width 0.3s ease;
+    transition: all 0.3s ease;
     font-size: 0.875rem;
     font-weight: 400;
     line-height: 1.5;
@@ -397,12 +397,14 @@ try {
     vertical-align: middle;
     min-width: 90px;
     width: auto;
-    overflow: hidden;
 }
 
 .btn-reveal-phone.revealed {
-    min-width: 170px;
+    background: #6c757d;
+    border-color: #6c757d;
+    min-width: 200px;
     width: auto;
+    padding: 0.5rem 1rem;
 }
 
 .btn-reveal-phone:hover {
