@@ -277,6 +277,8 @@ try {
     letter-spacing: 0.5px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     text-transform: uppercase;
+    z-index: 10;
+    pointer-events: none;
 }
 
 .anuncio-body {
@@ -665,6 +667,8 @@ try {
     border-radius: 20px;
     font-size: 0.875rem;
     font-weight: 500;
+    z-index: 100;
+    pointer-events: none;
 }
 
 .modal-info {
@@ -775,6 +779,7 @@ try {
         left: 0.75rem;
         font-size: 0.75rem;
         padding: 0.4rem 0.8rem;
+        z-index: 100;
     }
     
     .modal-info {
@@ -939,9 +944,12 @@ try {
                                     <i class="fas fa-image"></i>
                                 </div>
                             <?php endif; ?>
-                            <?php if ($anuncio['total_imagenes'] > 0): ?>
+                            <?php 
+                            $total_imgs = isset($anuncio['total_imagenes']) ? intval($anuncio['total_imagenes']) : 0;
+                            if ($total_imgs > 0): 
+                            ?>
                                 <div class="anuncio-image-counter">
-                                    1/<?= $anuncio['total_imagenes'] ?> IMÁGENES
+                                    1/<?= $total_imgs ?> IMÁGENES
                                 </div>
                             <?php endif; ?>
                         </div>
@@ -1266,7 +1274,7 @@ function mostrarAnuncio(index) {
         modalImagePlaceholder.style.display = 'flex';
     }
     
-    if (anuncio.total_imagenes > 0) {
+    if (anuncio.total_imagenes && anuncio.total_imagenes > 0) {
         modalImageCounter.textContent = `1/${anuncio.total_imagenes} IMÁGENES`;
         modalImageCounter.style.display = 'block';
     } else {
