@@ -214,7 +214,7 @@ try {
     background: white;
     border: 1px solid #e0e0e0;
     border-radius: 12px;
-    overflow: hidden;
+    overflow: visible;
     transition: all 0.3s ease;
     height: 100%;
     display: flex;
@@ -305,6 +305,8 @@ try {
     align-items: center;
     padding-top: 1rem;
     border-top: 1px solid #e0e0e0;
+    position: relative;
+    overflow: visible;
 }
 
 .anuncio-precio {
@@ -405,6 +407,8 @@ try {
     min-width: 200px;
     width: auto;
     padding: 0.5rem 1rem;
+    position: relative;
+    z-index: 10;
 }
 
 .btn-reveal-phone:hover {
