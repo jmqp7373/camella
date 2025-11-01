@@ -302,29 +302,41 @@ try {
 .anuncio-footer {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding-top: 1rem;
     border-top: 1px solid #e0e0e0;
     position: relative;
+    gap: 1rem;
+}
+
+.anuncio-footer > div:first-child {
+    flex: 0 0 auto;
 }
 
 .anuncio-footer > div:last-child {
     display: flex;
     gap: 0.5rem;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-end;
+    flex: 1;
+    min-height: 38px;
+    position: relative;
 }
 
 .anuncio-precio {
     font-size: 1.5rem;
     font-weight: 700;
     color: #28a745;
+    margin-bottom: 0.25rem;
+    line-height: 1.2;
 }
 
 .anuncio-fecha {
     font-size: 0.85rem;
     color: #999;
+    line-height: 1.2;
+    margin-top: 0.25rem;
 }
 
 .no-anuncios {
