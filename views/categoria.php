@@ -395,7 +395,7 @@ try {
     text-align: center;
     white-space: nowrap;
     vertical-align: middle;
-    min-width: 120px;
+    min-width: 90px;
 }
 
 .btn-reveal-phone:hover {
@@ -590,7 +590,7 @@ try {
                                                 data-telefono="<?= htmlspecialchars($telefonoFormateado) ?>"
                                                 data-anuncio-id="<?= $anuncio['id'] ?>"
                                                 title="Ver número de teléfono">
-                                            <i class="fas fa-phone"></i>&nbsp;<span class="phone-text">Ver número</span>
+                                            <i class="fas fa-phone"></i>&nbsp;<span class="phone-text">Ver #</span>
                                         </button>
                                     <?php endif; ?>
                                 </div>
@@ -684,7 +684,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => {
                     this.classList.remove('revealed');
                     icon.className = 'fas fa-phone';
-                    phoneText.textContent = 'Ver número';
+                    phoneText.textContent = 'Ver #';
                     phoneText.style.opacity = '1';
                     this.title = 'Ver número de teléfono';
                     this.style.backgroundColor = '';
