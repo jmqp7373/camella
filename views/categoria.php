@@ -111,6 +111,19 @@ try {
     $stmtAnuncios->execute();
     $anuncios = $stmtAnuncios->fetchAll(PDO::FETCH_ASSOC);
     
+    // Cargar todas las imágenes de cada anuncio
+    foreach ($anuncios as &$anuncio) {
+        $stmtImagenes = $pdo->prepare("
+            SELECT ruta, orden 
+            FROM anuncio_imagenes 
+            WHERE anuncio_id = ? 
+            ORDER BY orden ASC
+        ");
+        $stmtImagenes->execute([$anuncio['id']]);
+        $anuncio['imagenes'] = $stmtImagenes->fetchAll(PDO::FETCH_COLUMN);
+    }
+    unset($anuncio); // Romper la referencia
+    
 } catch (PDOException $e) {
     error_log("Error en categoria.php: " . $e->getMessage());
     http_response_code(500);
@@ -671,6 +684,74 @@ try {
     pointer-events: none;
 }
 
+.modal-image-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+    z-index: 50;
+    opacity: 0;
+}
+
+.modal-images:hover .modal-image-nav {
+    opacity: 1;
+}
+
+.modal-image-nav:hover {
+    background: white;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.modal-image-nav.prev-img {
+    left: 0.5rem;
+}
+
+.modal-image-nav.next-img {
+    right: 0.5rem;
+}
+
+.modal-image-nav:disabled {
+    opacity: 0 !important;
+    cursor: not-allowed;
+}
+
+.modal-image-dots {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 50;
+}
+
+.modal-image-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.modal-image-dot.active {
+    background: white;
+    width: 24px;
+    border-radius: 4px;
+}
+
 .modal-info {
     padding: 2rem;
     overflow-y: auto;
@@ -927,6 +1008,7 @@ try {
                              'descripcion' => $anuncio['descripcion'] ?? '',
                              'precio' => $anuncio['precio'],
                              'imagen_principal' => $anuncio['imagen_principal'] ?? '',
+                             'imagenes' => $anuncio['imagenes'] ?? [],
                              'total_imagenes' => $anuncio['total_imagenes'] ?? 0,
                              'oficio_nombre' => $anuncio['oficio_nombre'] ?? '',
                              'created_at' => $anuncio['created_at'],
@@ -1060,6 +1142,15 @@ try {
                             <i class="fas fa-image"></i>
                         </div>
                         <div id="modalImageCounter" class="modal-image-counter" style="display: none;"></div>
+                        
+                        <button class="modal-image-nav prev-img" onclick="navegarImagen(-1); event.stopPropagation();">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="modal-image-nav next-img" onclick="navegarImagen(1); event.stopPropagation();">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                        
+                        <div id="modalImageDots" class="modal-image-dots"></div>
                     </div>
                     
                     <div class="modal-info">
@@ -1127,6 +1218,8 @@ try {
 // Variables globales para el modal
 let anunciosData = [];
 let currentIndex = 0;
+let currentImageIndex = 0;
+let currentImages = [];
 
 // Funciones globales (deben estar disponibles para onclick)
 function abrirModal(index) {
@@ -1160,6 +1253,72 @@ function navegarAnuncio(direction) {
     if (newIndex >= 0 && newIndex < anunciosData.length) {
         currentIndex = newIndex;
         mostrarAnuncio(currentIndex);
+    }
+}
+
+function navegarImagen(direction) {
+    const newImageIndex = currentImageIndex + direction;
+    if (newImageIndex >= 0 && newImageIndex < currentImages.length) {
+        currentImageIndex = newImageIndex;
+        mostrarImagenActual();
+    }
+}
+
+function mostrarImagenActual() {
+    const modalImage = document.getElementById('modalImage');
+    const modalImagePlaceholder = document.getElementById('modalImagePlaceholder');
+    const modalImageCounter = document.getElementById('modalImageCounter');
+    const prevBtn = document.querySelector('.modal-image-nav.prev-img');
+    const nextBtn = document.querySelector('.modal-image-nav.next-img');
+    
+    if (currentImages.length > 0 && currentImageIndex < currentImages.length) {
+        let imageSrc = currentImages[currentImageIndex].trim();
+        
+        // Construir URL correctamente
+        if (imageSrc.startsWith('http://') || imageSrc.startsWith('https://') || imageSrc.startsWith('//')) {
+            modalImage.src = imageSrc;
+        } else if (imageSrc.startsWith('/')) {
+            modalImage.src = window.location.origin + imageSrc;
+        } else {
+            const currentUrl = new URL(window.location.href);
+            const baseUrl = currentUrl.origin + currentUrl.pathname.substring(0, currentUrl.pathname.lastIndexOf('/') + 1);
+            modalImage.src = baseUrl + imageSrc;
+        }
+        
+        modalImage.style.display = 'block';
+        modalImagePlaceholder.style.display = 'none';
+        
+        // Actualizar contador
+        modalImageCounter.textContent = `${currentImageIndex + 1}/${currentImages.length} IMÁGENES`;
+        modalImageCounter.style.display = 'block';
+        
+        // Actualizar botones de navegación
+        prevBtn.disabled = (currentImageIndex === 0);
+        nextBtn.disabled = (currentImageIndex === currentImages.length - 1);
+        
+        // Actualizar dots
+        actualizarDots();
+    } else {
+        modalImage.style.display = 'none';
+        modalImagePlaceholder.style.display = 'flex';
+        modalImageCounter.style.display = 'none';
+    }
+}
+
+function actualizarDots() {
+    const dotsContainer = document.getElementById('modalImageDots');
+    dotsContainer.innerHTML = '';
+    
+    if (currentImages.length > 1) {
+        currentImages.forEach((img, index) => {
+            const dot = document.createElement('div');
+            dot.className = 'modal-image-dot' + (index === currentImageIndex ? ' active' : '');
+            dot.onclick = () => {
+                currentImageIndex = index;
+                mostrarImagenActual();
+            };
+            dotsContainer.appendChild(dot);
+        });
     }
 }
 
@@ -1228,57 +1387,36 @@ document.addEventListener('DOMContentLoaded', function() {
 function mostrarAnuncio(index) {
     const anuncio = anunciosData[index];
     
-    // Actualizar imagen
-    const modalImage = document.getElementById('modalImage');
-    const modalImagePlaceholder = document.getElementById('modalImagePlaceholder');
-    const modalImageCounter = document.getElementById('modalImageCounter');
+    // Inicializar carrusel de imágenes
+    currentImages = anuncio.imagenes || [];
+    currentImageIndex = 0;
     
-    if (anuncio.imagen_principal && anuncio.imagen_principal.trim() !== '') {
-        let imageSrc = anuncio.imagen_principal.trim();
-        
-        console.log('Original image path:', imageSrc);
-        
-        // Construir URL correctamente dependiendo del formato
-        if (imageSrc.startsWith('http://') || imageSrc.startsWith('https://') || imageSrc.startsWith('//')) {
-            // URL completa
-            modalImage.src = imageSrc;
-        } else if (imageSrc.startsWith('/')) {
-            // Ruta absoluta desde el root
-            modalImage.src = window.location.origin + imageSrc;
-        } else {
-            // Ruta relativa - construir desde la ubicación actual del documento
-            const currentUrl = new URL(window.location.href);
-            const baseUrl = currentUrl.origin + currentUrl.pathname.substring(0, currentUrl.pathname.lastIndexOf('/') + 1);
-            modalImage.src = baseUrl + imageSrc;
-        }
-        
-        console.log('Final image URL:', modalImage.src);
-        modalImage.style.display = 'block';
-        modalImagePlaceholder.style.display = 'none';
-        
-        // Manejo de error de carga de imagen
-        modalImage.onerror = function() {
-            console.error('Error loading image:', this.src);
-            console.error('Tried to load from:', imageSrc);
-            this.style.display = 'none';
-            modalImagePlaceholder.style.display = 'flex';
-        };
-        
-        // Log cuando la imagen carga exitosamente
-        modalImage.onload = function() {
-            console.log('Image loaded successfully:', this.src);
-        };
+    // Mostrar primera imagen del carrusel
+    if (currentImages.length > 0) {
+        mostrarImagenActual();
     } else {
-        console.log('No image available for this anuncio');
+        // Sin imágenes, mostrar placeholder
+        const modalImage = document.getElementById('modalImage');
+        const modalImagePlaceholder = document.getElementById('modalImagePlaceholder');
+        const modalImageCounter = document.getElementById('modalImageCounter');
+        
         modalImage.style.display = 'none';
         modalImagePlaceholder.style.display = 'flex';
+        modalImageCounter.style.display = 'none';
+        
+        // Ocultar controles de navegación
+        document.querySelector('.modal-image-nav.prev-img').style.display = 'none';
+        document.querySelector('.modal-image-nav.next-img').style.display = 'none';
+        document.getElementById('modalImageDots').innerHTML = '';
     }
     
-    if (anuncio.total_imagenes && anuncio.total_imagenes > 0) {
-        modalImageCounter.textContent = `1/${anuncio.total_imagenes} IMÁGENES`;
-        modalImageCounter.style.display = 'block';
+    // Mostrar/ocultar controles según cantidad de imágenes
+    if (currentImages.length > 1) {
+        document.querySelector('.modal-image-nav.prev-img').style.display = 'flex';
+        document.querySelector('.modal-image-nav.next-img').style.display = 'flex';
     } else {
-        modalImageCounter.style.display = 'none';
+        document.querySelector('.modal-image-nav.prev-img').style.display = 'none';
+        document.querySelector('.modal-image-nav.next-img').style.display = 'none';
     }
     
     // Actualizar información
