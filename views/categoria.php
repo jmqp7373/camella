@@ -379,51 +379,53 @@ try {
 }
 
 .btn-reveal-phone {
-    background: #3a8be8;
-    border: none;
+    background: #007bff;
+    border: 1px solid #007bff;
     color: white;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.25rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    min-width: 120px;
 }
 
 .btn-reveal-phone:hover {
-    background: #2870d1;
-    transform: scale(1.05);
+    background: #0056b3;
+    border-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .btn-reveal-phone:active {
-    transform: scale(0.95);
+    transform: translateY(0);
 }
 
 .btn-reveal-phone.revealed {
     background: #6c757d;
+    border-color: #6c757d;
 }
 
-.phone-display {
-    background: #f8f9fa;
-    border: 1px solid #dee2e6;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #2c3e50;
-    animation: fadeIn 0.3s ease;
+.btn-reveal-phone.revealed:hover {
+    background: #5a6268;
+    border-color: #545b62;
 }
 
-.phone-display i {
-    color: #28a745;
+.btn-reveal-phone .phone-text {
+    transition: opacity 0.15s ease-in-out;
+    display: inline-block;
+}
+
+.btn-reveal-phone i {
     margin-right: 0.25rem;
-}
-
-.phone-number {
-    letter-spacing: 0.5px;
 }
 
 @keyframes fadeIn {
@@ -584,15 +586,12 @@ try {
                                            title="Contactar por WhatsApp">
                                             <i class="fab fa-whatsapp"></i>&nbsp;Contactar
                                         </a>
-                                        <button class="btn-reveal-phone" 
+                                        <button class="btn-reveal-phone btn-sm" 
                                                 data-telefono="<?= htmlspecialchars($telefonoFormateado) ?>"
                                                 data-anuncio-id="<?= $anuncio['id'] ?>"
                                                 title="Ver número de teléfono">
-                                            <i class="fas fa-eye"></i>
+                                            <i class="fas fa-phone"></i>&nbsp;<span class="phone-text">Ver número</span>
                                         </button>
-                                        <div class="phone-display" id="phone-<?= $anuncio['id'] ?>" style="display: none;">
-                                            <i class="fas fa-phone"></i> <span class="phone-number"></span>
-                                        </div>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -659,27 +658,38 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             e.stopPropagation();
             
-            const anuncioId = this.dataset.anuncioId;
             const telefono = this.dataset.telefono;
-            const phoneDisplay = document.getElementById('phone-' + anuncioId);
-            const phoneNumber = phoneDisplay.querySelector('.phone-number');
+            const phoneText = this.querySelector('.phone-text');
+            const icon = this.querySelector('i');
             
-            // Toggle visibility
-            if (phoneDisplay.style.display === 'none') {
+            // Toggle visibility con transición suave
+            if (!this.classList.contains('revealed')) {
                 // Mostrar teléfono
-                phoneNumber.textContent = telefono;
-                phoneDisplay.style.display = 'inline-flex';
-                phoneDisplay.style.alignItems = 'center';
-                phoneDisplay.style.gap = '0.25rem';
                 this.classList.add('revealed');
-                this.innerHTML = '<i class="fas fa-eye-slash"></i>';
-                this.title = 'Ocultar número de teléfono';
+                icon.className = 'fas fa-phone-alt';
+                phoneText.style.opacity = '0';
+                
+                setTimeout(() => {
+                    phoneText.textContent = telefono;
+                    phoneText.style.opacity = '1';
+                }, 150);
+                
+                this.title = 'Ocultar número';
+                this.style.backgroundColor = '#6c757d';
+                this.style.borderColor = '#6c757d';
             } else {
                 // Ocultar teléfono
-                phoneDisplay.style.display = 'none';
-                this.classList.remove('revealed');
-                this.innerHTML = '<i class="fas fa-eye"></i>';
-                this.title = 'Ver número de teléfono';
+                phoneText.style.opacity = '0';
+                
+                setTimeout(() => {
+                    this.classList.remove('revealed');
+                    icon.className = 'fas fa-phone';
+                    phoneText.textContent = 'Ver número';
+                    phoneText.style.opacity = '1';
+                    this.title = 'Ver número de teléfono';
+                    this.style.backgroundColor = '';
+                    this.style.borderColor = '';
+                }, 150);
             }
         });
     });
