@@ -257,6 +257,15 @@ try {
     width: 100%;
     height: 200px;
     overflow: hidden;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.anuncio-image-wrapper:active {
+    cursor: grabbing;
 }
 
 .anuncio-image {
@@ -292,6 +301,32 @@ try {
     text-transform: uppercase;
     z-index: 10;
     pointer-events: none;
+}
+
+.anuncio-image-dots {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.3rem;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.anuncio-image-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.anuncio-image-dot.active {
+    background: rgba(0, 0, 0, 0.8);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: scale(1.3);
 }
 
 .anuncio-body {
@@ -987,11 +1022,12 @@ try {
                              'usuario_telefono' => $anuncio['usuario_telefono'] ?? ''
                          ]), ENT_QUOTES, 'UTF-8') ?>">
                         <!-- Imagen -->
-                        <div class="anuncio-image-wrapper">
+                        <div class="anuncio-image-wrapper" data-card-index="<?= $index ?>">
                             <?php if (!empty($anuncio['imagen_principal'])): ?>
                                 <img src="<?= app_url($anuncio['imagen_principal']) ?>" 
                                      alt="<?= htmlspecialchars($anuncio['titulo']) ?>" 
-                                     class="anuncio-image"
+                                     class="anuncio-image card-image"
+                                     data-card-index="<?= $index ?>"
                                      onerror="this.parentElement.innerHTML='<div class=\'anuncio-image-placeholder\'><i class=\'fas fa-image\'></i></div>'">
                             <?php else: ?>
                                 <div class="anuncio-image-placeholder">
@@ -1002,9 +1038,10 @@ try {
                             $total_imgs = isset($anuncio['total_imagenes']) ? intval($anuncio['total_imagenes']) : 0;
                             if ($total_imgs > 0): 
                             ?>
-                                <div class="anuncio-image-counter">
+                                <div class="anuncio-image-counter card-counter" data-card-index="<?= $index ?>">
                                     1/<?= $total_imgs ?> IMÁGENES
                                 </div>
+                                <div class="anuncio-image-dots card-dots" data-card-index="<?= $index ?>"></div>
                             <?php endif; ?>
                         </div>
                         
@@ -1185,8 +1222,24 @@ let currentIndex = 0;
 let currentImageIndex = 0;
 let currentImages = [];
 
+// Variables globales para las tarjetas del grid
+let cardImageIndices = {}; // {cardIndex: currentImageIndex}
+
 // Funciones globales (deben estar disponibles para onclick)
 function abrirModal(index) {
+    // Verificar si se acaba de hacer un gesto de deslizamiento en tarjeta
+    const deltaTouch = Math.abs(cardTouchEndX - cardTouchStartX);
+    const deltaMouse = Math.abs(cardMouseEndX - cardMouseStartX);
+    
+    if (deltaTouch > 50 || deltaMouse > 50) {
+        // Se hizo un gesto de deslizamiento, no abrir modal
+        cardTouchStartX = 0;
+        cardTouchEndX = 0;
+        cardMouseStartX = 0;
+        cardMouseEndX = 0;
+        return;
+    }
+    
     console.log('Abriendo modal para index:', index);
     console.log('Total anuncios:', anunciosData.length);
     if (index >= 0 && index < anunciosData.length) {
@@ -1280,7 +1333,7 @@ function actualizarDots() {
     }
 }
 
-// Variables para gestos táctiles y arrastre
+// Variables para gestos táctiles y arrastre (MODAL)
 let touchStartX = 0;
 let touchEndX = 0;
 let mouseStartX = 0;
@@ -1313,6 +1366,111 @@ function handleGestureEnd() {
     isDragging = false;
 }
 
+// Variables para gestos táctiles y arrastre (TARJETAS)
+let cardTouchStartX = 0;
+let cardTouchEndX = 0;
+let cardMouseStartX = 0;
+let cardMouseEndX = 0;
+let cardIsDragging = false;
+let currentCardIndex = null;
+
+function handleCardGestureEnd(cardIndex) {
+    if (currentCardIndex === null) return;
+    
+    const deltaX = cardTouchEndX !== 0 ? cardTouchEndX - cardTouchStartX : cardMouseEndX - cardMouseStartX;
+    const threshold = 50;
+    
+    if (Math.abs(deltaX) > threshold) {
+        if (deltaX > 0) {
+            navegarImagenCard(cardIndex, -1);
+        } else {
+            navegarImagenCard(cardIndex, 1);
+        }
+    }
+    
+    // Reset
+    cardTouchStartX = 0;
+    cardTouchEndX = 0;
+    cardMouseStartX = 0;
+    cardMouseEndX = 0;
+    cardIsDragging = false;
+    currentCardIndex = null;
+}
+
+function navegarImagenCard(cardIndex, direction) {
+    const anuncio = anunciosData[cardIndex];
+    if (!anuncio || !anuncio.imagenes || anuncio.imagenes.length <= 1) return;
+    
+    // Inicializar índice si no existe
+    if (cardImageIndices[cardIndex] === undefined) {
+        cardImageIndices[cardIndex] = 0;
+    }
+    
+    const newIndex = cardImageIndices[cardIndex] + direction;
+    if (newIndex >= 0 && newIndex < anuncio.imagenes.length) {
+        cardImageIndices[cardIndex] = newIndex;
+        actualizarImagenCard(cardIndex);
+    }
+}
+
+function actualizarImagenCard(cardIndex) {
+    const anuncio = anunciosData[cardIndex];
+    if (!anuncio || !anuncio.imagenes) return;
+    
+    const imageIndex = cardImageIndices[cardIndex] || 0;
+    const imageWrapper = document.querySelector(`.anuncio-image-wrapper[data-card-index="${cardIndex}"]`);
+    if (!imageWrapper) return;
+    
+    const img = imageWrapper.querySelector('.card-image');
+    const counter = imageWrapper.querySelector('.card-counter');
+    const dotsContainer = imageWrapper.querySelector('.card-dots');
+    
+    if (img && anuncio.imagenes[imageIndex]) {
+        let imageSrc = anuncio.imagenes[imageIndex].trim();
+        
+        // Construir URL correctamente
+        if (imageSrc.startsWith('http://') || imageSrc.startsWith('https://') || imageSrc.startsWith('//')) {
+            img.src = imageSrc;
+        } else if (imageSrc.startsWith('/')) {
+            img.src = window.location.origin + imageSrc;
+        } else {
+            const currentUrl = new URL(window.location.href);
+            const baseUrl = currentUrl.origin + currentUrl.pathname.substring(0, currentUrl.pathname.lastIndexOf('/') + 1);
+            img.src = baseUrl + imageSrc;
+        }
+    }
+    
+    // Actualizar contador
+    if (counter) {
+        counter.textContent = `${imageIndex + 1}/${anuncio.imagenes.length} IMÁGENES`;
+    }
+    
+    // Actualizar dots
+    if (dotsContainer && anuncio.imagenes.length > 1) {
+        dotsContainer.innerHTML = '';
+        anuncio.imagenes.forEach((_, idx) => {
+            const dot = document.createElement('div');
+            dot.className = 'anuncio-image-dot' + (idx === imageIndex ? ' active' : '');
+            dotsContainer.appendChild(dot);
+        });
+    }
+}
+
+function inicializarDotsCard(cardIndex) {
+    const anuncio = anunciosData[cardIndex];
+    if (!anuncio || !anuncio.imagenes || anuncio.imagenes.length <= 1) return;
+    
+    const dotsContainer = document.querySelector(`.card-dots[data-card-index="${cardIndex}"]`);
+    if (!dotsContainer) return;
+    
+    dotsContainer.innerHTML = '';
+    anuncio.imagenes.forEach((_, idx) => {
+        const dot = document.createElement('div');
+        dot.className = 'anuncio-image-dot' + (idx === 0 ? ' active' : '');
+        dotsContainer.appendChild(dot);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Cargar datos de anuncios
     const anuncioCards = document.querySelectorAll('[data-anuncio]');
@@ -1329,6 +1487,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Total anuncios loaded:', anunciosData.length);
     console.log('All anuncios data:', anunciosData);
+    
+    // Inicializar dots para cada tarjeta con múltiples imágenes
+    anunciosData.forEach((anuncio, index) => {
+        cardImageIndices[index] = 0;
+        inicializarDotsCard(index);
+    });
     
     // Manejar click en botones de revelar teléfono
     const btnRevealPhones = document.querySelectorAll('.btn-reveal-phone');
@@ -1417,6 +1581,66 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Cursor visual para indicar interacción
     modalImages.style.cursor = 'grab';
+    
+    // Eventos táctiles y de arrastre para tarjetas del grid
+    const imageWrappers = document.querySelectorAll('.anuncio-image-wrapper');
+    
+    imageWrappers.forEach(wrapper => {
+        const cardIndex = parseInt(wrapper.getAttribute('data-card-index'));
+        
+        // Touch events
+        wrapper.addEventListener('touchstart', function(e) {
+            cardTouchStartX = e.changedTouches[0].screenX;
+            currentCardIndex = cardIndex;
+        }, false);
+        
+        wrapper.addEventListener('touchend', function(e) {
+            cardTouchEndX = e.changedTouches[0].screenX;
+            handleCardGestureEnd(cardIndex);
+            // Prevenir que se abra el modal si hubo un gesto de deslizamiento
+            const deltaX = Math.abs(cardTouchEndX - cardTouchStartX);
+            if (deltaX > 50) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, false);
+        
+        // Mouse events
+        wrapper.addEventListener('mousedown', function(e) {
+            cardIsDragging = true;
+            cardMouseStartX = e.clientX;
+            currentCardIndex = cardIndex;
+            wrapper.style.cursor = 'grabbing';
+        }, false);
+        
+        wrapper.addEventListener('mousemove', function(e) {
+            if (cardIsDragging && currentCardIndex === cardIndex) {
+                cardMouseEndX = e.clientX;
+            }
+        }, false);
+        
+        wrapper.addEventListener('mouseup', function(e) {
+            if (cardIsDragging && currentCardIndex === cardIndex) {
+                cardMouseEndX = e.clientX;
+                handleCardGestureEnd(cardIndex);
+                wrapper.style.cursor = 'grab';
+                // Prevenir que se abra el modal si hubo un gesto de deslizamiento
+                const deltaX = Math.abs(cardMouseEndX - cardMouseStartX);
+                if (deltaX > 50) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
+        }, false);
+        
+        wrapper.addEventListener('mouseleave', function(e) {
+            if (cardIsDragging && currentCardIndex === cardIndex) {
+                cardMouseEndX = e.clientX;
+                handleCardGestureEnd(cardIndex);
+                wrapper.style.cursor = 'grab';
+            }
+        }, false);
+    });
 });
 
 function mostrarAnuncio(index) {
