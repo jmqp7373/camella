@@ -13,114 +13,59 @@ if (isset($_GET['logout']) && $_GET['logout'] === 'success') {
     echo '</div>';
 }
 
-// Intentar cargar categorías desde la base de datos
-$categorias = []; // Inicializar vacío, se llenará desde BD
+// Cargar categorías desde la base de datos
+$categorias = [];
 
 try {
-    // DEBUG: Mostrar información del directorio actual
-    echo "<!-- DEBUG INICIO -->";
-    echo "<!-- DEBUG: __DIR__ = " . __DIR__ . " -->";
+    // Cargar modelo de categorías
+    require_once __DIR__ . '/../models/Categorias.php';
     
-    // Cargar el modelo usando ruta relativa al archivo actual
-    $projectRoot = realpath(__DIR__ . '/..');
-    $modelPath = $projectRoot . '/models/Categorias.php';
+    $categoriasModel = new Categorias();
+    $categoriasDB = $categoriasModel->obtenerCategoriasConOficios();
     
-    // DEBUG: Mostrar rutas calculadas
-    echo "<!-- DEBUG: projectRoot = " . $projectRoot . " -->";
-    echo "<!-- DEBUG: modelPath = " . $modelPath . " -->";
-    echo "<!-- DEBUG: file_exists(modelPath) = " . (file_exists($modelPath) ? 'TRUE' : 'FALSE') . " -->";
+    // Mapa de íconos por nombre de categoría
+    $iconMap = [
+        'Aseo y Limpieza' => 'fas fa-broom',
+        'Cocina y Preparación de Alimentos' => 'fas fa-utensils',
+        'Cuidados y Acompañamiento' => 'fas fa-heart',
+        'Mantenimiento y Reparaciones' => 'fas fa-tools',
+        'Construcción y Obras' => 'fas fa-hard-hat',
+        'Servicios Logísticos y Transporte' => 'fas fa-truck',
+        'Belleza y Cuidado Personal' => 'fas fa-spa',
+        'Ventas y Atención al Cliente' => 'fas fa-handshake',
+        'Oficios Generales / Multiservicios' => 'fas fa-briefcase',
+        'Cuidado de Animales' => 'fas fa-paw',
+        'Producción y Manufactura' => 'fas fa-industry',
+        'Eventos y Actividades Especiales' => 'fas fa-calendar-check',
+        'Servicios Digitales y Contenidos' => 'fas fa-photo-video',
+        'Educación y Formación' => 'fas fa-chalkboard-teacher',
+        'Tecnología y Soporte Digital' => 'fas fa-desktop',
+        'Agricultura y Medio Ambiente' => 'fas fa-seedling',
+        'Administración y Servicios Empresariales' => 'fas fa-folder-open',
+        'Moda y Confección' => 'fas fa-cut',
+    ];
 
-    if (file_exists($modelPath)) {
-        echo "<!-- DEBUG: Archivo modelo encontrado, intentando cargar... -->";
-        
-        require_once $modelPath;
-        
-        echo "<!-- DEBUG: Modelo cargado, creando instancia... -->";
-        $categoriasModel = new Categorias();
-        
-        echo "<!-- DEBUG: Instancia creada, llamando obtenerCategoriasConOficios()... -->";
-        $categoriasDB = $categoriasModel->obtenerCategoriasConOficios();
-        
-        // DEBUG: Ver qué devuelve la BD
-        echo "<!-- DEBUG: categoriasDB type = " . gettype($categoriasDB) . " -->";
-        echo "<!-- DEBUG: categoriasDB count = " . (is_array($categoriasDB) ? count($categoriasDB) : 'N/A') . " -->";
-        echo "<!-- DEBUG: categoriasDB empty = " . (empty($categoriasDB) ? 'TRUE' : 'FALSE') . " -->";
-        
-        if (is_array($categoriasDB) && count($categoriasDB) > 0) {
-            echo "<!-- DEBUG: Primera categoría: " . json_encode($categoriasDB[0]) . " -->";
-        }
-        
-        // Mapa de íconos por nombre de categoría (si la BD no trae "icono")
-        $iconMap = [
-            'Aseo y Limpieza' => 'fas fa-broom',
-            'Cocina y Preparación de Alimentos' => 'fas fa-utensils',
-            'Cuidados y Acompañamiento' => 'fas fa-heart',
-            'Mantenimiento y Reparaciones' => 'fas fa-tools',
-            'Construcción y Obras' => 'fas fa-hard-hat',
-            'Servicios Logísticos y Transporte' => 'fas fa-truck',
-            'Belleza y Cuidado Personal' => 'fas fa-spa',
-            'Ventas y Atención al Cliente' => 'fas fa-handshake',
-            'Oficios Generales / Multiservicios' => 'fas fa-briefcase',
-            'Cuidado de Animales' => 'fas fa-paw',
-            'Producción y Manufactura' => 'fas fa-industry',
-            'Eventos y Actividades Especiales' => 'fas fa-calendar-check',
-            // Categorías v1.1
-            'Servicios Digitales y Contenidos' => 'fas fa-photo-video',
-            'Educación y Formación' => 'fas fa-chalkboard-teacher',
-            'Tecnología y Soporte Digital' => 'fas fa-desktop',
-            'Agricultura y Medio Ambiente' => 'fas fa-seedling',
-            'Administración y Servicios Empresariales' => 'fas fa-folder-open',
-            'Moda y Confección' => 'fas fa-cut',
-        ];
-
-        if (is_array($categoriasDB) && !empty($categoriasDB)) {
-            echo "<!-- DEBUG: Procesando categorías de BD... -->";
-            foreach ($categoriasDB as &$c) {
-                if (empty($c['icono'])) {
-                    $c['icono'] = $iconMap[$c['nombre']] ?? 'fas fa-circle-question';
-                }
-                if (!isset($c['total_oficios'])) {
-                    $c['total_oficios'] = 0; // fallback si el modelo no trae conteo
-                }
+    if (is_array($categoriasDB) && !empty($categoriasDB)) {
+        foreach ($categoriasDB as &$c) {
+            // Asignar ícono si no tiene
+            if (empty($c['icono'])) {
+                $c['icono'] = $iconMap[$c['nombre']] ?? 'fas fa-briefcase';
             }
-            unset($c);
-            $categorias = $categoriasDB;
-
-            // Asegurar oficios por categoría (BD real)
-            if (isset($categoriasModel) && is_array($categorias)) {
-                foreach ($categorias as &$cat) {
-                    $cat['oficios'] = $categoriasModel->obtenerOficiosPorCategoria((int)$cat['id']);
-                }
-                unset($cat);
+            // Asegurar que tenga conteo de oficios
+            if (!isset($c['total_oficios'])) {
+                $c['total_oficios'] = 0;
             }
-
-            echo "<!-- DEBUG: Categorías BD asignadas exitosamente -->";
-        } else {
-            echo "<!-- DEBUG: categoriasDB vacío o inválido, usando fallback -->";
+            // Obtener oficios de la categoría
+            $c['oficios'] = $categoriasModel->obtenerOficiosPorCategoria((int)$c['id']);
         }
-    } else {
-        echo "<!-- DEBUG: Archivo modelo NO encontrado -->";
-        echo "<!-- DEBUG: Directorio models existe? " . (is_dir($projectRoot . '/models') ? 'TRUE' : 'FALSE') . " -->";
-        if (is_dir($projectRoot . '/models')) {
-            $files = scandir($projectRoot . '/models');
-            echo "<!-- DEBUG: Archivos en /models: " . implode(', ', $files) . " -->";
-        }
+        unset($c);
+        $categorias = $categoriasDB;
     }
     
-    echo "<!-- DEBUG FIN -->";
-    
 } catch (Exception $e) {
-    // Si hay error, dejar categorías vacías (BD real)
-    echo "<!-- DEBUG: EXCEPCION CAPTURADA: " . $e->getMessage() . " -->";
-    echo "<!-- DEBUG: Archivo: " . $e->getFile() . " -->";
-    echo "<!-- DEBUG: Línea: " . $e->getLine() . " -->";
-    error_log("Error cargando categorías dinámicas: " . $e->getMessage());
-    $categorias = []; // Asegurar que esté vacío si hay error
+    error_log("Error cargando categorías en home: " . $e->getMessage());
+    $categorias = [];
 }
-
-// DEBUG FINAL: Mostrar qué categorías se van a usar
-echo "<!-- DEBUG FINAL: Usando " . count($categorias) . " categorías -->";
-echo "<!-- DEBUG FINAL: Primera categoría a mostrar: " . (isset($categorias[0]) ? $categorias[0]['nombre'] : 'NINGUNA') . " -->";
 ?>
 
 <div class="home-hero">
