@@ -388,7 +388,7 @@ try {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease, width 0.3s ease;
     font-size: 0.875rem;
     font-weight: 400;
     line-height: 1.5;
@@ -396,6 +396,11 @@ try {
     white-space: nowrap;
     vertical-align: middle;
     min-width: 90px;
+    width: auto;
+}
+
+.btn-reveal-phone.revealed {
+    min-width: 140px;
 }
 
 .btn-reveal-phone:hover {
@@ -407,16 +412,6 @@ try {
 
 .btn-reveal-phone:active {
     transform: translateY(0);
-}
-
-.btn-reveal-phone.revealed {
-    background: #6c757d;
-    border-color: #6c757d;
-}
-
-.btn-reveal-phone.revealed:hover {
-    background: #5a6268;
-    border-color: #545b62;
 }
 
 .btn-reveal-phone .phone-text {
