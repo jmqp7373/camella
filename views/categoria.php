@@ -1039,7 +1039,7 @@ try {
                             if ($total_imgs > 0): 
                             ?>
                                 <div class="anuncio-image-counter card-counter" data-card-index="<?= $index ?>">
-                                    1/<?= $total_imgs ?> IMÁGENES
+                                    <?= $total_imgs ?> IMÁGENES
                                 </div>
                                 <div class="anuncio-image-dots card-dots" data-card-index="<?= $index ?>"></div>
                             <?php endif; ?>
@@ -1304,7 +1304,7 @@ function mostrarImagenActual() {
         modalImagePlaceholder.style.display = 'none';
         
         // Actualizar contador
-        modalImageCounter.textContent = `${currentImageIndex + 1}/${currentImages.length} IMÁGENES`;
+        modalImageCounter.textContent = `${currentImages.length} IMÁGENES`;
         modalImageCounter.style.display = 'block';
         
         // Actualizar dots
