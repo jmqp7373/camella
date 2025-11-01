@@ -303,30 +303,52 @@ try {
     pointer-events: none;
 }
 
-.anuncio-image-dots {
+.anuncio-image-controls {
     position: absolute;
     bottom: 0.5rem;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0.5rem;
     display: flex;
-    gap: 0.3rem;
+    gap: 0.4rem;
     z-index: 10;
-    pointer-events: none;
 }
 
-.anuncio-image-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
-    transition: all 0.3s ease;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+.anuncio-control-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.75rem;
 }
 
-.anuncio-image-dot.active {
-    background: rgba(0, 0, 0, 0.8);
-    border-color: rgba(255, 255, 255, 0.8);
-    transform: scale(1.3);
+.anuncio-control-btn:hover {
+    background: rgba(0, 123, 255, 0.9);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.1);
+}
+
+.anuncio-control-btn:active {
+    transform: scale(0.95);
+}
+
+.anuncio-control-btn.playing {
+    background: rgba(0, 123, 255, 0.9);
+}
+
+.anuncio-control-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.anuncio-control-btn:disabled:hover {
+    background: rgba(0, 0, 0, 0.7);
+    transform: scale(1);
 }
 
 .anuncio-body {
@@ -1041,7 +1063,22 @@ try {
                                 <div class="anuncio-image-counter card-counter" data-card-index="<?= $index ?>">
                                     <?= $total_imgs ?> IMÁGENES
                                 </div>
-                                <div class="anuncio-image-dots card-dots" data-card-index="<?= $index ?>"></div>
+                                <?php if ($total_imgs > 1): ?>
+                                <div class="anuncio-image-controls card-controls" data-card-index="<?= $index ?>">
+                                    <button class="anuncio-control-btn btn-back" title="Anterior" onclick="event.stopPropagation()">
+                                        <i class="fas fa-step-backward"></i>
+                                    </button>
+                                    <button class="anuncio-control-btn btn-play" title="Reproducir" onclick="event.stopPropagation()">
+                                        <i class="fas fa-play"></i>
+                                    </button>
+                                    <button class="anuncio-control-btn btn-pause" title="Pausar" style="display: none;" onclick="event.stopPropagation()">
+                                        <i class="fas fa-pause"></i>
+                                    </button>
+                                    <button class="anuncio-control-btn btn-forward" title="Siguiente" onclick="event.stopPropagation()">
+                                        <i class="fas fa-step-forward"></i>
+                                    </button>
+                                </div>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                         
@@ -1224,6 +1261,8 @@ let currentImages = [];
 
 // Variables globales para las tarjetas del grid
 let cardImageIndices = {}; // {cardIndex: currentImageIndex}
+let cardAutoplayIntervals = {}; // {cardIndex: intervalId}
+let cardIsPlaying = {}; // {cardIndex: boolean}
 
 // Funciones globales (deben estar disponibles para onclick)
 function abrirModal(index) {
@@ -1239,6 +1278,11 @@ function abrirModal(index) {
         cardMouseEndX = 0;
         return;
     }
+    
+    // Pausar todos los autoplays antes de abrir modal
+    Object.keys(cardAutoplayIntervals).forEach(cardIdx => {
+        pauseCard(parseInt(cardIdx));
+    });
     
     console.log('Abriendo modal para index:', index);
     console.log('Total anuncios:', anunciosData.length);
@@ -1381,6 +1425,9 @@ function handleCardGestureEnd(cardIndex) {
     const threshold = 50;
     
     if (Math.abs(deltaX) > threshold) {
+        // Pausar autoplay si está activo
+        pauseCard(cardIndex);
+        
         if (deltaX > 0) {
             navegarImagenCard(cardIndex, -1);
         } else {
@@ -1423,7 +1470,7 @@ function actualizarImagenCard(cardIndex) {
     
     const img = imageWrapper.querySelector('.card-image');
     const counter = imageWrapper.querySelector('.card-counter');
-    const dotsContainer = imageWrapper.querySelector('.card-dots');
+    const controlsContainer = imageWrapper.querySelector('.card-controls');
     
     if (img && anuncio.imagenes[imageIndex]) {
         let imageSrc = anuncio.imagenes[imageIndex].trim();
@@ -1442,33 +1489,115 @@ function actualizarImagenCard(cardIndex) {
     
     // Actualizar contador
     if (counter) {
-        counter.textContent = `${anuncio.imagenes.length} IMÁGENES`;
+        counter.textContent = `${imageIndex + 1}/${anuncio.imagenes.length} IMÁGENES`;
     }
     
-    // Actualizar dots
-    if (dotsContainer && anuncio.imagenes.length > 1) {
-        dotsContainer.innerHTML = '';
-        anuncio.imagenes.forEach((_, idx) => {
-            const dot = document.createElement('div');
-            dot.className = 'anuncio-image-dot' + (idx === imageIndex ? ' active' : '');
-            dotsContainer.appendChild(dot);
-        });
+    // Actualizar botones
+    if (controlsContainer) {
+        const btnBack = controlsContainer.querySelector('.btn-back');
+        const btnForward = controlsContainer.querySelector('.btn-forward');
+        
+        if (btnBack) {
+            btnBack.disabled = (imageIndex === 0);
+        }
+        if (btnForward) {
+            btnForward.disabled = (imageIndex === anuncio.imagenes.length - 1);
+        }
     }
 }
 
-function inicializarDotsCard(cardIndex) {
+function playCard(cardIndex) {
     const anuncio = anunciosData[cardIndex];
     if (!anuncio || !anuncio.imagenes || anuncio.imagenes.length <= 1) return;
     
-    const dotsContainer = document.querySelector(`.card-dots[data-card-index="${cardIndex}"]`);
-    if (!dotsContainer) return;
+    // Detener cualquier reproducción previa
+    stopCard(cardIndex);
     
-    dotsContainer.innerHTML = '';
-    anuncio.imagenes.forEach((_, idx) => {
-        const dot = document.createElement('div');
-        dot.className = 'anuncio-image-dot' + (idx === 0 ? ' active' : '');
-        dotsContainer.appendChild(dot);
-    });
+    cardIsPlaying[cardIndex] = true;
+    
+    // Actualizar UI
+    const controlsContainer = document.querySelector(`.card-controls[data-card-index="${cardIndex}"]`);
+    if (controlsContainer) {
+        controlsContainer.querySelector('.btn-play').style.display = 'none';
+        controlsContainer.querySelector('.btn-pause').style.display = 'flex';
+        controlsContainer.querySelector('.btn-pause').classList.add('playing');
+    }
+    
+    // Iniciar autoplay cada 2 segundos
+    cardAutoplayIntervals[cardIndex] = setInterval(() => {
+        const currentIndex = cardImageIndices[cardIndex] || 0;
+        const nextIndex = (currentIndex + 1) % anuncio.imagenes.length;
+        cardImageIndices[cardIndex] = nextIndex;
+        actualizarImagenCard(cardIndex);
+    }, 2000);
+}
+
+function pauseCard(cardIndex) {
+    stopCard(cardIndex);
+    
+    // Actualizar UI
+    const controlsContainer = document.querySelector(`.card-controls[data-card-index="${cardIndex}"]`);
+    if (controlsContainer) {
+        controlsContainer.querySelector('.btn-play').style.display = 'flex';
+        controlsContainer.querySelector('.btn-pause').style.display = 'none';
+        controlsContainer.querySelector('.btn-pause').classList.remove('playing');
+    }
+}
+
+function stopCard(cardIndex) {
+    if (cardAutoplayIntervals[cardIndex]) {
+        clearInterval(cardAutoplayIntervals[cardIndex]);
+        delete cardAutoplayIntervals[cardIndex];
+    }
+    cardIsPlaying[cardIndex] = false;
+}
+
+function inicializarControlesCard(cardIndex) {
+    const anuncio = anunciosData[cardIndex];
+    if (!anuncio || !anuncio.imagenes || anuncio.imagenes.length <= 1) return;
+    
+    const controlsContainer = document.querySelector(`.card-controls[data-card-index="${cardIndex}"]`);
+    if (!controlsContainer) return;
+    
+    const btnBack = controlsContainer.querySelector('.btn-back');
+    const btnPlay = controlsContainer.querySelector('.btn-play');
+    const btnPause = controlsContainer.querySelector('.btn-pause');
+    const btnForward = controlsContainer.querySelector('.btn-forward');
+    
+    // Eventos de los botones
+    if (btnBack) {
+        btnBack.addEventListener('click', (e) => {
+            e.stopPropagation();
+            pauseCard(cardIndex);
+            navegarImagenCard(cardIndex, -1);
+        });
+    }
+    
+    if (btnPlay) {
+        btnPlay.addEventListener('click', (e) => {
+            e.stopPropagation();
+            playCard(cardIndex);
+        });
+    }
+    
+    if (btnPause) {
+        btnPause.addEventListener('click', (e) => {
+            e.stopPropagation();
+            pauseCard(cardIndex);
+        });
+    }
+    
+    if (btnForward) {
+        btnForward.addEventListener('click', (e) => {
+            e.stopPropagation();
+            pauseCard(cardIndex);
+            navegarImagenCard(cardIndex, 1);
+        });
+    }
+    
+    // Estado inicial
+    btnBack.disabled = true;
+    btnForward.disabled = (anuncio.imagenes.length <= 1);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1488,10 +1617,11 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Total anuncios loaded:', anunciosData.length);
     console.log('All anuncios data:', anunciosData);
     
-    // Inicializar dots para cada tarjeta con múltiples imágenes
+    // Inicializar controles para cada tarjeta con múltiples imágenes
     anunciosData.forEach((anuncio, index) => {
         cardImageIndices[index] = 0;
-        inicializarDotsCard(index);
+        cardIsPlaying[index] = false;
+        inicializarControlesCard(index);
     });
     
     // Manejar click en botones de revelar teléfono
