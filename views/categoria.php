@@ -743,11 +743,11 @@ try {
     }
     
     .modal-close {
-        position: fixed;
-        top: 70px;
-        right: 15px;
-        width: 42px;
-        height: 42px;
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 44px;
+        height: 44px;
         font-size: 1.4rem;
         background: rgba(220, 53, 69, 0.95);
         color: white;
