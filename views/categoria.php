@@ -1442,7 +1442,7 @@ function actualizarImagenCard(cardIndex) {
     
     // Actualizar contador
     if (counter) {
-        counter.textContent = `${imageIndex + 1}/${anuncio.imagenes.length} IMÁGENES`;
+        counter.textContent = `${anuncio.imagenes.length} IMÁGENES`;
     }
     
     // Actualizar dots
