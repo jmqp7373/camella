@@ -554,27 +554,30 @@ try {
 
 .modal-close {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    background: white;
-    border: none;
-    width: 40px;
-    height: 40px;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #dc3545;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     cursor: pointer;
-    z-index: 10;
+    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    color: #333;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    color: #dc3545;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
     transition: all 0.2s ease;
+    font-weight: bold;
 }
 
 .modal-close:hover {
-    background: #f8f9fa;
+    background: #dc3545;
+    color: white;
     transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.6);
 }
 
 .modal-nav {
@@ -667,6 +670,7 @@ try {
     padding: 2rem;
     overflow-y: auto;
     max-height: 500px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .modal-oficio {
@@ -722,9 +726,27 @@ try {
 }
 
 @media (max-width: 768px) {
+    .anuncio-modal {
+        align-items: flex-start;
+        padding: 0;
+    }
+    
     .modal-container {
-        width: 95%;
-        margin: 1rem auto;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 0;
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+    
+    .modal-close {
+        top: 0.5rem;
+        right: 0.5rem;
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+        background: rgba(255, 255, 255, 0.98);
     }
     
     .modal-content {
@@ -733,17 +755,30 @@ try {
     
     .modal-image-main,
     .modal-image-placeholder {
-        height: 300px;
+        height: 250px;
     }
     
     .modal-info {
         max-height: none;
+        padding: 1.5rem;
+    }
+    
+    .modal-titulo {
+        font-size: 1.35rem;
+    }
+    
+    .modal-descripcion {
+        font-size: 0.95rem;
+    }
+    
+    .modal-precio {
+        font-size: 1.75rem;
     }
     
     .modal-nav {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
     }
     
     .modal-nav.prev {
@@ -1138,9 +1173,28 @@ function mostrarAnuncio(index) {
     const modalImageCounter = document.getElementById('modalImageCounter');
     
     if (anuncio.imagen_principal) {
-        modalImage.src = '<?= app_url('') ?>' + anuncio.imagen_principal;
+        // Construir URL correctamente
+        const baseUrl = window.location.origin + '/camella.com.co/';
+        let imageSrc = anuncio.imagen_principal;
+        
+        // Si la imagen ya tiene la URL completa o empieza con /, úsala directamente
+        if (imageSrc.startsWith('http') || imageSrc.startsWith('//')) {
+            modalImage.src = imageSrc;
+        } else if (imageSrc.startsWith('/')) {
+            modalImage.src = window.location.origin + imageSrc;
+        } else {
+            modalImage.src = baseUrl + imageSrc;
+        }
+        
         modalImage.style.display = 'block';
         modalImagePlaceholder.style.display = 'none';
+        
+        // Manejo de error de carga de imagen
+        modalImage.onerror = function() {
+            console.error('Error loading image:', this.src);
+            modalImage.style.display = 'none';
+            modalImagePlaceholder.style.display = 'flex';
+        };
     } else {
         modalImage.style.display = 'none';
         modalImagePlaceholder.style.display = 'flex';
