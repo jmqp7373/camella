@@ -160,7 +160,7 @@ echo "<!-- DEBUG FINAL: Primera categoría a mostrar: " . (isset($categorias[0])
                 <div class="category-card" data-categoria-id="<?= $categoria['id'] ?>">
                     <h3 class="category-title">
                         <span class="category-icon"><i class="<?= htmlspecialchars($categoria['icono']) ?>" style="<?= ($categoria['icono'] === 'fas fa-circle-question') ? 'opacity: 0.5; color: #dc3545;' : '' ?>"></i></span>
-                        <?= htmlspecialchars(ucwords(mb_strtolower($categoria['nombre']))) ?>
+                        <?= htmlspecialchars(ucwords(mb_strtolower($categoria['nombre']))) ?> (<?= $categoria['total_anuncios'] ?? 0 ?>)
                     </h3>
                     
                     <?php if (!empty($categoria['oficios'])): ?>
@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Manejar clic en oficios específicos
+    // Manejar clic en oficios específicos - REDIRIGIR A LA CATEGORÍA
     const oficios = document.querySelectorAll('.oficio-item');
     oficios.forEach(oficio => {
         oficio.addEventListener('click', function(e) {
@@ -315,8 +315,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             console.log('Oficio seleccionado:', oficioId, 'de categoría:', categoriaId);
             
-            // Redirigir a la vista de oficio
-            window.location.href = `index.php?view=oficio&id=${oficioId}`;
+            // Redirigir a la vista de CATEGORÍA (no de oficio)
+            window.location.href = `index.php?view=categoria&id=${categoriaId}`;
         });
     });
     

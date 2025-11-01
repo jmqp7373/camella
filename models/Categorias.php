@@ -34,14 +34,19 @@ class Categorias extends BaseModel
                 c.descripcion,
                 c.icono,
                 c.activo,
-                COALESCE(COUNT(o.id), 0) AS total_oficios
+                COALESCE(COUNT(o.id), 0) AS total_oficios,
+                (SELECT COUNT(*) 
+                 FROM anuncios a 
+                 INNER JOIN oficios o2 ON a.oficio_id = o2.id 
+                 WHERE o2.categoria_id = c.id 
+                 AND a.status = 'activo') AS total_anuncios
             FROM categorias c
             LEFT JOIN oficios o 
                 ON o.categoria_id = c.id 
                AND o.activo = 1
             WHERE c.activo = 1
             GROUP BY c.id, c.nombre, c.descripcion, c.icono, c.activo
-            ORDER BY c.id ASC
+            ORDER BY total_anuncios DESC, c.nombre ASC
         ";
 
         try {

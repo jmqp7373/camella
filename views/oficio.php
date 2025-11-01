@@ -106,10 +106,11 @@ try {
             a.titulo,
             a.descripcion,
             a.precio,
-            a.imagen_principal,
             a.created_at,
             u.phone as usuario_nombre,
-            u.phone as usuario_telefono
+            u.phone as usuario_telefono,
+            (SELECT ai.ruta FROM anuncio_imagenes ai WHERE ai.anuncio_id = a.id ORDER BY ai.orden LIMIT 1) as imagen_principal,
+            (SELECT COUNT(*) FROM anuncio_imagenes ai WHERE ai.anuncio_id = a.id) as total_imagenes
         FROM anuncios a
         LEFT JOIN users u ON a.user_id = u.id
         WHERE a.oficio_id = ?
@@ -218,22 +219,44 @@ try {
     border-color: #28a745;
 }
 
-.anuncio-image {
+.anuncio-image-wrapper {
+    position: relative;
     width: 100%;
     height: 200px;
+    overflow: hidden;
+}
+
+.anuncio-image {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
 .anuncio-image-placeholder {
     width: 100%;
-    height: 200px;
+    height: 100%;
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 4rem;
     color: white;
+}
+
+.anuncio-image-counter {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    text-transform: uppercase;
 }
 
 .anuncio-body {
@@ -338,6 +361,65 @@ try {
     color: #6c757d;
 }
 
+.btn-reveal-phone {
+    background: #3a8be8;
+    border: none;
+    color: white;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.btn-reveal-phone:hover {
+    background: #2870d1;
+    transform: scale(1.05);
+}
+
+.btn-reveal-phone:active {
+    transform: scale(0.95);
+}
+
+.btn-reveal-phone.revealed {
+    background: #6c757d;
+}
+
+.phone-display {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2c3e50;
+    animation: fadeIn 0.3s ease;
+}
+
+.phone-display i {
+    color: #28a745;
+    margin-right: 0.25rem;
+}
+
+.phone-number {
+    letter-spacing: 0.5px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (max-width: 768px) {
     .oficio-title {
         font-size: 2rem;
@@ -389,33 +471,41 @@ try {
 </div>
 
 <!-- Grid de Anuncios -->
-<div class="container mb-5">
+<div class="container-fluid px-4 mb-5">
     <?php if (empty($anuncios)): ?>
         <!-- Sin anuncios -->
         <div class="no-anuncios">
             <i class="fas fa-inbox"></i>
             <h3>Aún no hay publicaciones disponibles para este oficio</h3>
-            <p>Sé el primero en ofrecer servicios de <strong><?= htmlspecialchars($oficio['titulo']) ?></strong></p>
-            <a href="<?= app_url('index.php?view=publicar-oferta') ?>" class="btn btn-success mt-3">
-                <i class="fas fa-plus"></i> Publicar un anuncio
+            <p style="padding-bottom: 20px;">Sé el primero en ofrecer servicios de <strong><?= htmlspecialchars($oficio['titulo']) ?></strong></p>
+            <a href="<?= app_url('index.php?view=loginPhone') ?>" class="btn btn-publish mt-3">
+                + Publícate
             </a>
         </div>
     <?php else: ?>
         <!-- Grid de anuncios -->
-        <div class="row g-4">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem;">
             <?php foreach ($anuncios as $anuncio): ?>
-                <div class="col-12 col-md-6 col-lg-4">
+                <div>
                     <div class="anuncio-card">
                         <!-- Imagen -->
-                        <?php if (!empty($anuncio['imagen_principal']) && file_exists(__DIR__ . '/../' . $anuncio['imagen_principal'])): ?>
-                            <img src="<?= app_url($anuncio['imagen_principal']) ?>" 
-                                 alt="<?= htmlspecialchars($anuncio['titulo']) ?>" 
-                                 class="anuncio-image">
-                        <?php else: ?>
-                            <div class="anuncio-image-placeholder">
-                                <i class="fas fa-image"></i>
-                            </div>
-                        <?php endif; ?>
+                        <div class="anuncio-image-wrapper">
+                            <?php if (!empty($anuncio['imagen_principal'])): ?>
+                                <img src="<?= app_url($anuncio['imagen_principal']) ?>" 
+                                     alt="<?= htmlspecialchars($anuncio['titulo']) ?>" 
+                                     class="anuncio-image"
+                                     onerror="this.parentElement.innerHTML='<div class=\'anuncio-image-placeholder\'><i class=\'fas fa-image\'></i></div>'">
+                            <?php else: ?>
+                                <div class="anuncio-image-placeholder">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                            <?php endif; ?>
+                            <?php if ($anuncio['total_imagenes'] > 0): ?>
+                                <div class="anuncio-image-counter">
+                                    1/<?= $anuncio['total_imagenes'] ?> IMÁGENES
+                                </div>
+                            <?php endif; ?>
+                        </div>
                         
                         <!-- Contenido -->
                         <div class="anuncio-body">
@@ -464,14 +554,33 @@ try {
                                     </div>
                                 </div>
                                 
-                                <div>
-                                    <?php if (!empty($anuncio['usuario_telefono'])): ?>
-                                        <a href="https://wa.me/57<?= htmlspecialchars($anuncio['usuario_telefono']) ?>?text=Hola, vi tu anuncio: <?= urlencode($anuncio['titulo']) ?>" 
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <?php if (!empty($anuncio['usuario_telefono'])): 
+                                        // Limpiar número de teléfono (quitar espacios, guiones, paréntesis)
+                                        $telefono = preg_replace('/[^0-9]/', '', $anuncio['usuario_telefono']);
+                                        // Si no empieza con 57, agregarlo
+                                        if (substr($telefono, 0, 2) !== '57') {
+                                            $telefono = '57' . $telefono;
+                                        }
+                                        // Formatear para mostrar
+                                        $telefonoFormateado = '+57 ' . substr($telefono, 2, 3) . ' ' . substr($telefono, 5);
+                                    ?>
+                                        <a href="https://wa.me/<?= htmlspecialchars($telefono) ?>?text=Hola,%20vi%20tu%20anuncio:%20<?= urlencode($anuncio['titulo']) ?>" 
                                            class="btn btn-success btn-sm" 
                                            target="_blank"
+                                           rel="noopener noreferrer"
                                            title="Contactar por WhatsApp">
                                             <i class="fab fa-whatsapp"></i> Contactar
                                         </a>
+                                        <button class="btn-reveal-phone" 
+                                                data-telefono="<?= htmlspecialchars($telefonoFormateado) ?>"
+                                                data-anuncio-id="<?= $anuncio['id'] ?>"
+                                                title="Ver número de teléfono">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <div class="phone-display" id="phone-<?= $anuncio['id'] ?>" style="display: none;">
+                                            <i class="fas fa-phone"></i> <span class="phone-number"></span>
+                                        </div>
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -527,3 +636,40 @@ try {
         <?php endif; ?>
     <?php endif; ?>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Manejar click en botones de revelar teléfono
+    const btnRevealPhones = document.querySelectorAll('.btn-reveal-phone');
+    
+    btnRevealPhones.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const anuncioId = this.dataset.anuncioId;
+            const telefono = this.dataset.telefono;
+            const phoneDisplay = document.getElementById('phone-' + anuncioId);
+            const phoneNumber = phoneDisplay.querySelector('.phone-number');
+            
+            // Toggle visibility
+            if (phoneDisplay.style.display === 'none') {
+                // Mostrar teléfono
+                phoneNumber.textContent = telefono;
+                phoneDisplay.style.display = 'inline-flex';
+                phoneDisplay.style.alignItems = 'center';
+                phoneDisplay.style.gap = '0.25rem';
+                this.classList.add('revealed');
+                this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                this.title = 'Ocultar número de teléfono';
+            } else {
+                // Ocultar teléfono
+                phoneDisplay.style.display = 'none';
+                this.classList.remove('revealed');
+                this.innerHTML = '<i class="fas fa-eye"></i>';
+                this.title = 'Ver número de teléfono';
+            }
+        });
+    });
+});
+</script>
