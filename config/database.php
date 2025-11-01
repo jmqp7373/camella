@@ -37,16 +37,16 @@ function getPDO(): PDO {
     try {
         $pdo = new PDO($dsn, DB_USER, DB_PASS, $options);
         
-        // Log de conexión exitosa (solo en modo debug)
-        if (defined('DEBUG_MODE') && DEBUG_MODE) {
-            error_log("✅ Conexión PDO exitosa a: " . DB_NAME);
-        }
+        // Log de conexión exitosa
+        error_log("INFO: Conexión PDO establecida correctamente a BD: " . DB_NAME);
         
         return $pdo;
         
     } catch (PDOException $e) {
-        // Log del error
-        error_log("❌ Error PDO: " . $e->getMessage());
+        // Log detallado del error
+        error_log("ERROR CRÍTICO en getPDO(): " . $e->getMessage());
+        error_log("Host: " . DB_HOST . " | DB: " . DB_NAME . " | User: " . DB_USER);
+        error_log("DSN: " . $dsn);
         
         // Lanzar excepción con mensaje personalizado
         throw new PDOException('Error conectando a BD: ' . $e->getMessage());

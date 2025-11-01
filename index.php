@@ -9,7 +9,9 @@ session_start();
 
 // Configuraciones básicas
 error_reporting(E_ALL);
-ini_set('display_errors', 0); // Producción
+ini_set('display_errors', 0); // Producción - cambiar a 1 solo para depuración temporal
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/logs/php_errors.log');
 
 // Función para sanitizar entradas
 function sanitize_input($data) {

@@ -8,11 +8,17 @@ class Categorias extends BaseModel
     public function __construct() {
         parent::__construct();
         try {
-            // Load database configuration
+            // Load database configuration con ruta absoluta
             require_once __DIR__ . '/../config/database.php';
             $this->pdo = getPDO();
+            
+            if (!$this->pdo) {
+                error_log("ERROR: No se pudo obtener conexión PDO en Categorias::__construct()");
+                throw new Exception("No se pudo conectar a la base de datos");
+            }
         } catch (Exception $e) {
-            error_log("Error conectando BD en Categorias: " . $e->getMessage());
+            error_log("ERROR CRÍTICO conectando BD en Categorias: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
             $this->pdo = null;
         }
     }
@@ -24,6 +30,7 @@ class Categorias extends BaseModel
     public function obtenerCategoriasConOficios(): array
     {
         if (!$this->pdo) {
+            error_log("ERROR: PDO no disponible en obtenerCategoriasConOficios()");
             return [];
         }
 
@@ -52,9 +59,18 @@ class Categorias extends BaseModel
         try {
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
-            return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            $resultado = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?: [];
+            
+            if (empty($resultado)) {
+                error_log("ADVERTENCIA: obtenerCategoriasConOficios() devolvió 0 resultados");
+            } else {
+                error_log("INFO: obtenerCategoriasConOficios() devolvió " . count($resultado) . " categorías");
+            }
+            
+            return $resultado;
         } catch (Exception $e) {
-            error_log("Error obteniendo categorías: " . $e->getMessage());
+            error_log("ERROR obteniendo categorías: " . $e->getMessage());
+            error_log("SQL ejecutado: " . $sql);
             return [];
         }
     }

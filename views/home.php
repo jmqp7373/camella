@@ -17,11 +17,18 @@ if (isset($_GET['logout']) && $_GET['logout'] === 'success') {
 $categorias = [];
 
 try {
-    // Cargar modelo de categorías
+    // Cargar modelo de categorías con ruta absoluta
     require_once __DIR__ . '/../models/Categorias.php';
     
     $categoriasModel = new Categorias();
     $categoriasDB = $categoriasModel->obtenerCategoriasConOficios();
+    
+    // Log para depuración (remover después)
+    if (empty($categoriasDB)) {
+        error_log("ADVERTENCIA en home.php: No se encontraron categorías en la base de datos");
+    } else {
+        error_log("INFO en home.php: Se cargaron " . count($categoriasDB) . " categorías correctamente");
+    }
     
     // Mapa de íconos por nombre de categoría
     $iconMap = [
@@ -60,10 +67,13 @@ try {
         }
         unset($c);
         $categorias = $categoriasDB;
+    } else {
+        error_log("ADVERTENCIA en home.php: categoriasDB está vacío o no es array");
     }
     
 } catch (Exception $e) {
-    error_log("Error cargando categorías en home: " . $e->getMessage());
+    error_log("ERROR CRÍTICO en home.php al cargar categorías: " . $e->getMessage());
+    error_log("Stack trace: " . $e->getTraceAsString());
     $categorias = [];
 }
 ?>
