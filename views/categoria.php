@@ -397,10 +397,12 @@ try {
     vertical-align: middle;
     min-width: 90px;
     width: auto;
+    overflow: hidden;
 }
 
 .btn-reveal-phone.revealed {
-    min-width: 140px;
+    min-width: 170px;
+    width: auto;
 }
 
 .btn-reveal-phone:hover {
