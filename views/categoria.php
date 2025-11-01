@@ -1160,12 +1160,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const anuncioCards = document.querySelectorAll('[data-anuncio]');
     anunciosData = Array.from(anuncioCards).map(card => {
         try {
-            return JSON.parse(card.getAttribute('data-anuncio'));
+            const data = JSON.parse(card.getAttribute('data-anuncio'));
+            console.log('Anuncio data loaded:', data);
+            return data;
         } catch (e) {
             console.error('Error parsing anuncio data:', e);
             return null;
         }
     }).filter(a => a !== null);
+    
+    console.log('Total anuncios loaded:', anunciosData.length);
+    console.log('All anuncios data:', anunciosData);
     
     // Manejar click en botones de revelar teléfono
     const btnRevealPhones = document.querySelectorAll('.btn-reveal-phone');
