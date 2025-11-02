@@ -169,8 +169,8 @@ try {
 .categoria-header {
     background: linear-gradient(135deg, #3a8be8 0%, #2870d1 100%);
     color: white;
-    padding: 2.5rem 0;
-    margin-bottom: 2rem;
+    padding: 1.5rem 0;
+    margin-bottom: 1.5rem;
     border-radius: 0;
     box-shadow: 0 4px 15px rgba(58, 139, 232, 0.2);
     position: relative;
@@ -195,41 +195,41 @@ try {
 }
 
 .categoria-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-size: 2rem;
+    margin-bottom: 0.75rem;
     background: rgba(255, 255, 255, 0.15);
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 16px;
+    border-radius: 14px;
     backdrop-filter: blur(10px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .categoria-title {
-    font-size: 2.25rem;
+    font-size: 1.75rem;
     font-weight: 700;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
     letter-spacing: -0.5px;
 }
 
 .categoria-descripcion {
-    font-size: 1rem;
+    font-size: 0.9rem;
     opacity: 0.95;
     max-width: 700px;
-    margin: 0 auto 1rem;
-    line-height: 1.5;
+    margin: 0 auto 0.75rem;
+    line-height: 1.4;
 }
 
 .categoria-stats {
-    margin-top: 1rem;
-    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
     display: inline-block;
     background: rgba(255, 255, 255, 0.2);
-    padding: 0.5rem 1.25rem;
+    padding: 0.4rem 1rem;
     border-radius: 30px;
     backdrop-filter: blur(10px);
     font-weight: 600;
@@ -1003,12 +1003,26 @@ try {
         font-size: 0.7rem;
     }
     
+    .categoria-header {
+        padding: 1rem 0;
+        margin-bottom: 1rem;
+    }
+    
     .categoria-title {
-        font-size: 2rem;
+        font-size: 1.5rem;
     }
     
     .categoria-icon {
-        font-size: 2.5rem;
+        font-size: 1.75rem;
+        width: 50px;
+        height: 50px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .categoria-stats {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.85rem;
+        margin-top: 0.35rem;
     }
     
     .anuncio-info-top {
