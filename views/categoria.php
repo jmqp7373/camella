@@ -395,7 +395,7 @@ try {
 .anuncio-info-top {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     gap: 1rem;
 }
 
@@ -408,10 +408,10 @@ try {
 }
 
 .anuncio-precio {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: #28a745;
-    line-height: 1;
+    line-height: 1.2;
     margin: 0;
     padding: 0;
 }
@@ -419,12 +419,14 @@ try {
 .anuncio-fecha {
     font-size: 0.8rem;
     color: #6c757d;
-    line-height: 1;
+    line-height: 1.4;
     display: flex;
     align-items: center;
     gap: 0.35rem;
     margin: 0;
     padding: 0;
+    text-align: right;
+    white-space: nowrap;
 }
 
 .anuncio-fecha i {
