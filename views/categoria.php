@@ -973,19 +973,34 @@ try {
 }
 
 @media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
     .breadcrumb-categoria {
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
-        font-size: 0.8rem;
+        padding: 0.75rem 0;
+        margin-bottom: 0.75rem;
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        background: white;
+        display: block !important;
+        visibility: visible !important;
     }
     
     .breadcrumb-categoria span {
-        gap: 0.35rem;
+        gap: 0.25rem;
+        font-size: 0.75rem;
     }
     
     .breadcrumb-categoria a,
     .breadcrumb-categoria strong {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
+        display: inline;
+    }
+    
+    .breadcrumb-categoria a i {
+        font-size: 0.7rem;
     }
     
     .categoria-title {
