@@ -750,35 +750,52 @@ try {
     pointer-events: none;
 }
 
-.modal-image-dots {
+.modal-image-controls {
     position: absolute;
     bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 1rem;
     display: flex;
-    gap: 0.4rem;
+    gap: 0.5rem;
     z-index: 100;
 }
 
-.modal-image-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-}
-
-.modal-image-dot.active {
+.modal-control-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
     background: rgba(0, 0, 0, 0.8);
-    border-color: rgba(255, 255, 255, 0.8);
-    transform: scale(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
 }
 
-.modal-image-dot:hover {
-    background: rgba(255, 255, 255, 0.8);
-    transform: scale(1.15);
+.modal-control-btn:hover {
+    background: rgba(0, 123, 255, 0.95);
+    border-color: rgba(255, 255, 255, 0.7);
+    transform: scale(1.1);
+}
+
+.modal-control-btn:active {
+    transform: scale(0.95);
+}
+
+.modal-control-btn.playing {
+    background: rgba(0, 123, 255, 0.95);
+}
+
+.modal-control-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.modal-control-btn:disabled:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: scale(1);
 }
 
 .modal-info {
@@ -1188,7 +1205,20 @@ try {
                             <i class="fas fa-image"></i>
                         </div>
                         <div id="modalImageCounter" class="modal-image-counter" style="display: none;"></div>
-                        <div id="modalImageDots" class="modal-image-dots"></div>
+                        <div id="modalImageControls" class="modal-image-controls">
+                            <button class="modal-control-btn modal-btn-back" title="Anterior">
+                                <i class="fas fa-step-backward"></i>
+                            </button>
+                            <button class="modal-control-btn modal-btn-play" title="Reproducir">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <button class="modal-control-btn modal-btn-pause" title="Pausar" style="display: none;">
+                                <i class="fas fa-pause"></i>
+                            </button>
+                            <button class="modal-control-btn modal-btn-forward" title="Siguiente">
+                                <i class="fas fa-step-forward"></i>
+                            </button>
+                        </div>
                     </div>
                     
                     <div class="modal-info">
@@ -1258,6 +1288,8 @@ let anunciosData = [];
 let currentIndex = 0;
 let currentImageIndex = 0;
 let currentImages = [];
+let modalAutoplayInterval = null;
+let modalIsPlaying = false;
 
 // Variables globales para las tarjetas del grid
 let cardImageIndices = {}; // {cardIndex: currentImageIndex}
@@ -1302,6 +1334,9 @@ function abrirModal(index) {
 }
 
 function cerrarModal() {
+    // Pausar autoplay del modal si está activo
+    pauseModal();
+    
     const modal = document.getElementById('anuncioModal');
     if (modal) {
         modal.classList.remove('active');
@@ -1348,11 +1383,11 @@ function mostrarImagenActual() {
         modalImagePlaceholder.style.display = 'none';
         
         // Actualizar contador
-        modalImageCounter.textContent = `${currentImages.length} IMÁGENES`;
+        modalImageCounter.textContent = `${currentImageIndex + 1}/${currentImages.length} IMÁGENES`;
         modalImageCounter.style.display = 'block';
         
-        // Actualizar dots
-        actualizarDots();
+        // Actualizar controles
+        actualizarControlesModal();
     } else {
         modalImage.style.display = 'none';
         modalImagePlaceholder.style.display = 'flex';
@@ -1360,21 +1395,74 @@ function mostrarImagenActual() {
     }
 }
 
-function actualizarDots() {
-    const dotsContainer = document.getElementById('modalImageDots');
-    dotsContainer.innerHTML = '';
+function actualizarControlesModal() {
+    const controlsContainer = document.getElementById('modalImageControls');
+    if (!controlsContainer) return;
     
-    if (currentImages.length > 1) {
-        currentImages.forEach((img, index) => {
-            const dot = document.createElement('div');
-            dot.className = 'modal-image-dot' + (index === currentImageIndex ? ' active' : '');
-            dot.onclick = () => {
-                currentImageIndex = index;
-                mostrarImagenActual();
-            };
-            dotsContainer.appendChild(dot);
-        });
+    const btnBack = controlsContainer.querySelector('.modal-btn-back');
+    const btnForward = controlsContainer.querySelector('.modal-btn-forward');
+    
+    if (btnBack) {
+        btnBack.disabled = (currentImageIndex === 0);
     }
+    if (btnForward) {
+        btnForward.disabled = (currentImageIndex === currentImages.length - 1);
+    }
+    
+    // Mostrar/ocultar controles según cantidad de imágenes
+    if (currentImages.length > 1) {
+        controlsContainer.style.display = 'flex';
+    } else {
+        controlsContainer.style.display = 'none';
+    }
+}
+
+function playModal() {
+    if (!currentImages || currentImages.length <= 1) return;
+    
+    // Detener cualquier reproducción previa
+    stopModal();
+    
+    modalIsPlaying = true;
+    
+    // Actualizar UI
+    const controlsContainer = document.getElementById('modalImageControls');
+    if (controlsContainer) {
+        controlsContainer.querySelector('.modal-btn-play').style.display = 'none';
+        controlsContainer.querySelector('.modal-btn-pause').style.display = 'flex';
+        controlsContainer.querySelector('.modal-btn-pause').classList.add('playing');
+    }
+    
+    // Iniciar autoplay cada 2 segundos
+    modalAutoplayInterval = setInterval(() => {
+        const nextIndex = (currentImageIndex + 1) % currentImages.length;
+        currentImageIndex = nextIndex;
+        mostrarImagenActual();
+    }, 2000);
+}
+
+function pauseModal() {
+    stopModal();
+    
+    // Actualizar UI
+    const controlsContainer = document.getElementById('modalImageControls');
+    if (controlsContainer) {
+        const btnPlay = controlsContainer.querySelector('.modal-btn-play');
+        const btnPause = controlsContainer.querySelector('.modal-btn-pause');
+        if (btnPlay) btnPlay.style.display = 'flex';
+        if (btnPause) {
+            btnPause.style.display = 'none';
+            btnPause.classList.remove('playing');
+        }
+    }
+}
+
+function stopModal() {
+    if (modalAutoplayInterval) {
+        clearInterval(modalAutoplayInterval);
+        modalAutoplayInterval = null;
+    }
+    modalIsPlaying = false;
 }
 
 // Variables para gestos táctiles y arrastre (MODAL)
@@ -1393,6 +1481,9 @@ function handleGestureEnd() {
     const threshold = 50; // Umbral mínimo de deslizamiento en píxeles
     
     if (Math.abs(deltaX) > threshold) {
+        // Pausar autoplay si está activo
+        pauseModal();
+        
         if (deltaX > 0) {
             // Deslizar a la derecha = imagen anterior
             navegarImagen(-1);
@@ -1712,6 +1803,45 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cursor visual para indicar interacción
     modalImages.style.cursor = 'grab';
     
+    // Eventos de los controles del modal
+    const modalControlsContainer = document.getElementById('modalImageControls');
+    if (modalControlsContainer) {
+        const modalBtnBack = modalControlsContainer.querySelector('.modal-btn-back');
+        const modalBtnPlay = modalControlsContainer.querySelector('.modal-btn-play');
+        const modalBtnPause = modalControlsContainer.querySelector('.modal-btn-pause');
+        const modalBtnForward = modalControlsContainer.querySelector('.modal-btn-forward');
+        
+        if (modalBtnBack) {
+            modalBtnBack.addEventListener('click', (e) => {
+                e.stopPropagation();
+                pauseModal();
+                navegarImagen(-1);
+            });
+        }
+        
+        if (modalBtnPlay) {
+            modalBtnPlay.addEventListener('click', (e) => {
+                e.stopPropagation();
+                playModal();
+            });
+        }
+        
+        if (modalBtnPause) {
+            modalBtnPause.addEventListener('click', (e) => {
+                e.stopPropagation();
+                pauseModal();
+            });
+        }
+        
+        if (modalBtnForward) {
+            modalBtnForward.addEventListener('click', (e) => {
+                e.stopPropagation();
+                pauseModal();
+                navegarImagen(1);
+            });
+        }
+    }
+    
     // Eventos táctiles y de arrastre para tarjetas del grid
     const imageWrappers = document.querySelectorAll('.anuncio-image-wrapper');
     
@@ -1776,6 +1906,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function mostrarAnuncio(index) {
     const anuncio = anunciosData[index];
     
+    // Pausar autoplay anterior si existe
+    pauseModal();
+    
     // Inicializar carrusel de imágenes
     currentImages = anuncio.imagenes || [];
     currentImageIndex = 0;
@@ -1788,15 +1921,12 @@ function mostrarAnuncio(index) {
         const modalImage = document.getElementById('modalImage');
         const modalImagePlaceholder = document.getElementById('modalImagePlaceholder');
         const modalImageCounter = document.getElementById('modalImageCounter');
+        const modalImageControls = document.getElementById('modalImageControls');
         
         modalImage.style.display = 'none';
         modalImagePlaceholder.style.display = 'flex';
         modalImageCounter.style.display = 'none';
-        
-        // Ocultar controles de navegación
-        document.querySelector('.modal-image-nav.prev-img').style.display = 'none';
-        document.querySelector('.modal-image-nav.next-img').style.display = 'none';
-        document.getElementById('modalImageDots').innerHTML = '';
+        if (modalImageControls) modalImageControls.style.display = 'none';
     }
     
     // Actualizar información
