@@ -111,6 +111,9 @@ html, body { margin:0; padding:0; box-sizing:border-box; overflow-x:hidden; }
     padding: 9px 14px; 
     font-size: 15px; 
   }
+  .main-content {
+    margin-top: 70px !important; /* Ajustar para header más pequeño en tablet */
+  }
 }
 
 /* Móviles pequeños */
@@ -127,6 +130,9 @@ html, body { margin:0; padding:0; box-sizing:border-box; overflow-x:hidden; }
     height: 32px; /* Tamaño mínimo para buena visibilidad */
     min-height: 28px; /* Nunca menor a 28px */
     width: auto; /* Mantener proporción */
+  }
+  .main-content {
+    margin-top: 65px !important; /* Ajustar para header móvil */
   }
 }
 
@@ -150,9 +156,13 @@ html, body { margin:0; padding:0; box-sizing:border-box; overflow-x:hidden; }
    BLOQUEAR ESTILOS HEREDADOS PROBLEMÁTICOS
    ======================================== */
 
-/* Eliminar padding-top del body */
+/* Compensar altura del header fijo */
 body{ 
   padding-top:0 !important; 
+}
+
+.main-content {
+  margin-top: 80px !important; /* Espacio para header fijo (60px header + 20px margen) */
 }
 
 /* Prevenir overflow horizontal */
