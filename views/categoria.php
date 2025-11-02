@@ -973,6 +973,21 @@ try {
 }
 
 @media (max-width: 768px) {
+    .breadcrumb-categoria {
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    .breadcrumb-categoria span {
+        gap: 0.35rem;
+    }
+    
+    .breadcrumb-categoria a,
+    .breadcrumb-categoria strong {
+        font-size: 0.8rem;
+    }
+    
     .categoria-title {
         font-size: 2rem;
     }
