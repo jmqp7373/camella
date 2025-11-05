@@ -174,9 +174,7 @@ try {
 }
 
 // -------------------- Construir enlace corto --------------------
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'];
-$shortLink = "{$protocol}://{$host}/camella.com.co/in/{$verificationCode}";
+$shortLink = SITE_URL . "/in/{$verificationCode}";
 
 // -------------------- Preparar mensaje SMS --------------------
 $smsBody = "Tu código de verificación es: {$verificationCode}\n";

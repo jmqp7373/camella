@@ -109,9 +109,8 @@ class MagicLinkController {
         try {
             $twilio = new Client(TWILIO_SID, TWILIO_AUTH_TOKEN);
 
-            // Construir enlace corto con código directo
-            $currentUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
-            $shortLink = $currentUrl . "/camella.com.co/in/{$code}";
+            // Construir enlace corto con código directo usando SITE_URL
+            $shortLink = SITE_URL . "/in/{$code}";
 
             // Construir mensaje
             $message = "Tu código de verificación es: {$code}\n";

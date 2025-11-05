@@ -25,10 +25,9 @@ function sendSmsInfobip($telefono, $codigo, $token) {
     $endpoint = INFOBIP_BASE_URL . '/sms/2/text/advanced';
     $apiKey = INFOBIP_API_KEY;
 
-    // Construir el mensaje con enlace corto
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-    $host = $_SERVER['HTTP_HOST'];
-    $shortLink = "{$protocol}://{$host}/camella.com.co/in/{$codigo}";
+    // Construir el mensaje con enlace corto usando SITE_URL
+    require_once __DIR__ . '/../config/config.php';
+    $shortLink = SITE_URL . "/in/{$codigo}";
     $mensaje = "Tu código de verificación es: {$codigo}\nAccede directamente en: {$shortLink}\nVálido por 10 minutos.";
 
     // Payload JSON para Infobip
