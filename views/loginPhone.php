@@ -34,6 +34,13 @@ if ($isLocalhost) {
             <p>Ingresa tu número para recibir un enlace mágico y código de acceso</p>
         </div>
 
+        <?php if (isset($_GET['error']) && !empty($_GET['error'])): ?>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong><?= htmlspecialchars($_GET['error']) ?></strong>
+            </div>
+        <?php endif; ?>
+
         <form class="login-form" method="POST" action="<?= $verificationControllerUrl ?>" id="phoneLoginForm">
             <div class="form-group">
                 <label for="phone">
@@ -229,6 +236,46 @@ if ($isLocalhost) {
     color: var(--color-verde);
     margin-right: 8px;
     font-size: 10px;
+}
+
+/* Estilo de alerta de error */
+.alert {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-error {
+    background: #fee;
+    border-left: 4px solid #dc3545;
+    color: #721c24;
+}
+
+.alert-error i {
+    color: #dc3545;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.alert-error strong {
+    font-weight: 600;
 }
 </style>
 

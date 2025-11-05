@@ -659,11 +659,10 @@ class MagicLinkController {
         }
 
         try {
-            // Buscar el código en verification_codes
+            // Buscar el código en verification_codes (sin filtrar por expiración primero)
             $stmt = $this->pdo->prepare("
                 SELECT * FROM verification_codes 
                 WHERE code = ? 
-                AND expires_at > NOW() 
                 ORDER BY created_at DESC 
                 LIMIT 1
             ");
@@ -671,8 +670,32 @@ class MagicLinkController {
             $verification = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if (!$verification) {
-                error_log("MagicLink: Código no encontrado o expirado: $code");
-                header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Código inválido o expirado"));
+                error_log("MagicLink: Código no encontrado: $code");
+                header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Código no válido"));
+                exit;
+            }
+
+            // Verificar si el código ya fue usado
+            if ($verification['used_at'] !== null) {
+                $usedAt = date('d/m/Y \a \l\a\s H:i', strtotime($verification['used_at']));
+                error_log("MagicLink: Código ya usado: $code (usado el $usedAt)");
+                header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Este código ya fue usado el $usedAt"));
+                exit;
+            }
+
+            // Verificar si el código expiró
+            $now = new DateTime();
+            $expiresAt = new DateTime($verification['expires_at']);
+            if ($expiresAt < $now) {
+                $diff = $now->diff($expiresAt);
+                $timeAgo = '';
+                if ($diff->h > 0) {
+                    $timeAgo = $diff->h . ' hora' . ($diff->h > 1 ? 's' : '');
+                } else {
+                    $timeAgo = $diff->i . ' minuto' . ($diff->i > 1 ? 's' : '');
+                }
+                error_log("MagicLink: Código expirado: $code (expiró hace $timeAgo)");
+                header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Este código expiró hace $timeAgo"));
                 exit;
             }
 
@@ -716,8 +739,8 @@ class MagicLinkController {
             error_log("  - Teléfono: {$user['phone']}");
             error_log("  - Rol: {$user['role']}");
 
-            // Eliminar el código usado
-            $stmt4 = $this->pdo->prepare("DELETE FROM verification_codes WHERE code = ?");
+            // Marcar el código como usado (en lugar de eliminarlo)
+            $stmt4 = $this->pdo->prepare("UPDATE verification_codes SET used_at = NOW() WHERE code = ?");
             $stmt4->execute([$code]);
 
             // Redirigir según el rol
