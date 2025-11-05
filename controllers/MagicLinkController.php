@@ -508,10 +508,8 @@ class MagicLinkController {
         // Sanitizar token
         $token = preg_replace('/[^a-zA-Z0-9]/', '', $token);
         
-        // Obtener la base URL del sitio
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'];
-        $baseUrl = "$protocol://$host/camella.com.co";
+        // Usar SITE_URL de configuración
+        $baseUrl = SITE_URL;
         
         if (empty($token)) {
             header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Token no válido"));
@@ -647,10 +645,8 @@ class MagicLinkController {
         // Sanitizar código (solo 6 dígitos)
         $code = preg_replace('/[^0-9]/', '', $code);
         
-        // Obtener la base URL del sitio
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host = $_SERVER['HTTP_HOST'];
-        $baseUrl = "$protocol://$host/camella.com.co";
+        // Usar SITE_URL de configuración
+        $baseUrl = SITE_URL;
         
         if (strlen($code) !== 6) {
             header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Código no válido"));
