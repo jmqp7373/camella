@@ -75,11 +75,10 @@ Formato número: 573103951529 (sin +)
 
 ### 🔄 Para activar en producción:
 ```php
-// En MagicLinkController.php línea 81:
-// CAMBIAR DE:
-curl_init('...scripts/sendSmsMessageBird.php');
-// A:
-curl_init('...scripts/sendSmsLabsMobile.php');
+// En MagicLinkController.php:
+// Actualmente usa Twilio como proveedor principal
+// Para cambiar a LabsMobile, modificar el método sendCode()
+// para llamar al script sendSmsLabsMobile.php
 ```
 
 ## 📱 **PRUEBAS EXITOSAS**
@@ -96,7 +95,7 @@ curl_init('...scripts/sendSmsLabsMobile.php');
 
 ## 🎊 **¡MIGRACIÓN EXITOSA!**
 
-**LabsMobile OTP está funcionando perfectamente como reemplazo de MessageBird.**
+**LabsMobile OTP está funcionando perfectamente como alternativa a Twilio.**
 
 ### Ventajas confirmadas:
 - ✅ **Entrega confiable:** SMS llegando correctamente

@@ -71,13 +71,11 @@ if ($isJsonResponse && isset($responseData['status'])) {
 - Credenciales reales configuradas
 - Compatible con `MagicLinkController.php`
 
-### 🔄 Para cambiar de MessageBird a LabsMobile:
+### 🔄 Nota sobre proveedores SMS:
 ```php
-// En MagicLinkController.php línea 81:
-// CAMBIAR DE:
-curl_init('...scripts/sendSmsMessageBird.php');
-// A:
-curl_init('...scripts/sendSmsLabsMobile.php');
+// Actualmente el sistema usa Twilio como proveedor principal de SMS
+// LabsMobile está disponible como alternativa si se necesita cambiar
+// Para usar LabsMobile, modificar el método sendCode() en MagicLinkController.php
 ```
 
 ## 📱 **PRUEBAS REALIZADAS**
@@ -112,7 +110,7 @@ http://localhost/camella.com.co/test_labsmobile_otp.php
 
 ## 🎉 **¡MIGRACIÓN EXITOSA!**
 
-**LabsMobile OTP está funcionando perfectamente y listo para reemplazar MessageBird.**
+**LabsMobile OTP está funcionando perfectamente como alternativa a Twilio.**
 
 El script genera códigos, crea magic links, envía SMS y devuelve la respuesta en el formato exacto que espera el sistema de Camella.
 

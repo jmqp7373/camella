@@ -30,17 +30,17 @@ $LABSMOBILE_TOKEN = 'TU_TOKEN_REAL_DEL_PANEL';
 - **Usuario:** El email de tu cuenta LabsMobile
 - **Token:** Código alfanumérico del panel de API
 
-## 🔄 COMPARACIÓN CON MESSAGEBIRD
+## 🔄 COMPARACIÓN CON TWILIO
 
-### MessageBird (Actual)
+### Twilio (Actual)
 ```
-❌ API Key expirada/inválida
-❌ Errores 401/404 constantes
-🔧 Endpoint: https://rest.messagebird.com/messages
-📋 Formato: URL-encoded
+✅ Proveedor principal activo
+✅ API estable y funcional
+🔧 Endpoint: Twilio REST API
+📋 Formato: JSON
 ```
 
-### LabsMobile OTP (Nuevo)
+### LabsMobile OTP (Alternativa)
 ```
 ✅ API OTP especializada
 ✅ Credenciales por configurar
@@ -105,15 +105,13 @@ php test_directo_labsmobile.php
 ```
 
 ### 3. **Actualizar MagicLinkController (Opcional)**
-Si quieres cambiar el proveedor predeterminado:
+Si quieres cambiar de Twilio a LabsMobile como proveedor:
 
 ```php
-// En controllers/MagicLinkController.php línea 81:
-// CAMBIAR DE:
-$ch = curl_init('http..../scripts/sendSmsMessageBird.php');
-
-// A:
-$ch = curl_init('http..../scripts/sendSmsLabsMobile.php');
+// En controllers/MagicLinkController.php:
+// Actualmente usa Twilio directamente
+// Para usar LabsMobile, modificar el método sendCode() 
+// para llamar a sendSmsLabsMobile.php en lugar del método sendSMSTwilio()
 ```
 
 ### 4. **Desplegar a Producción**

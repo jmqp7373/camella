@@ -12,6 +12,12 @@ RewriteEngine On
 RewriteRule ^m/([a-zA-Z0-9]+)$ index.php?view=m&token=$1 [L,QSA]
 
 # ========================================
+# ENLACE CORTO DE VERIFICACIÓN - /in/{code}
+# ========================================
+# Convertir /in/123456 a index.php?view=magiclink&code=123456
+RewriteRule ^in/([0-9]{6})$ index.php?view=magiclink&code=$1 [L,QSA]
+
+# ========================================
 # PÁGINAS DE ERROR PERSONALIZADAS
 # ========================================
 ErrorDocument 403 /403.php

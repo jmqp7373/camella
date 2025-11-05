@@ -73,62 +73,73 @@ class MagicLinkController {
             return $this->jsonResponse(false, 'Número no ingresado o inválido');
         }
 
-        // ENVÍO VIA MESSAGEBIRD (proveedor principal)
-        // MessageBird genera internamente el código y token
-        error_log("MagicLinkController sendCode: Enviando SMS vía MessageBird...");
+        // Generar código de 6 dígitos
+        $code = sprintf('%06d', random_int(0, 999999));
         
-        // Hacer petición interna al script de MessageBird
-        $ch = curl_init('http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/../scripts/sendSmsMessageBird.php');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['phone' => $phone]));
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        error_log("MagicLinkController sendCode: Código generado: {$code}");
         
-        $response = curl_exec($ch);
-        $curlError = curl_error($ch);
-        curl_close($ch);
+        // Intentar enviar SMS vía Twilio
+        $smsSent = $this->sendSMSTwilio($phone, $code);
         
-        if (!empty($curlError)) {
-            error_log("MagicLinkController sendCode: Error cURL - {$curlError}");
+        if (!$smsSent) {
+            error_log("MagicLinkController sendCode: Error al enviar SMS vía Twilio");
             return $this->jsonResponse(false, 'Error al enviar el código. Intenta de nuevo.');
         }
         
-        // Decodificar respuesta de MessageBird
-        $resultado = json_decode($response, true);
-        
-        if (!$resultado || !isset($resultado['success'])) {
-            error_log("MagicLinkController sendCode: Respuesta inválida de MessageBird");
-            return $this->jsonResponse(false, 'Error interno al enviar SMS');
-        }
-        
-        if (!$resultado['success']) {
-            error_log("MagicLinkController sendCode: Error de MessageBird - " . ($resultado['error'] ?? 'desconocido'));
-            return $this->jsonResponse(false, 'Error al enviar el código. Intenta de nuevo.');
-        }
-        
-        // Extraer código y token de la respuesta
-        $code = $resultado['code'];
-        $magicToken = $resultado['token'];
-        
-        // Log del envío exitoso
-        error_log("MagicLinkController sendCode: SMS enviado exitosamente vía MessageBird");
-        error_log("MagicLinkController sendCode: Código: {$code}, Token: {$magicToken}");
-        error_log("MagicLinkController sendCode: SMS enviado exitosamente via {$resultado['provider']}");
-        
-        error_log("MagicLinkController sendCode: SMS enviado exitosamente, guardando en BD...");
+        error_log("MagicLinkController sendCode: SMS enviado exitosamente vía Twilio");
         
         // Intentar guardar en BD (pero no fallar si no se puede)
-        $savedInDB = $this->saveVerificationCode($phone, $code, $magicToken);
+        $savedInDB = $this->saveVerificationCode($phone, $code);
         
         if ($savedInDB) {
             error_log("MagicLinkController sendCode: Código guardado en BD correctamente");
-            $this->saveToHistory($phone, $code, $magicToken, 'sent');
+            $this->saveToHistory($phone, $code, 'sent');
         } else {
             error_log("MagicLinkController sendCode: ADVERTENCIA - No se pudo guardar en BD, pero SMS fue enviado");
             // Aún así devolvemos éxito porque el SMS SÍ se envió
         }
         
         return $this->jsonResponse(true, 'Código enviado exitosamente');
+    }
+
+    /**
+     * Enviar SMS usando Twilio con enlace corto
+     */
+    private function sendSMSTwilio($phone, $code) {
+        try {
+            $twilio = new Client(TWILIO_SID, TWILIO_AUTH_TOKEN);
+
+            // Construir enlace corto con código directo
+            $currentUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'];
+            $shortLink = $currentUrl . "/camella.com.co/in/{$code}";
+
+            // Construir mensaje
+            $message = "Tu código de verificación es: {$code}\n";
+            $message .= "Accede directamente en: {$shortLink}\n";
+            $message .= "Válido por 10 minutos.";
+
+            error_log("Twilio: Enviando SMS a {$phone}");
+            error_log("Twilio: Mensaje: {$message}");
+
+            $twilioMessage = $twilio->messages->create(
+                $phone,
+                [
+                    'from' => TWILIO_FROM_NUMBER,
+                    'body' => $message
+                ]
+            );
+
+            error_log("Twilio: SMS enviado exitosamente. SID: " . $twilioMessage->sid);
+            
+            // Guardar SID en el historial
+            $this->updateHistorySMSSID($phone, $twilioMessage->sid);
+            
+            return true;
+
+        } catch (Exception $e) {
+            error_log("Twilio: Error enviando SMS a {$phone}: " . $e->getMessage());
+            return false;
+        }
     }
 
     private function verifyCode() {
@@ -199,46 +210,30 @@ class MagicLinkController {
         return bin2hex(random_bytes(4)); // 4 bytes = 8 caracteres hex
     }
 
-    private function saveVerificationCode($phone, $code, $magicToken) {
+    private function saveVerificationCode($phone, $code) {
         if (!$this->pdo) {
             error_log("ERROR saveVerificationCode: No hay conexión PDO");
             return false;
         }
 
         try {
-            // Limpiar códigos antiguos
+            // Limpiar códigos antiguos del mismo teléfono
             $stmt = $this->pdo->prepare("
                 DELETE FROM verification_codes 
-                WHERE phone = ? AND created_at < NOW() - INTERVAL 5 MINUTE
+                WHERE phone = ?
             ");
             $stmt->execute([$phone]);
 
             // Guardar el código de verificación
             $stmt = $this->pdo->prepare("
-                INSERT INTO verification_codes (phone, code, magic_token, created_at, expires_at) 
-                VALUES (?, ?, ?, NOW(), NOW() + INTERVAL 5 MINUTE)
+                INSERT INTO verification_codes (phone, code, created_at, expires_at) 
+                VALUES (?, ?, NOW(), NOW() + INTERVAL 10 MINUTE)
             ");
-            $saved = $stmt->execute([$phone, $code, $magicToken]);
+            $saved = $stmt->execute([$phone, $code]);
 
             if (!$saved) {
                 error_log("ERROR saveVerificationCode: Falló inserción en verification_codes");
                 return false;
-            }
-
-            // TAMBIÉN guardar el magic token en la tabla magic_links
-            // Usar try-catch separado para no fallar si la tabla no existe
-            try {
-                $stmt = $this->pdo->prepare("
-                    INSERT INTO magic_links (token, phone, created_at, usos) 
-                    VALUES (?, ?, NOW(), 0)
-                    ON DUPLICATE KEY UPDATE created_at = NOW(), usos = 0
-                ");
-                $stmt->execute([$magicToken, $phone]);
-                error_log("Magic token guardado en magic_links: {$magicToken}");
-            } catch (Exception $e) {
-                // No fallar si magic_links no existe (compatibilidad)
-                error_log("ADVERTENCIA: No se pudo guardar en magic_links: " . $e->getMessage());
-                error_log("El sistema funcionará solo con códigos de verificación");
             }
 
             return $saved;
@@ -372,7 +367,7 @@ class MagicLinkController {
     /**
      * Guardar código en historial para auditoría
      */
-    private function saveToHistory($phone, $code, $magicToken, $status = 'created') {
+    private function saveToHistory($phone, $code, $status = 'created') {
         if (!$this->pdo) return;
 
         try {
@@ -381,11 +376,11 @@ class MagicLinkController {
 
             $stmt = $this->pdo->prepare("
                 INSERT INTO verification_codes_history 
-                (phone, code, magic_token, created_at, expires_at, status, ip_address, user_agent) 
-                VALUES (?, ?, ?, NOW(), NOW() + INTERVAL 5 MINUTE, ?, ?, ?)
+                (phone, code, created_at, expires_at, status, ip_address, user_agent) 
+                VALUES (?, ?, NOW(), NOW() + INTERVAL 10 MINUTE, ?, ?, ?)
             ");
 
-            $stmt->execute([$phone, $code, $magicToken, $status, $ip, $userAgent]);
+            $stmt->execute([$phone, $code, $status, $ip, $userAgent]);
             error_log("Historial: Código guardado para {$phone}");
 
         } catch (Exception $e) {
@@ -636,6 +631,119 @@ class MagicLinkController {
 
         } catch (PDOException $e) {
             error_log("MagicLink: Error de BD: " . $e->getMessage());
+            header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Error interno del servidor"));
+            exit;
+        }
+    }
+
+    /**
+     * Login automático con código de 6 dígitos desde enlace corto /in/{code}
+     */
+    public function loginConCodigo($code) {
+        // Asegurar que la sesión esté iniciada
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        // Sanitizar código (solo 6 dígitos)
+        $code = preg_replace('/[^0-9]/', '', $code);
+        
+        // Obtener la base URL del sitio
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'];
+        $baseUrl = "$protocol://$host/camella.com.co";
+        
+        if (strlen($code) !== 6) {
+            header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Código no válido"));
+            exit;
+        }
+
+        if (!$this->pdo) {
+            header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Error de conexión"));
+            exit;
+        }
+
+        try {
+            // Buscar el código en verification_codes
+            $stmt = $this->pdo->prepare("
+                SELECT * FROM verification_codes 
+                WHERE code = ? 
+                AND expires_at > NOW() 
+                ORDER BY created_at DESC 
+                LIMIT 1
+            ");
+            $stmt->execute([$code]);
+            $verification = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if (!$verification) {
+                error_log("MagicLink: Código no encontrado o expirado: $code");
+                header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Código inválido o expirado"));
+                exit;
+            }
+
+            $phone = $verification['phone'];
+
+            // Buscar o crear usuario
+            $stmt2 = $this->pdo->prepare("SELECT * FROM users WHERE phone = ? LIMIT 1");
+            $stmt2->execute([$phone]);
+            $user = $stmt2->fetch(PDO::FETCH_ASSOC);
+
+            if (!$user) {
+                // Crear usuario automáticamente si no existe
+                $stmt3 = $this->pdo->prepare("
+                    INSERT INTO users (phone, created_at, last_login) 
+                    VALUES (?, NOW(), NOW())
+                ");
+                $stmt3->execute([$phone]);
+                $userId = $this->pdo->lastInsertId();
+                
+                // Obtener el usuario recién creado
+                $stmt2->execute([$phone]);
+                $user = $stmt2->fetch(PDO::FETCH_ASSOC);
+            }
+
+            // Configurar sesión
+            $_SESSION['usuario'] = $user['id'];
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_phone'] = $user['phone'] ?? '';
+            $_SESSION['user_email'] = $user['email'] ?? '';
+            $_SESSION['role'] = $user['role'] ?? 'user';
+            $_SESSION['user_role'] = $user['role'] ?? 'user';
+            $_SESSION['logged_in'] = true;
+            
+            if (!empty($user['original_role'])) {
+                $_SESSION['original_role'] = $user['original_role'];
+            }
+
+            // Log de éxito
+            error_log("MagicLink: Login exitoso con código $code");
+            error_log("  - Usuario ID: {$user['id']}");
+            error_log("  - Teléfono: {$user['phone']}");
+            error_log("  - Rol: {$user['role']}");
+
+            // Eliminar el código usado
+            $stmt4 = $this->pdo->prepare("DELETE FROM verification_codes WHERE code = ?");
+            $stmt4->execute([$code]);
+
+            // Redirigir según el rol
+            $role = strtolower(trim($user['role']));
+            $redirectMap = [
+                'admin' => "$baseUrl/views/admin/dashboard.php",
+                'promotor' => "$baseUrl/views/promotor/dashboard.php",
+                'publicante' => "$baseUrl/views/publicante/dashboard.php"
+            ];
+            
+            $redirect = $redirectMap[$role] ?? "$baseUrl/index.php?view=home";
+            error_log("  - Redirigiendo a: $redirect");
+            
+            // Forzar escritura de la sesión
+            session_write_close();
+            
+            header("Location: $redirect");
+            exit;
+
+        } catch (PDOException $e) {
+            error_log("MagicLink: Error loginConCodigo: " . $e->getMessage());
             header("Location: $baseUrl/index.php?view=loginPhone&error=" . urlencode("Error interno del servidor"));
             exit;
         }

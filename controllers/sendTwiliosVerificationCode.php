@@ -151,8 +151,37 @@ $_SESSION['verification_phone'] = $phoneE164;
 $_SESSION['verification_time'] = time();
 error_log("💾 Código guardado en sesión para: " . $phoneE164);
 
+// -------------------- Guardar en base de datos --------------------
+try {
+    require_once __DIR__ . '/../config/database.php';
+    $pdo = getPDO();
+    
+    // Eliminar códigos anteriores del mismo teléfono
+    $stmt = $pdo->prepare("DELETE FROM verification_codes WHERE phone = ?");
+    $stmt->execute([$phoneE164]);
+    
+    // Insertar nuevo código
+    $stmt = $pdo->prepare("
+        INSERT INTO verification_codes (phone, code, created_at, expires_at)
+        VALUES (?, ?, NOW(), NOW() + INTERVAL 10 MINUTE)
+    ");
+    $stmt->execute([$phoneE164, $verificationCode]);
+    error_log("💾 Código guardado en BD para: " . $phoneE164);
+    
+} catch (Exception $e) {
+    error_log("⚠️ Error guardando en BD: " . $e->getMessage());
+    // Continuar aunque falle la BD
+}
+
+// -------------------- Construir enlace corto --------------------
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host = $_SERVER['HTTP_HOST'];
+$shortLink = "{$protocol}://{$host}/camella.com.co/in/{$verificationCode}";
+
 // -------------------- Preparar mensaje SMS --------------------
-$smsBody = "Tu código de verificación Camella es: {$verificationCode}. Expira en 5 minutos.";
+$smsBody = "Tu código de verificación es: {$verificationCode}\n";
+$smsBody .= "Accede directamente en: {$shortLink}\n";
+$smsBody .= "Válido por 10 minutos.";
 
 // -------------------- Envío vía Twilio --------------------
 try {

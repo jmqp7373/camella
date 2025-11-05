@@ -28,6 +28,16 @@ if (isset($_GET['view']) && $_GET['view'] === 'm' && isset($_GET['token'])) {
     exit;
 }
 
+// ============================================
+// RUTA ESPECIAL: Enlace Corto /in/{code}
+// ============================================
+if (isset($_GET['view']) && $_GET['view'] === 'magiclink' && isset($_GET['code'])) {
+    require_once __DIR__ . '/controllers/MagicLinkController.php';
+    $controller = new MagicLinkController();
+    $controller->loginConCodigo($_GET['code']);
+    exit;
+}
+
 // Obtener la vista solicitada (default: home)
 $view = isset($_GET['view']) ? sanitize_input($_GET['view']) : 'home';
 
